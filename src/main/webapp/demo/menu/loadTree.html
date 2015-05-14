@@ -1,0 +1,36 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Menu</title>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" /><link href="../demo.css" rel="stylesheet" type="text/css" />
+
+    <script src="../../scripts/jquery-1.6.2.min.js" type="text/javascript"></script>
+    <script src="../../scripts/miniui/miniui.js" type="text/javascript"></script><link href="../../scripts/miniui/themes/default/miniui.css" rel="stylesheet" type="text/css" />
+    <link href="../../scripts/miniui/themes/icons.css" rel="stylesheet" type="text/css" />
+    
+</head>
+<body>
+    <h1>Menu 菜单</h1>
+    
+    <h4>横向菜单</h4>
+<ul id="menu1" class="mini-menu" vertical="false" style="width:100%;"
+    url="../data/menu.txt" onitemclick="onItemClick" textField="text"
+>
+</ul>
+
+    <script type="text/javascript">
+        mini.parse();
+        function onItemClick(e) {
+            var item = e.sender;
+            alert(item.getText());         
+        }
+    </script>
+
+    <div class="description">
+        <h3>Description</h3>
+        <p>Menu可以加载服务端的一个JSON，动态生成菜单。            
+        </p>
+    </div>
+</body>
+</html>

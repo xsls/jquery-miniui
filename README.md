@@ -1,2 +1,2 @@
 # jquery-miniui
-对官方的 MiniUI 进行扩展
+基于 MiniUI 官方版本 v3.6 进行扩展
