@@ -1,9 +1,10 @@
-﻿# SQL Manager 2007 for MySQL 4.3.2.3
-# ---------------------------------------
-# Host     : localhost
-# Port     : 3306
-# Database : plusoft_test
-
+/*
+ SQL Manager 2007 for MySQL 4.3.2.3
+ ---------------------------------------
+ Host     : localhost
+ Port     : 3306
+ Database : plusoft_test
+*/
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -11,17 +12,15 @@
 /*!40101 SET NAMES utf8 */;
 
 SET FOREIGN_KEY_CHECKS=0;
-
+/*
 CREATE DATABASE `plusoft_test`
     CHARACTER SET 'utf8'
     COLLATE 'utf8_general_ci';
-
+*/
 USE `plusoft_test`;
 
-#
-# Structure for the `plus_file` table : 
-#
 
+-- Structure for the `plus_file` table : 
 CREATE TABLE `plus_file` (
   `id` VARCHAR(50) COLLATE utf8_general_ci NOT NULL DEFAULT '',
   `name` VARCHAR(500) COLLATE utf8_general_ci DEFAULT NULL,
@@ -36,13 +35,10 @@ CREATE TABLE `plus_file` (
   PRIMARY KEY (`id`)
 
 )ENGINE=InnoDB
-CHARACTER SET 'utf8' COLLATE 'utf8_general_ci'
-COMMENT='InnoDB free: 7168 kB; InnoDB free: 7168 kB';
+CHARACTER SET 'utf8' COLLATE 'utf8_general_ci';
 
-#
-# Structure for the `t_department` table : 
-#
 
+-- Structure for the `t_department` table : 
 CREATE TABLE `t_department` (
   `id` VARCHAR(20) COLLATE utf8_general_ci NOT NULL DEFAULT '',
   `name` VARCHAR(50) COLLATE utf8_general_ci DEFAULT NULL,
@@ -50,25 +46,19 @@ CREATE TABLE `t_department` (
   `manager_name` VARCHAR(200) COLLATE utf8_general_ci DEFAULT NULL
 
 )ENGINE=InnoDB
-CHARACTER SET 'utf8' COLLATE 'utf8_general_ci'
-COMMENT='InnoDB free: 6144 kB; InnoDB free: 7168 kB; InnoDB free: 7168 kB';
+CHARACTER SET 'utf8' COLLATE 'utf8_general_ci';
 
-#
-# Structure for the `t_educational` table : 
-#
 
+-- Structure for the `t_educational` table : 
 CREATE TABLE `t_educational` (
   `id` VARCHAR(20) COLLATE utf8_general_ci DEFAULT NULL,
   `name` VARCHAR(20) COLLATE utf8_general_ci DEFAULT NULL
 
 )ENGINE=InnoDB
-CHARACTER SET 'utf8' COLLATE 'utf8_general_ci'
-COMMENT='InnoDB free: 6144 kB; InnoDB free: 7168 kB; InnoDB free: 7168 kB';
+CHARACTER SET 'utf8' COLLATE 'utf8_general_ci';
 
-#
-# Structure for the `t_employee` table : 
-#
 
+-- Structure for the `t_employee` table : 
 CREATE TABLE `t_employee` (
   `id` VARCHAR(50) COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '员工编号',
   `loginname` VARCHAR(50) COLLATE utf8_general_ci DEFAULT NULL COMMENT '帐号',
@@ -89,26 +79,20 @@ CREATE TABLE `t_employee` (
   `email` VARCHAR(100) COLLATE utf8_general_ci DEFAULT NULL
 
 )ENGINE=InnoDB
-CHARACTER SET 'utf8' COLLATE 'utf8_general_ci'
-COMMENT='InnoDB free: 6144 kB; InnoDB free: 7168 kB; InnoDB free: 7168 kB';
+CHARACTER SET 'utf8' COLLATE 'utf8_general_ci';
 
-#
-# Structure for the `t_position` table : 
-#
 
+-- Structure for the `t_position` table : 
 CREATE TABLE `t_position` (
   `id` VARCHAR(50) COLLATE utf8_general_ci DEFAULT NULL,
   `name` VARCHAR(50) COLLATE utf8_general_ci DEFAULT NULL,
   `dept_id` VARCHAR(50) COLLATE utf8_general_ci DEFAULT NULL
 
 )ENGINE=InnoDB
-CHARACTER SET 'utf8' COLLATE 'utf8_general_ci'
-COMMENT='InnoDB free: 6144 kB; InnoDB free: 7168 kB; InnoDB free: 7168 kB';
+CHARACTER SET 'utf8' COLLATE 'utf8_general_ci';
 
-#
-# Data for the `plus_file` table  (LIMIT 0,500)
-#
 
+-- Data for the `plus_file` table  (LIMIT 0,500)
 INSERT INTO `plus_file` (`id`, `name`, `type`, `size`, `url`, `pid`, `createdate`, `updatedate`, `folder`, `num`) VALUES
   ('1','Files',NULL,'0',NULL,'-1',NULL,NULL,1,NULL),
   ('10','Product icons',NULL,NULL,NULL,'3',NULL,NULL,1,NULL),
@@ -134,10 +118,7 @@ INSERT INTO `plus_file` (`id`, `name`, `type`, `size`, `url`, `pid`, `createdate
   ('9','Employees',NULL,NULL,NULL,'3',NULL,NULL,1,NULL);
 COMMIT;
 
-#
-# Data for the `t_department` table  (LIMIT 0,500)
-#
-
+-- Data for the `t_department` table  (LIMIT 0,500)
 INSERT INTO `t_department` (`id`, `name`, `manager`, `manager_name`) VALUES
   ('sc','市场销售部',NULL,NULL),
   ('rs','人事部',NULL,NULL),
@@ -145,10 +126,7 @@ INSERT INTO `t_department` (`id`, `name`, `manager`, `manager_name`) VALUES
   ('cw','财务部',NULL,NULL);
 COMMIT;
 
-#
-# Data for the `t_educational` table  (LIMIT 0,500)
-#
-
+-- Data for the `t_educational` table  (LIMIT 0,500)
 INSERT INTO `t_educational` (`id`, `name`) VALUES
   ('1','大专'),
   ('2','本科'),
@@ -156,10 +134,7 @@ INSERT INTO `t_educational` (`id`, `name`) VALUES
   ('4','博士');
 COMMIT;
 
-#
-# Data for the `t_employee` table  (LIMIT 0,500)
-#
-
+-- Data for the `t_employee` table  (LIMIT 0,500)
 INSERT INTO `t_employee` (`id`, `loginname`, `name`, `age`, `birthday`, `dept_id`, `position`, `gender`, `married`, `salary`, `educational`, `country`, `city`, `remarks`, `school`, `createtime`, `email`) VALUES
   ('8197fb45-2b60-4309-820c-e70824fc9b33','zm@163.com','张明',27,'1983-01-13 00:00:00','cw','cw2',1,0,'3839','2','','','爱好足球','贵州财经大学','2012-01-31 10:50:12','zm@163.com'),
   ('b3d3d2b2-460a-470e-a33c-aff1c8d8a652','sww@163.com','宋蔚伟',25,'1987-01-21 00:00:00','sc','sc3',1,0,'3681','2','','','爱好篮球','天津科技大学','2012-01-31 10:53:35','sww@163.com'),
@@ -198,10 +173,7 @@ INSERT INTO `t_employee` (`id`, `loginname`, `name`, `age`, `birthday`, `dept_id
   ('92c2a9fb-5da1-4de5-a516-0c4c96d82ffd','wq@163.com','王强',25,'1987-12-11 00:00:00','js','js2',1,0,'3201','2','','','','天津商业大学','2012-01-31 10:53:39','wq@163.com');
 COMMIT;
 
-#
-# Data for the `t_position` table  (LIMIT 0,500)
-#
-
+-- Data for the `t_position` table  (LIMIT 0,500)
 INSERT INTO `t_position` (`id`, `name`, `dept_id`) VALUES
   ('cw1','财务总监','cw'),
   ('cw2','会计','cw'),
@@ -217,5 +189,3 @@ INSERT INTO `t_position` (`id`, `name`, `dept_id`) VALUES
   ('rs1','人事部经理','rs'),
   ('rs2','人事助理','rs');
 COMMIT;
-
-

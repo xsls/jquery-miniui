@@ -1,9 +1,12 @@
 package cn.hemw.miniui;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+@SuppressWarnings({"rawtypes", "unchecked"})
 public class DataTree {
 	protected String idField = "id";
     protected String pidField = "pid";

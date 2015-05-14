@@ -1,16 +1,11 @@
 package cn.hemw.miniui;
 
-import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
+@SuppressWarnings({"rawtypes", "unchecked"})
 public class TreeUtil {
     
     public static ArrayList ToTree(List table, String childrenField, String idField, String parentIdField)

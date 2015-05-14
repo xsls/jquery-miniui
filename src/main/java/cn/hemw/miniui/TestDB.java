@@ -1,35 +1,62 @@
 package cn.hemw.miniui;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.sql.Clob;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
-import java.util.*;
-
-
-import java.sql.Clob;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Locale;
+import java.util.Map.Entry;
+import java.util.Properties;
+import java.util.UUID;
 
 public class TestDB {
-	//mysql
-	public static String driver = "com.mysql.jdbc.Driver";
-	public static String url = "jdbc:mysql://localhost/plusoft_test?useUnicode=true&characterEncoding=utf8";
-	public static String user = "root";
-	public static String pwd = "";
+	public static String driver;
+	public static String url;
+	public static String user;
+	public static String pwd;
 	
-	//sqlserver
-//	public static String driver = "com.microsoft.sqlserver.jdbc.SQLServerDriver";
-//	public static String url = "jdbc:sqlserver://localhost:1433;DatabaseName=plusoft_test;";
-//	public static String user = "";
-//	public static String pwd = ""; 	
+	static {
+	    InputStream in = TestDB.class.getClassLoader().getResourceAsStream("miniui.properties");
+	    if(in == null) {
+	        System.err.println("系统配置文件 miniui.properties 不存在");
+	        System.exit(1);
+	    }
+	    
+	    try {
+	        Properties prop = new Properties();
+            prop.load(in);
+            driver = prop.getProperty("jdbc.driver");
+            url = prop.getProperty("jdbc.url");
+            user = prop.getProperty("jdbc.username");
+            pwd = prop.getProperty("jdbc.password");
+            
+            
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.exit(1);
+        } finally {
+            try {
+                in.close();
+            } catch (IOException e) {
+                // ignore
+            }
+        }
+	}
 
 	////////////////////////////////////////////////////
-	public String InsertNode(HashMap n) throws Exception
+	public String InsertNode(HashMap<String, Object> n) throws Exception
 	{
 		
 		String sql = "insert into plus_file (id, name, type, size, url, pid, createdate, updatedate, folder, num)"
@@ -39,7 +66,7 @@ public class TestDB {
 		return n.get("id").toString();
 	}
 	
-	public void RemoveNode(HashMap n) throws Exception
+	public void RemoveNode(HashMap<String, Object> n) throws Exception
 	{
 		String id = n.get("id").toString();
 		Connection conn = getConn();		
@@ -52,7 +79,7 @@ public class TestDB {
 		conn.close();
 	}
 	
-	public void UpdateTreeNode(HashMap n) throws Exception
+	public void UpdateTreeNode(HashMap<String, Object> n) throws Exception
 	{
 		
 		
@@ -78,49 +105,49 @@ public class TestDB {
 		conn.close();   
 	}
 	
-    public ArrayList GetDepartments() throws Exception
+    public ArrayList<HashMap<String, Object>> GetDepartments() throws Exception
     {
         String sql = "select *"
 					+" from t_department";
-        ArrayList data = DBSelect(sql);
+        ArrayList<HashMap<String, Object>> data = DBSelect(sql);
         return data;
     }
-    public HashMap GetDepartment(String id) throws Exception
+    public HashMap<String, Object> GetDepartment(String id) throws Exception
     {
     	String sql = "select * from t_department where id = '" + id + "'";
-        ArrayList data = DBSelect(sql);
-        return data.size() > 0 ? (HashMap)data.get(0) : null;
+        ArrayList<HashMap<String, Object>> data = DBSelect(sql);
+        return data.size() > 0 ? data.get(0) : null;
     }
-    public ArrayList GetPositions() throws Exception
+    public ArrayList<HashMap<String, Object>> GetPositions() throws Exception
     {
     	String sql = "select * from t_position";
-        ArrayList data = DBSelect(sql);
+        ArrayList<HashMap<String, Object>> data = DBSelect(sql);
         return data;
     }
-    public ArrayList GetEducationals() throws Exception
+    public ArrayList<HashMap<String, Object>> GetEducationals() throws Exception
     {
     	String sql = "select * from t_educational";
-        ArrayList data = DBSelect(sql);
+        ArrayList<HashMap<String, Object>> data = DBSelect(sql);
         return data;
     }
-    public ArrayList GetPositionsByDepartmenId(String departmentId) throws Exception
+    public ArrayList<HashMap<String, Object>> GetPositionsByDepartmenId(String departmentId) throws Exception
     {        
     	String sql = "select * from t_position where dept_id = '" + departmentId + "'";
-        ArrayList dataAll = DBSelect(sql);
+        ArrayList<HashMap<String, Object>> dataAll = DBSelect(sql);
         return dataAll;
 
     }
-    public HashMap GetDepartmentEmployees(String departmentId, int index, int size) throws Exception
+    public HashMap<String, Object> GetDepartmentEmployees(String departmentId, int index, int size) throws Exception
     {
         String sql = "select * from t_employee where dept_id = '" + departmentId + "'";
-        ArrayList dataAll = DBSelect(sql);
+        ArrayList<HashMap<String, Object>> dataAll = DBSelect(sql);
         
-        ArrayList data = new ArrayList();
+        ArrayList<HashMap<String, Object>> data = new ArrayList<HashMap<String, Object>>();
         int start = index * size, end = start + size;
 
         for (int i = 0, l = dataAll.size(); i < l; i++)
         {
-            HashMap record = (HashMap)dataAll.get(i);
+            HashMap<String, Object> record = dataAll.get(i);
             if (record == null) continue;
             if (start <= i && i < end)
             {
@@ -128,14 +155,14 @@ public class TestDB {
             }
         }
 
-        HashMap result = new HashMap();
+        HashMap<String, Object> result = new HashMap<String, Object>();
         result.put("data", data);
         result.put("total", dataAll.size());
         
         return result;
     }
 
-    public HashMap SearchEmployees(String key, int index, int size, String sortField, String sortOrder) throws Exception
+    public HashMap<String, Object> SearchEmployees(String key, int index, int size, String sortField, String sortOrder) throws Exception
     {
         //System.Threading.Thread.Sleep(300);
     	if(key == null) key = "";
@@ -161,29 +188,31 @@ public class TestDB {
             sql += " order by createtime desc";
         }
 
-        ArrayList dataAll = DBSelect(sql);
+        ArrayList<HashMap<String, Object>> dataAll = DBSelect(sql);
         
-        ArrayList data = new ArrayList();
+        ArrayList<HashMap<String, Object>> data = new ArrayList<HashMap<String, Object>>();
         int start = index * size, end = start + size;
 
         for (int i = 0, l = dataAll.size(); i < l; i++)
         {
-            HashMap record = (HashMap)dataAll.get(i);
+            HashMap<String, Object> record = dataAll.get(i);
             if (record == null) continue;
             if (start <= i && i < end)
             {
                 data.add(record);
             }
-            record.put("createtime", new Timestamp(100,10,10,1,1,1,1));
+            Calendar calendar = Calendar.getInstance(Locale.CHINA);
+            calendar.set(2000,10,10,1,1,1);
+            record.put("createtime", new Timestamp(calendar.getTimeInMillis()));
         }
 
-        HashMap result = new HashMap();
+        HashMap<String, Object> result = new HashMap<String, Object>();
         result.put("data", data);
         result.put("total", dataAll.size());
 
         //minAge, maxAge, avgAge
-        ArrayList ages = DBSelect("select min(age) as minAge, max(age) as maxAge, avg(age) as avgAge from t_employee");
-        HashMap ageInfo = (HashMap)ages.get(0);
+        ArrayList<HashMap<String, Object>> ages = DBSelect("select min(age) as minAge, max(age) as maxAge, avg(age) as avgAge from t_employee");
+        HashMap<String, Object> ageInfo = ages.get(0);
         result.put("minAge", ageInfo.get("minAge"));
         result.put("maxAge", ageInfo.get("maxAge"));
         result.put("avgAge", ageInfo.get("avgAge"));
@@ -193,13 +222,13 @@ public class TestDB {
 
         return result;
     }
-    public HashMap GetEmployee(String id) throws Exception
+    public HashMap<String, Object> GetEmployee(String id) throws Exception
     {
     	String sql = "select * from t_employee where id = '"+id+"'";
-        ArrayList data = DBSelect(sql);
-        return data.size() > 0 ? (HashMap)data.get(0) : null;
+        ArrayList<HashMap<String, Object>> data = DBSelect(sql);
+        return data.size() > 0 ? data.get(0) : null;
     }
-    public String InsertEmployee(HashMap user) throws Exception
+    public String InsertEmployee(HashMap<String, Object> user) throws Exception
     {
     	String id = (user.get("id") == null || user.get("id").toString().equals(""))? UUID.randomUUID().toString() : user.get("id").toString();
         user.put("id", id);
@@ -251,14 +280,14 @@ public class TestDB {
 		stmt.close();
 		conn.close();
     }
-    public void UpdateEmployee(HashMap user) throws Exception
+    public void UpdateEmployee(HashMap<String, Object> user) throws Exception
     {
-        HashMap db_user = GetEmployee(user.get("id").toString());
+        HashMap<String, Object> db_user = GetEmployee(user.get("id").toString());
         
-        Iterator iter = user.entrySet().iterator();
+        Iterator<Entry<String, Object>> iter = user.entrySet().iterator();
         while (iter.hasNext()) {
-            Map.Entry entry = (Map.Entry) iter.next();
-            Object key = entry.getKey();
+            Entry<String, Object> entry = iter.next();
+            String key = entry.getKey();
             Object val = entry.getValue();
             
             db_user.put(key, val);
@@ -268,14 +297,14 @@ public class TestDB {
         InsertEmployee(db_user);
     }
     
-    public void UpdateDepartment(HashMap d) throws Exception
+    public void UpdateDepartment(HashMap<String, Object> d) throws Exception
     {
-    	HashMap db_d = GetDepartment(d.get("id").toString());
+        HashMap<String, Object> db_d = GetDepartment(d.get("id").toString());
     	
-        Iterator iter = d.entrySet().iterator();
+        Iterator<Entry<String, Object>> iter = d.entrySet().iterator();
         while (iter.hasNext()) {
-            Map.Entry entry = (Map.Entry) iter.next();
-            Object key = entry.getKey();
+            Entry<String, Object> entry = iter.next();
+            String key = entry.getKey();
             Object val = entry.getValue();
             
             db_d.put(key, val);
@@ -314,12 +343,12 @@ public class TestDB {
 			
 		return conn;
 	}	    
-	public ArrayList DBSelect(String sql) throws Exception{
+	public ArrayList<HashMap<String, Object>> DBSelect(String sql) throws Exception{
     	Connection conn = getConn();		
 		Statement stmt = conn.createStatement();
     	
         ResultSet rst = stmt.executeQuery(sql);		
-		ArrayList list = ResultSetToList(rst);
+		ArrayList<HashMap<String, Object>> list = ResultSetToList(rst);
 		
 		rst.close();
 		stmt.close();
@@ -337,7 +366,7 @@ public class TestDB {
 		stmt.close();
 		conn.close();
 	}
-	public void DBInsert(String sql,HashMap node) throws Exception
+	public void DBInsert(String sql, HashMap<String, Object> node) throws Exception
 	{
 		Connection conn = getConn();
 		PreparedStatement stmt = conn.prepareStatement(sql);
@@ -359,13 +388,13 @@ public class TestDB {
 		conn.close();
 	}
 	
-    private static ArrayList ResultSetToList(ResultSet   rs) throws Exception{    	
+    private static ArrayList<HashMap<String, Object>> ResultSetToList(ResultSet   rs) throws Exception{    	
     	ResultSetMetaData md = rs.getMetaData();
     	int columnCount = md.getColumnCount();
-    	ArrayList list = new ArrayList();
-    	Map rowData;
+    	ArrayList<HashMap<String, Object>> list = new ArrayList<HashMap<String, Object>>();
+    	HashMap<String, Object> rowData;
     	while(rs.next()){
-	    	rowData = new HashMap(columnCount);
+	    	rowData = new HashMap<String, Object>(columnCount);
 	    	for(int i = 1; i <= columnCount; i++)   {	 	    		
 	    		Object v = rs.getObject(i);	    		
 	    		
@@ -376,7 +405,7 @@ public class TestDB {
 	    		}else if(v != null && v.getClass() == Clob.class){
 	    			v = clob2String((Clob)v);
 	    		}
-	    		rowData.put(md.getColumnName(i),   v);
+	    		rowData.put(md.getColumnName(i).toLowerCase(),   v);
 	    	}
 	    	list.add(rowData);	    	
     	}

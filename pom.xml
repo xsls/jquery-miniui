@@ -21,6 +21,7 @@
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
             <version>${servlet.versio}</version>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>net.sf.flexjson</groupId>
