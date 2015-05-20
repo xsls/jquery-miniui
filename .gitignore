@@ -15,6 +15,7 @@ hs_err_pid*
 .project
 .settings
 .classpath
+*.md.html
 
 # Maven output directory
 target
