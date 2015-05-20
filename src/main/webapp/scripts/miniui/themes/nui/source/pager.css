@@ -1,0 +1,125 @@
+﻿.mini-pager
+{   
+    width:auto;
+    height:28px;
+    overflow:hidden;  
+    font-size:9pt;
+    font-family: Tahoma, Verdana;
+    position:relative;
+    
+}
+
+.mini-pager-left
+{
+    padding-top:3px;
+    padding-top:2px\9;
+    _padding:2px;
+    
+    line-height:25px;
+    height:25px;
+    overflow:hidden;
+    padding-left:2px;
+    float:left;
+    position:relative;
+    top:-1px;        
+    /*top:0px\0; /*ie8,9*/
+}
+:root .mini-pager-left {top:-1px\9; }  /*ie9*/
+
+
+.mini-pager-right
+{
+    float:right;
+    line-height:28px;
+    padding-right:5px;
+}
+
+.mini-pager .mini-button
+{
+    margin-right:0px;
+}
+
+.mini-pager .mini-button-iconOnly
+{
+    padding-top:0;
+    padding-bottom:0;
+    height:20px;
+}
+
+body .mini-pager-size .mini-buttonedit .mini-buttonedit-border
+{
+    border-color:#ccc;
+}
+
+body .mini-pager-num
+{    
+	border:1px solid #ccc;
+	margin:0 2px;
+	width:35px;
+	text-align:center;	
+	outline:none;
+	+vertical-align:middle;
+	position:relative;
+	_left:0;_top:-1px;
+	height:14px;
+	
+
+}
+.mini-pager-pages
+{
+    padding-left:5px;
+    padding-right:5px;
+    display:inline-block;
+}
+.mini-pager-size
+{
+    display:inline-block;
+    height:20px;
+    padding-left:2px;
+    vertical-align:middle;
+    position:relative;left:0;    
+    _top:-1px;
+    
+    font-size: 0;   
+    line-height:0px;	    
+}
+.mini-pager-index
+{
+    vertical-align:middle;
+    height:25px;
+    overflow:hidden;
+    
+}
+
+.mini-pager-first
+{    
+    background:url(images/pager/first.gif) no-repeat;
+}
+.mini-pager-prev
+{
+    background-image:url(images/pager/prev.gif);
+}
+.mini-pager-next
+{
+    background-image:url(images/pager/next.gif);
+}
+.mini-pager-last
+{
+    background-image:url(images/pager/last.gif);
+}
+.mini-pager-reload
+{
+    background-image:url(images/pager/reload.png);
+}
+
+.mini-page-buttons .mini-button,
+.mini-page-buttons .mini-textbox,
+.mini-page-buttons .mini-buttonedit
+{
+    vertical-align:bottom;
+}
+
+.mini-pager-left table
+{
+    float:left;
+}

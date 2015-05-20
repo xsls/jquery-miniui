@@ -1,0 +1,200 @@
+﻿.mini-buttonedit
+{
+    width:125px;
+    height:21px;
+    display:inline-block;    
+    vertical-align:middle;    
+    overflow:hidden;	/*必须hidden*/
+    /*position:static;*/
+    position:relative;
+}
+
+.mini-buttonedit-border
+{
+    background:white;
+    border: solid 1px #a5acb5;
+    width:auto;
+    height:19px;
+    display:block;
+    /*_display:inline-block;/*ie6*/
+    position:relative;overflow:hidden;
+    padding-right:22px;padding-left:1px;
+}
+.mini-buttonedit-buttons
+{
+    clear:both;position:absolute;right:0px;top:0px;    
+    
+}
+
+.mini-buttonedit-input
+{
+	
+    /*background:none;*/
+    background:none;
+    /*background:url(0) no-repeat\0;                /* fix ie8 */
+    background:url(about:blank) no-repeat\0;        /* fix ie8 */
+    border: 0;     
+    line-height:19px;    
+    font-family: Verdana;
+    font-size: 9pt;        
+    padding: 0;
+    margin:0;  
+    outline:none;    
+    z-index:1;
+    cursor:text;    
+    width:100%;height:19px;float:left;
+    _position:absolute;/*ie6*/
+    _left:2px;
+    _top:0px;
+}
+.mini-buttonedit-button, .mini-buttonedit-close
+{    
+    border:0px;
+    padding:1px;
+    background:none;
+    width:15px;height:15px;
+    overflow:hidden;cursor:pointer;
+    margin-top:1px;
+    margin-right:1px;
+    display:inline-block;
+    z-index:10;    
+    vertical-align:top;
+}
+.mini-buttonedit-close
+{
+    display:none;
+    background:url(images/buttonedit/close.gif) no-repeat 50% 5px;
+}
+
+.mini-buttonedit-button-hover,
+.mini-buttonedit-hover .mini-buttonedit-button
+{
+    border:1px solid #ababab;
+    padding:0;
+    background:#dde6fe url(images/buttonedit/hover.png) repeat-x 0 0;   
+}
+.mini-buttonedit-button-pressed,
+.mini-buttonedit-popup .mini-buttonedit-button
+{
+    border:1px solid #888;
+    padding:0;
+    background:#DBDDE2 url(images/buttonedit/pressed.png) repeat-x 0 0;    
+}
+
+.mini-buttonedit-focus .mini-buttonedit-border,
+.mini-buttonedit-popup .mini-buttonedit-border
+{
+    border-color:#808891;
+}
+.mini-buttonedit-hover,
+.mini-buttonedit-hover .mini-buttonedit-input
+{
+    cursor:pointer;
+}
+
+.mini-buttonedit-disabled
+{
+    cursor:default;
+
+}
+body .mini-buttonedit-disabled .mini-buttonedit-border,
+body .mini-buttonedit-disabled .mini-buttonedit-input
+{
+    background:#f0f0f0;color:#6D6D6D;cursor:default;
+}
+body .mini-buttonedit-disabled .mini-buttonedit-button
+{
+    cursor:default;background:#f0f0f0;border-color:#f0f0f0;
+}
+body .mini-buttonedit-disabled .mini-buttonedit-up,
+body .mini-buttonedit-disabled .mini-buttonedit-down
+{
+    cursor:default;
+}
+
+
+/* empty */
+.mini-buttonedit-empty .mini-buttonedit-input
+{
+    color:#B1B1B8;
+}
+
+.mini-buttonedit-icon
+{
+    display:block;
+    width:15px;
+    height:15px;
+    overflow:hidden;
+    background:url(images/buttonedit/icon1.gif) no-repeat 50% 50%;
+}
+.mini-popupedit .mini-buttonedit-icon
+{
+    background:url(images/buttonedit/icon2.gif) no-repeat 3px 1px;
+}
+.mini-datepicker .mini-buttonedit-icon
+{
+    background:url(images/datepicker/date.gif) no-repeat 50% 2px;
+}
+.mini-autocomplete .mini-buttonedit-icon
+{
+    display:none;
+}
+
+/* spinner */
+.mini-buttonedit-up, .mini-buttonedit-down
+{
+    overflow:hidden;
+    height:50%;    
+    display:block;
+    cursor:pointer;
+    z-index:1;
+}
+.mini-buttonedit-up span, .mini-buttonedit-down span
+{
+    background:url(images/buttonedit/up.gif) no-repeat 50% 2px;   
+    height:100%;
+    height:100%;
+    overflow:hidden;    
+    display:block;
+}
+.mini-buttonedit-down span
+{
+    background:url(images/buttonedit/down.gif) no-repeat 50% 2px; 
+}
+.mini-buttonedit-button .mini-buttonedit-button-pressed
+{
+    border:0;
+}
+
+/***********************/
+input.mini-textbox,
+input.mini-buttonedit,
+input.mini-datepicker,
+input.mini-spinner,
+input.mini-timespinner,
+input.mini-combobox,
+input.mini-treeselect,
+input.mini-lookup,
+input.mini-htmlfile,
+input.mini-password,
+input.mini-checkbox,
+input.mini-textarea
+{
+    visibility:hidden;
+    border:0;
+    padding:0;
+    height:21px;
+    width:125px;
+}
+input.mini-textarea
+{   
+    height:50px;
+}
+
+
+
+/* error */
+.mini-error .mini-buttonedit-border
+{
+    margin-right:18px;
+}

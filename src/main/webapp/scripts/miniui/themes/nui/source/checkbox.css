@@ -1,0 +1,15 @@
+﻿.mini-checkbox
+{
+    font-size:9pt;
+    font-family:Tahoma,Verdana,宋体;
+    line-height:22px;
+}
+.mini-checkbox-check
+{
+    padding:0;
+    margin:0;
+    margin-right:4px;
+    vertical-align:bottom;
+    vertical-align:middle;
+    width:16px;height:16px;    
+}

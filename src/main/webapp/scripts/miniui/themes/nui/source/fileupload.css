@@ -1,0 +1,12 @@
+﻿.mini-fileupload-progressbar
+{
+    width:100%;
+    height:4px;
+    position:absolute;
+}
+.mini-fileupload-complete
+{
+    width:0;
+    height:100%;
+    background-color:#2fd85e;
+}

@@ -1,0 +1,151 @@
+﻿.mini-tooltip
+{
+    position:absolute;
+    z-index:1030;        
+    font-size:12px;
+    line-height:1.4;       
+    display:none;         
+}
+.mini-tooltip-inner {    
+    padding: 3px 8px;
+    
+    text-align: center;
+    text-decoration: none;
+    background-color: #ffffff;
+    border:solid 1px #888;
+    border-radius: 4px;
+    vertical-align:middle;
+}
+.mini-tooltip-arrow {
+    position: absolute;
+    width: 0;
+    height: 0;
+    border-color: transparent;
+    border-style: solid;    
+    
+    overflow:hidden;
+    font-size:0;
+    
+  _border-left-style:dashed;
+  _border-right-style:dashed;    
+  
+}
+.mini-tooltip-left .mini-tooltip-arrow,
+.mini-tooltip-right .mini-tooltip-arrow
+{
+  _border-left-style:solid;
+  _border-right-style:solid;	
+  _border-top-style:dashed;
+  _border-bottom-style:dashed;	
+}
+    
+.mini-tooltip-top {
+  padding: 5px 0;
+  margin-top: -3px;
+}
+
+.mini-tooltip-right {
+  padding: 0 5px;
+  margin-left: 3px;
+}
+
+.mini-tooltip-bottom {
+  padding: 5px 0;
+  margin-top: 3px;
+}
+.mini-tooltip-left {
+  padding: 0 5px;
+  margin-left: -3px;
+}
+
+
+.mini-tooltip-top .mini-tooltip-arrow {
+  bottom: 0;
+  left: 50%;
+  margin-left: -5px;
+  border-top-color: #666;
+  border-width: 5px 5px 0;
+}
+
+
+.mini-tooltip-left .mini-tooltip-arrow {
+  top: 50%;
+  right: 0;
+  margin-top: -5px;
+  border-left-color: #666;
+  border-width: 5px 0 5px 5px;
+}
+
+.mini-tooltip-right .mini-tooltip-arrow {
+  top: 50%;
+  left: 0;
+  margin-top: -5px;
+  border-right-color: #888;
+  border-width: 5px 5px 5px 0;
+}
+
+
+
+.mini-tooltip-bottom .mini-tooltip-arrow {
+  top: 0;
+  left: 50%;
+  margin-left: -5px;
+  border-bottom-color: #666;
+  border-width: 0 5px 5px;
+}
+
+
+/* bottomleft */
+.mini-tooltip-bottomleft {
+  padding: 5px 0;
+  margin-top: 3px;
+}
+
+.mini-tooltip-bottomleft .mini-tooltip-arrow {
+  top: 0;
+  left: 5px;
+  border-bottom-color: #666;
+  border-width: 0 5px 5px;
+}
+/* bottomright */
+.mini-tooltip-bottomright {
+  padding: 5px 0;
+  margin-top: 3px;
+}
+
+.mini-tooltip-bottomright .mini-tooltip-arrow {
+  top: 0;
+  right: 5px;
+  border-bottom-color: #666;
+  border-width: 0 5px 5px;
+}
+/* topleft */
+.mini-tooltip-topleft {
+  padding: 5px 0;
+  margin-top: -3px;
+}
+.mini-tooltip-topleft .mini-tooltip-arrow {
+  bottom: 0;
+  left: 5px;
+  border-top-color: #666;
+  border-width: 5px 5px 0;
+}
+/* topright */
+.mini-tooltip-topright {
+  padding: 5px 0;
+  margin-top: -3px;
+}
+.mini-tooltip-topright .mini-tooltip-arrow {
+  right: 5px;
+  bottom: 0;
+  border-top-color: #666;
+  border-width: 5px 5px 0;
+}
+
+
+.mini-tooltip-loading
+{
+    width:16px;height:16px;
+    background:url(images/tooltip/wait.gif) no-repeat 50% 50%;
+}
+

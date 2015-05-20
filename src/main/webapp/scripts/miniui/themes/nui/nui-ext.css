@@ -1,0 +1,19 @@
+.mini-tabs-position-bottom .mini-tabs-headers
+{
+	width:auto;
+	overflow:hidden;
+}
+
+body .mini-tabs-position-bottom .mini-tabs-scrollCt
+{
+	border-bottom:0;
+}
+
+.mini-tabs-leftButton, .mini-tabs-rightButton
+{
+    position:static !important;
+    display:inline-block !important;
+    left:0px !important;
+	top:0px !important;
+    _left:0px !important;
+}

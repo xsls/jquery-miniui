@@ -1,0 +1,120 @@
+﻿.mini-textbox
+{
+    width:125px;
+    height:21px;
+    display:inline-block;
+      
+    padding:0;
+    margin:0;
+    border:0;
+    vertical-align:middle;    
+    overflow:hidden;	/*必须hidden*/
+    /*position:static;*/
+    position:relative;
+    
+}
+.mini-textbox-border
+{
+    background:white;
+    border: solid 1px #a5acb5;
+    width:auto;
+    height:19px;
+    display:block;    
+    /*_display:inline-block;/*ie6*/
+    position:relative;overflow:hidden;
+    padding-left:1px;padding-right:1px;        
+}
+
+.mini-textbox-input
+{
+    cursor:text;
+    background:none;
+    /*background:url(0) no-repeat\0;                /* fix ie8 */
+    background:url(about:blank) no-repeat\0;        /* fix ie8 */
+    width:100%;
+    height:19px;
+    line-height:19px;
+    font-family: Verdana;
+    font-size: 9pt;
+    border:0;
+    padding: 0;
+    margin:0;
+    padding:0;
+    outline:none;
+    float:left;
+    _position:absolute;/*ie6*/
+    _left:2px;
+    _top:0px;
+}
+.mini-required .mini-textbox-border,
+.mini-required .mini-buttonedit-border
+{
+    background:#FFFFE6;
+}
+
+/*
+.mini-textbox .mini-errorIcon
+{   
+    display:block;
+    width:18px;
+    height:18px;    
+    overflow:hidden;    
+    position:absolute;
+    top:1px;right:0;
+    margin-top:0px;
+}*/
+
+/* focus */
+body .mini-textbox-focus .mini-textbox-border
+{
+    border-color:#808891;
+}
+
+/* empty */
+.mini-placeholder-label
+{
+    position:absolute;left:0;top:0;padding:2px;line-height:17px;padding-left:2px;
+    color:#9a9a9a;cursor:text;white-space:nowrap;
+}
+/*.mini-textbox-empty .mini-textbox-input
+{
+    color:#B1B1B8;
+}*/
+
+/* disabled */
+.mini-textbox-disabled
+{
+    cursor:default;
+    
+}
+body .mini-textbox-disabled .mini-textbox-border
+{
+    background:#f0f0f0;color:#6D6D6D;cursor:default;
+}
+
+/* textarea */
+.mini-textarea
+{
+    height:50px;
+}
+.mini-textarea .mini-textbox-border
+{
+    height:auto;
+}
+.mini-textarea .mini-textbox-input
+{
+    resize:none;
+    height:100%;
+    margin:0;padding:0;border:0;
+}
+
+/* error */
+.mini-error .mini-textbox-border
+{
+    margin-right:18px;
+}
+body .mini-invalid .mini-textbox-border,
+body .mini-invalid .mini-buttonedit-border
+{
+	border:red 1px solid;
+}

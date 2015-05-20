@@ -1,0 +1,155 @@
+﻿.mini-outlookbar
+{        
+    font-size:9pt;
+    font-family:Tahoma, Verdana, 宋体;    
+    overflow:hidden;
+}
+.mini-outlookbar-border
+{
+    border:1px solid #999999;
+    overflow:hidden;
+    position:relative;
+}
+
+.mini-outlookbar-group 
+{
+    overflow:hidden;
+    height:auto; 
+    border-bottom:solid 1px #a7abb0;
+    position:relative;
+}
+.mini-outlookbar-groupHeader
+{
+    position:relative;
+    background:url(images/navbar/header.png) repeat-x 0 0;        
+    cursor:pointer;    
+    overflow:hidden; 
+    height:23px;
+    padding-left:2px;
+    padding-right:25px;
+    font-weight:bold;      
+}
+.mini-outlookbar-groupTitle
+{
+    overflow:hidden;
+    white-space:nowrap;
+    float:left; 
+    line-height:23px;
+    padding-left:4px;
+}
+.mini-outlookbar-groupHeader .mini-tools
+{   
+    position:absolute;
+    top:3px;right:3px;
+ 
+}
+.mini-outlookbar-groupBody
+{    
+    clear:both;    
+    border-top:solid 1px #a7abb0;    
+    overflow:auto;
+    overflow-x:hidden;
+    overflow-y:auto;
+    position:relative;
+}
+
+.mini-outlookbar-firstGroup 
+{
+    
+}
+
+.mini-outlookbar .mini-outlookbar-icon
+{
+    float:left;
+    width:16px;
+    height:16px;
+    overflow:hidden;
+    vertical-align:middle;
+    
+    margin-top:3px;
+    margin-left:4px;
+}
+
+.mini-outlookbar-collapse .mini-outlookbar-groupBody
+{
+    display:none;
+}
+.mini-outlookbar-lastGroup
+{
+    border-bottom:0;
+}
+.mini-outlookbar-lastGroup .mini-outlookbar-groupHeader
+{
+    border-bottom:0;
+}
+
+.mini-outlookbar .mini-outlookbar-expand .mini-tools-collapse
+{
+    background:url(images/tools/expand.gif) no-repeat 50% 50%;   
+}
+.mini-outlookbar-collapse
+{
+    
+}
+.mini-outlookbar-expand
+{    
+}
+
+/* view2 */
+.mini-outlookbar-view2 .mini-outlookbar-border
+{
+    border:0;
+}
+.mini-outlookbar-view2 .mini-outlookbar-group
+{
+    border:0;
+    margin-bottom:1px;
+}
+.mini-outlookbar-view2 .mini-outlookbar-groupHeader
+{
+    border:solid 1px #a7abb0; 
+}
+.mini-outlookbar-view2 .mini-outlookbar-groupBody
+{
+    border:0;
+    background:#fff;
+}
+.mini-outlookbar-view2 .mini-outlookbar-lastGroup 
+{
+    margin:0;
+}
+
+/* view3 */
+.mini-outlookbar-view3 .mini-outlookbar-border
+{
+    border:0;
+}
+.mini-outlookbar-view3 .mini-outlookbar-group
+{
+    border:solid 1px #a7abb0; 
+    margin-bottom:8px;
+}
+.mini-outlookbar-view3 .mini-outlookbar-groupBody
+{    
+    
+}
+.mini-outlookbar-view3 .mini-outlookbar-lastGroup 
+{
+    margin:0;
+    margin-bottom:0px;
+}
+
+
+.mini-outlookbar-overflow,
+.mini-outlookbar-overflow .mini-tree,
+.mini-outlookbar-overflow .mini-menu
+{
+    overflow:hidden;
+}
+
+
+/* outlookmenu */
+.mini-outlookmenu .mini-menu-border
+{
+    overflow-y:auto;
+}

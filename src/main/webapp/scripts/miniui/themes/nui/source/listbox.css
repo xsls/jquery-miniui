@@ -1,0 +1,148 @@
+﻿.mini-listbox
+{                
+    background:white;
+    overflow:hidden;
+    position:relative;  
+}
+.mini-listbox-border
+{
+    border:1px solid #999999;    
+    overflow:hidden;
+    border-spacing: 1px;
+}
+.mini-listbox td
+{
+    white-space:nowrap;text-overflow:ellipsis;word-break:keep-all;
+    overflow:hidden;    
+    line-height:22px;
+    cursor:default;
+    padding-left:4px;
+    padding-right:2px;
+    font-size:9pt;
+    font-family:Tahoma, Verdana, 宋体;       
+    text-align:left; 
+}
+.mini-listbox-showColumns .mini-listbox-header td
+{
+    padding-left:4px;
+    padding-right:4px;
+    
+}
+.mini-listbox-showColumns .mini-listbox-view td
+{
+    padding-left:4px;
+    padding-right:4px;
+    border:0;
+    border-right:solid 1px #cfcfcf;
+    border-bottom:solid 1px #cfcfcf;
+}
+
+.mini-listbox-header
+{
+    overflow:hidden;
+    background:#E7EBEF url(images/listbox/header.png) repeat-x 0 0;    
+    border-bottom:solid 1px #A5ACB5;
+}
+.mini-listbox-header td
+{
+    border-right:solid 1px #A5ACB5;    ;
+}
+
+.mini-listbox-view
+{
+    width:100%;
+    overflow:auto;   
+    position:relative;
+}
+.mini-listbox-items, .mini-listbox-headerInner
+{
+    text-align:left;
+    width:100%;
+    border-collapse:collapse;
+    border-collapse:separate;    
+    /*table-layout:fixed;*/
+    display:table;    
+}
+.mini-listbox-showcolumns .mini-listbox-items,
+.mini-listbox-showcolumns .mini-listbox-headerInner
+{
+    table-layout:fixed!important;
+}
+
+
+.mini-listbox .mini-listbox-checkbox
+{
+    text-overflow:clip;
+    text-align:center;
+    width:22px;
+    padding:0;
+}
+.mini-listbox .mini-listbox-checkbox input
+{
+    width:18px\9;
+    height:16px\9;
+}
+.mini-listbox-hideCheckBox .mini-listbox-checkbox
+{
+    display:none;    
+    width:0;
+}
+
+.mini-listbox-item-hover{	
+	background:#e2ecf7;
+}
+.mini-listbox-item-selected{	
+	background:#ecedef;
+	color:Black;
+}
+
+
+/*
+.mini-listbox .mini-errorIcon
+{
+    position:absolute;
+    right:1px;
+    top:0;
+}*/
+
+/*
+.mini-list-inner
+{
+    border:1px solid transparent;    
+    _border:1px dotted transparent;    
+}
+.mini-list-invalid .mini-list-inner
+{
+    border:solid 1px red;
+}
+.mini-list-error
+{
+    position:relative;
+}
+.mini-list-error .mini-list-inner
+{
+    margin-right:18px;
+}
+.mini-list-error .mini-list-errorIcon
+{
+    display:block;
+}
+.mini-list-errorIcon
+{
+    background:url(images/listbox/error.gif) no-repeat 50% 50%;
+    width:14px;    
+    height:16px;
+    overflow:hidden;        
+    position:absolute;
+    right:1px;
+    top:1px;
+    display:none;
+    cursor:default;
+}
+
+.mini-listbox .mini-list-errorIcon
+{
+    position:static;
+    display:block;
+    margin-left:3px;margin-right:1px;
+}*/

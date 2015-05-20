@@ -1,0 +1,145 @@
+﻿.mini-button
+{
+    padding:0;
+    border:1px solid #A9ACB5;
+    background:#EBEDF2 url(images/button/button.png) repeat-x 0 0;
+    
+    font-size:9pt;
+    font-family:Tahoma,Verdana,宋体;
+    
+    line-height:22px;
+    
+    text-decoration:none;
+    text-align: center;
+    display:inline-block;
+    zoom:1;    
+    cursor:pointer;
+    -khtml-user-select: none;
+    -moz-user-select:none;
+    vertical-align:middle;          
+    outline:none;
+}
+.mini-button, a.mini-button
+{
+    color:#201F35;
+}
+body a:hover.mini-button
+{    
+    padding:0;
+    border:1px solid #A9ACB5;
+    background:#dde6fe url(images/button/hover.png) repeat-x 0 0;      
+    text-decoration:none;
+}
+.mini-button-text
+{   
+    line-height:16px; 
+	padding:2px 8px 3px 8px;
+	
+    line-height:17px\9;
+    vertical-align:top;
+    display:inline-block;    
+    padding:3px 8px 2px 8px\9;    
+    +padding:3px 8px 2px 8px; /*ie7*/ 
+    _padding:2px 8px 2px 8px; /*ie6*/ 
+}
+.mini-button .mini-button-icon
+{
+    padding-left:25px;
+    background-position: 6px 50%;        
+    background-repeat:no-repeat;    
+}
+.mini-button .mini-button-iconOnly
+{
+    padding-left:14px;    
+    background-repeat:no-repeat;    
+    background-position:50% 50%;
+}
+
+/* plain */
+body .mini-button-plain
+{    
+    background:transparent;
+    border:0;
+    padding:1px;
+}
+
+
+body .mini-button-pressed, body a:hover.mini-button-pressed,
+body .mini-button-checked, body a:hover.mini-button-checked,
+body a.mini-button-popup, body a:hover.mini-button-popup
+{
+    border:solid 1px  #888;    
+    padding:0px;
+    color:#3C3C3C;
+    background:#DBDDE2 url(images/button/pressed.png) repeat-x 0 0; 
+    cursor:pointer;   
+}
+
+/* disabled */
+body a.mini-button-disabled, body a:hover.mini-button-disabled
+{
+    border:1px solid #ccc;
+    padding:0px;
+    color:#777;
+    background:#F8F9FA url(images/button/disabled.png) repeat-x 0 0px;      
+    cursor:default;
+}
+body .mini-button-disabled *
+{    
+    cursor: default;
+    opacity: .7;
+    -moz-opacity: .7;
+    filter: alpha(opacity=70);        
+}
+
+/* iconPosition */
+.mini-button-iconRight .mini-button-icon
+{
+    padding-left:8px;
+    padding-right:18px;
+    background-position:right 50%;
+    margin-right:5px;
+}
+.mini-button-iconTop .mini-button-icon
+{
+    padding-left:8px;
+    padding-top:22px;
+    background-position:50% 4px;        
+}
+.mini-button-iconBottom .mini-button-icon
+{
+    padding-left:8px;
+    padding-bottom:18px;
+    margin-bottom:4px;
+    background-position:50% bottom;        
+}
+
+.mini-button-iconTop .mini-button-allow
+{
+    position:static;display:block;
+    background-position:3px 50%;
+    margin-top:0;
+    margin:auto;
+    +margin:0;  /*ie7*/
+}
+
+/* menu, split*/
+.mini-button-allow
+{
+    width:14px;
+    height:16px;
+    overflow:hidden;
+    display:inline-block;
+    vertical-align:top;
+    margin-top:3px;
+}
+.mini-button-menu
+{
+    background:url(images/button/menu_arrow.png) no-repeat 0px 50%;
+}
+.mini-button-split
+{
+    width:18px;
+    background:url(images/button/split_arrow.png) no-repeat 0px 50%;
+}
+

@@ -1,0 +1,107 @@
+﻿.mini-textboxlist
+{
+    width:125px;
+    height:24px;
+    
+    display:inline-table;
+    *display:inline;
+    zoom:1;
+    
+    table-layout:fixed;
+    border-collapse:collapse;
+    border-collapse:separate;
+    vertical-align:middle;
+    
+    font: 9pt Verdana;
+}
+.mini-textboxlist-border
+{
+    border-style: solid;
+    border-width: 1px;
+    background:white;    
+    border-color: #9DA0AA #C2C4CB #D9DAE0;       
+         
+    width:100%;
+    cursor:text;
+    vertical-align:top;
+}
+body .mini-textboxlist-focus .mini-textboxlist-border
+{
+    border-color: #434756 #7D808D #AAACB9;
+}
+
+.mini-textboxlist ul
+{
+    zoom: 1; overflow: hidden; margin: 0; padding: 2px;padding-bottom:0;
+}
+.mini-textboxlist li
+{
+    list-style-type: none; float: left; display:inline-block; padding: 0; margin: 0 3px 0px 0; cursor: default;       
+}
+.mini-textboxlist .mini-textboxlist-inputLi
+{
+    margin-right:2px;    
+    margin-bottom:2px;
+}
+.mini-textboxlist .mini-textboxlist-input
+{
+    border: 0; padding: 0; font: 9pt "Lucida Grande", Verdana;
+    outline:none;
+    width:20px;
+    height: 16px;
+    margin-top:2px;
+    *+margin-top:0px;/*ie7*/ 
+}
+
+
+.mini-textboxlist .mini-textboxlist-item
+{
+    position: relative; padding: 0 6px; -moz-border-radius: 9px; -webkit-border-radius: 9px; border-radius: 9px; border: 1px solid #CAD8F3; background: #DEE7F8; cursor: default;
+    padding-right: 15px;
+    height:16px;
+    line-height: 16px;
+    margin-bottom:2px;
+    white-space:nowrap;
+}
+.mini-textboxlist .mini-textboxlist-item-hover
+{
+    background: #BBCEF1; border: 1px solid #6D95E0;
+}
+.mini-textboxlist .mini-textboxlist-item-selected
+{
+    border-color: #598BEC; background: #598BEC; color: #fff;
+}
+.mini-textboxlist-close { position: absolute; right: 4px;top:5px; display: block; width: 7px; height: 7px; font-size: 1px; background: url(images/textboxlist/close.gif); cursor:pointer; }
+.mini-textboxlist-close-hover, .mini-textboxlist-item-selected .mini-textboxlist-close{ background-position: bottom; }
+
+.mini-textboxlist .mini-errorIcon
+{
+    margin-left:2px;
+    margin-top:2px;
+}
+
+.mini-textboxlist-popup-loading
+{
+    background:url(images/textboxlist/loading.gif) no-repeat 0 5px;
+    padding-left:20px;
+    line-height:25px;
+    display:block;
+}
+.mini-textboxlist-popup-error
+{
+    background:url(images/textboxlist/error.gif) no-repeat 0 5px;
+    padding-left:20px;
+    line-height:25px;
+    display:block;
+}
+.mini-textboxlist-popup-noresult
+{
+    padding-left:20px;
+    line-height:25px;
+    display:block;
+}
+
+.mini-textboxlist-popup .mini-listbox-item td
+{
+    white-space:nowrap;
+}

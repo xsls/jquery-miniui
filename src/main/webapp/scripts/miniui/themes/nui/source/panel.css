@@ -1,0 +1,216 @@
+﻿.mini-panel
+{
+    font-size:9pt;
+    font-family:Tahoma, Verdana, 宋体;
+    overflow:hidden;
+    position:relative;
+    outline:none;
+}
+.mini-panel-border
+{
+    border:1px solid #999999;
+    overflow:hidden;
+    position:relative;    
+    
+}
+ .mini-panel-viewport
+ {
+     background:white;
+ }
+.mini-panel .mini-panel-viewport
+{
+	position:relative;
+    overflow:hidden;  
+}
+.mini-panel-header
+{
+    width:auto;
+    height:25px;
+    overflow:hidden;
+    background:#E3E6E8 url(images/panel/header.png) repeat-x 0 0px;
+    color:#201F35;
+    border-bottom:solid 1px #bbb;
+    cursor:default;
+    position:relative;
+    zoom:1;
+}
+
+.mini-panel-header-inner
+{	
+    padding:3px;
+    padding-bottom:2px;
+    padding-top:4px;
+    padding-left:8px;
+}
+.mini-panel .mini-panel-title
+{
+    padding-top:0px\9;
+    float:left;
+    line-height:16px;
+    line-height:18px\9;
+}
+.mini-panel .mini-panel-icon
+{
+    float:left;
+    width:16px;
+    height:16px;
+    overflow:hidden;
+    vertical-align:middle;
+    margin-right:2px;
+    display:none;
+}
+
+.mini-panel-body
+{
+    position:relative;
+    padding:5px;
+    text-align:left;    
+    width:auto;
+    overflow:auto;
+    clear:both;
+}
+.mini-messagebox-content table
+{
+    /*display:none;*/
+}
+
+.mini-panel .mini-tools
+{
+    position:absolute;
+    top:5px;right:3px;
+}
+
+.mini-panel-toolbar
+{
+    clear:both;
+    border-bottom:solid 1px #C9C9C9;
+    background:#eff2f4;
+    /*padding:2px;
+    padding-left:3px;
+    padding-right:3px;*/
+    width:auto;
+    clear:both;
+    position:relative;overflow:hidden;
+    line-height:18px;zoom:1;    
+}
+
+.mini-panel-footer
+{
+    border-top:solid 1px #C9C9C9;
+    background:#eff2f4;
+    /*padding:2px;
+    padding-left:3px;
+    padding-right:3px;*/
+    width:auto;
+    position:relative;overflow:hidden;
+    line-height:18px;zoom:1;
+}
+
+
+.mini-panel-collapse .mini-panel-header
+{
+    border-bottom:0;
+}
+.mini-panel-collapse .mini-tools-collapse
+{
+    background:url(images/tools/expand.gif) no-repeat 50% 50%;
+}
+
+.mini-panel-titleclick .mini-panel-header
+{
+    cursor:pointer;
+}
+
+
+/* window */
+.mini-window
+{    
+    position:absolute;
+}
+.mini-window .mini-panel-header
+{
+    background:#E3E6E8 url(images/window/header.png) repeat-x 0 0px;    
+}
+.mini-window .mini-panel-footer
+{
+    background:#E3E6E8 url(images/window/footer.png) repeat-x 0 0px;
+}
+.mini-window-drag .mini-panel-header
+{
+    cursor:move;
+}
+
+/* messagebox */
+.mini-messagebox-content
+{
+    padding:5px;
+    cursor:default;
+}
+.mini-messagebox-table
+{   
+}
+.mini-messagebox-content td
+{
+    font-size:12px;    
+}
+.mini-messagebox-content-text
+{
+    padding:8px;padding-right:40px;padding-left:0px;text-align:center;
+    white-space:nowrap;
+}
+.mini-messagebox-buttons
+{
+    text-align:center;
+    padding:5px;
+    padding-left:15px;
+    padding-right:15px;
+}
+.mini-messagebox-info,
+.mini-messagebox-warning,
+.mini-messagebox-question,
+.mini-messagebox-error,
+.mini-messagebox-waiting
+{
+    width:40px;
+    height:40px;
+    background:url(images/messagebox/icon-info.gif) no-repeat 50% 50%;
+}
+.mini-messagebox-warning
+{
+    background:url(images/messagebox/icon-warning.gif) no-repeat 50% 50%;
+}
+.mini-messagebox-question
+{
+    background:url(images/messagebox/icon-question.gif) no-repeat 50% 50%;
+}
+.mini-messagebox-error
+{
+    background:url(images/messagebox/icon-error.gif) no-repeat 50% 50%;
+}
+.mini-messagebox-waiting
+{
+    width:40px;
+    height:30px;
+    background:url(images/messagebox/loading.gif) no-repeat 50% 50%;
+}
+
+.mini-messagebox-input
+{
+    
+}
+
+
+
+/*
+.mini-window .mini-panel-border
+{
+    border-radius: 4px;
+    background-color:#CADCF2;
+}
+
+
+.mini-window .mini-panel-viewport
+{
+    margin:5px 5px 5px 5px;
+    border:1px solid #99bce8;    
+}*/

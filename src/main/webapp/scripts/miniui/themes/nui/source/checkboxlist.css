@@ -1,0 +1,74 @@
+﻿.mini-checkboxlist
+{    
+    overflow:hidden;
+    font-size:9pt;
+    font-family:Tahoma, Verdana, 宋体;   
+    position:relative;
+}
+
+.mini-checkboxlist-item
+{
+    display:inline-block;
+    *display:inline;
+    zoom:1;
+    margin-right:8px;
+}
+.mini-checkboxlist table label
+{
+    padding-left:2px;
+    line-height:16px;
+    display:inline-block;
+}
+.mini-checkboxlist input,
+.mini-radiobuttonlist input
+{
+    overflow:hidden;
+    vertical-align:middle;
+    +vertical-align:bottom;
+    width:16px;
+    height:16px;
+    margin:0;
+    padding:0;
+}
+
+/* radiobuttonlist */
+.mini-radiobuttonlist
+{    
+    position:relative;
+    overflow:hidden;
+    font-size:9pt;
+    font-family:Tahoma, Verdana, 宋体;   
+}
+
+.mini-radiobuttonlist-item
+{
+    display:inline-block;
+    *display:inline;
+    zoom:1;
+    margin-right:8px;
+}
+.mini-radiobuttonlist table label
+{
+    padding-left:2px;
+    line-height:16px;
+    display:inline-block;
+    font-size:9pt;
+    font-family:Tahoma, Verdana, 宋体;      
+    vertical-align:middle; 
+}
+.mini-radiobuttonlist input
+{
+    overflow:hidden;
+    vertical-align:middle;
+    width:16px;
+    height:16px;
+    
+    *vertical-align:top;
+    *height:14px;
+    +vertical-align:bottom;
+    
+    margin:0;
+    padding:0;
+    
+}
+
