@@ -1,3 +1,8 @@
+/**
+ * JSON组件。可序列化、反序列化JS对象。
+ * @class
+ * @singleton
+ */
 mini.JSON = new (function() {
     var sb = [];
     var _dateFormat = null;
@@ -125,6 +130,14 @@ mini.JSON = new (function() {
         '"' : '\\"',
         "\\" : "\\\\"
     }, strReg1 = /["\\\x00-\x1f]/, strReg2 = /([\x00-\x1f\\"])/g;
+    
+    /**
+     * 把 JSON 对象序列化为字符串。别名为 {@link mini#encode}
+     * @param  {Object} o 要序列化成字符串的 JSON 对象
+     * @param  {String} [dateFormat="yyyy-MM-ddTHH:mm:ss"] 日期格式，如： yyyy-MM-dd HH:mm:ss，具体参见 {@link mini#formatDate}
+     * @returns {String} 序列化后的字符中
+     * @member mini.JSON
+     */
     this.encode = function() {
         var ec;
         return function(o, dateFormat) {
@@ -135,6 +148,14 @@ mini.JSON = new (function() {
             return sb.join("")
         }
     }();
+    
+    /**
+     * 把字符串反序列化为 JSON 对象。别名为 {@link mini#decode}
+     * @param {String} json JSON 字符串
+     * @param {Boolean} [parseDate=true] 是否自动解析日期字符串为 `Date` 类型
+     * @returns {Object} 解析后的 JSON 对象
+     * @member mini.JSON
+     */
     this.decode = function() {
         var dateRe1 = /^(\d{4})-(\d{2})-(\d{2})[T ](\d{2}):(\d{2}):(\d{2}(?:\.*\d*)?)Z*$/;
         var dateRe2 = new RegExp("^/+Date\\((-?[0-9]+).*\\)/+$", "g");
@@ -191,14 +212,34 @@ __js_dateRegEx = new RegExp(
         '(^|[^\\\\])\\"\\\\/Date\\((-?[0-9]+)(?:[a-zA-Z]|(?:\\+|-)[0-9]{4})?\\)\\\\/\\"',
         "g");
 __js_dateRegEx2 = new RegExp("[\"']/Date\\(([0-9]+)\\)/[\"']", "g");
+
+/**
+ * @method encode
+ * @member mini
+ * @alias mini.JSON#encode
+ */
 mini.encode = mini.JSON.encode;
+
+/**
+ * @method decode
+ * @member mini
+ * @alias mini.JSON#decode
+ */
 mini.decode = mini.JSON.decode;
-mini.clone = function(e, c) {
-    if (e === null || e === undefined) {
-        return e
+
+/**
+ * 克隆对象
+ * @param  {Object} source 要进行克隆的对象
+ * @param  {Boolean} [isControl=true] 要克隆的对象是否为 MiniUI 控件
+ * @returns {Object} 克隆出来的新对象
+ * @member mini
+ */
+mini.clone = function(source, isControl) {
+    if (source === null || source === undefined) {
+        return source
     }
-    var b = mini.encode(e);
-    var d = mini.decode(b);
+    var json = mini.encode(source);
+    var d = mini.decode(json);
     function a(f) {
         for (var j = 0, g = f.length; j < g; j++) {
             var m = f[j];
@@ -214,7 +255,7 @@ mini.clone = function(e, c) {
             }
         }
     }
-    if (c !== false) {
+    if (isControl !== false) {
         a(d instanceof Array ? d : [ d ])
     }
     return d

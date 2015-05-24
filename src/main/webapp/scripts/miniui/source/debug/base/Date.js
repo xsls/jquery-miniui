@@ -1,15 +1,15 @@
 /**
- * @enum {Number} [DAY_MS=86400000] 1天的毫秒数
+ * @property {Number} [DAY_MS=86400000] 1天的毫秒数
  * @member Window
  */
 var DAY_MS = 86400000,
     /**
-     * @enum {Number} [HOUR_MS=3600000] 1小时的毫秒数
+     * @property {Number} [HOUR_MS=3600000] 1小时的毫秒数
      * @member Window
      */
     HOUR_MS = 3600000,
     /**
-     * @enum {Number} [MINUTE_MS=60000] 1分钟的毫秒数
+     * @property {Number} [MINUTE_MS=60000] 1分钟的毫秒数
      * @member Window
      */
     MINUTE_MS = 60000;
@@ -20,7 +20,6 @@ mini.copyTo(mini, {
      * @param {Date} date 日期对象
      * @return {Date} 一个新的日期对象，年、月、日和 `date` 一样，时、分、秒 为零
      * @member mini
-     * @static
      */
     clearTime : function(date) {
         if (!date) {
@@ -33,7 +32,6 @@ mini.copyTo(mini, {
      * @param {Date} date 日期对象
      * @return {Date} 一个新的日期对象，年、月、日和 `date` 一样，时、分、秒分别为23、59、59
      * @member mini
-     * @static
      */
     maxTime : function(date) {
         if (!date) {
@@ -46,7 +44,6 @@ mini.copyTo(mini, {
      * @param {Date} date 原日期对象 
      * @return {Date} 克隆出来的新日期对象
      * @member mini
-     * @static
      */
     cloneDate : function(date) {
         if (!date) {
@@ -70,7 +67,6 @@ mini.copyTo(mini, {
      * </ul>
      * @return {Date} 增加或送去了指定时间量后的日期（传入的 `date` 对象）
      * @member mini
-     * @static
      */
     addDate : function(date, amount, field) {
         if (!field) {
@@ -109,7 +105,6 @@ mini.copyTo(mini, {
      * @param {Number} day
      * @return {Number} 指定日期在当前年的周数（Week Of Year），是一个 1 到 54 之间的整数
      * @member mini
-     * @static
      * @experimental 这是一项实验室功能，在某些特殊情况下返回值可能不准确，请谨慎使用！<br>
      *      如：mini.getWeek(2016,1,3) 的返回值是 53，而不是预期中的 1。
      */
@@ -132,7 +127,6 @@ mini.copyTo(mini, {
      * @param {Number} [weekDay=0] 星期几，是一个 0 到 6 之间的整数 
      * @return {Date} 对应的日期
      * @member mini
-     * @static
      */
     getWeekStartDate : function(date, weekDay) {
         if (!weekDay) {
@@ -157,7 +151,6 @@ mini.copyTo(mini, {
      *   <li>英文环境 &#45; "Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"</li>
      * </ul>
      * @member mini
-     * @static
      */
     getShortWeek : function(date) {
         var b = this.dateInfo.daysShort;
@@ -172,7 +165,6 @@ mini.copyTo(mini, {
      *   <li>英文环境 &#45; "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"</li>
      * </ul>
      * @member mini
-     * @static
      */
     getLongWeek : function(date) {
         var b = this.dateInfo.daysLong;
@@ -187,7 +179,6 @@ mini.copyTo(mini, {
      *   <li>英文环境 &#45; "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"</li>
      * </ul>
      * @member mini
-     * @static
      */
     getShortMonth : function(date) {
         var a = this.dateInfo.monthsShort;
@@ -202,7 +193,6 @@ mini.copyTo(mini, {
      *   <li>英文环境 &#45; "January", "Febraury", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"</li>
      * </ul>
      * @member mini
-     * @static
      */
     getLongMonth : function(date) {
         var a = this.dateInfo.monthsLong;
@@ -212,7 +202,6 @@ mini.copyTo(mini, {
      * 日期信息
      * @property {Object} dateInfo
      * @member mini
-     * @static
      */
     dateInfo : {
         /** @enum {String} mini.dateInfo.monthsLong */
@@ -501,7 +490,6 @@ Date.prototype.getQuarter = function() {
  * </table>
  * @returns {String} 格式化后的日期字符串
  * @member mini
- * @static
  */
 mini.formatDate = function(date, pattern, p) {
     if (!date || !date.getFullYear || isNaN(date)) {
@@ -608,7 +596,6 @@ String.prototype.escapeDateTimeTokens = function() {
  * @param date1 要进行处理的日期
  * @param date2 参考日期
  * @member mini
- * @static
  */
 mini.fixDate = function(date1, date2) {
     if (+date1) {
@@ -633,7 +620,6 @@ mini.fixDate = function(date1, date2) {
  * @param  {Boolean} [ignoreTimezone=true] 是否忽略时区
  * @returns {Date} 转换后的日期对象
  * @member mini
- * @static
  */
 mini.parseDate = function(str, ignoreTimezone) {
     try {
@@ -688,7 +674,6 @@ mini.parseDate = function(str, ignoreTimezone) {
  * @param  {Boolean} [includeTime=false] 是否包含时间
  * @returns {Date} 转换后的日期对象
  * @member mini
- * @static
  */
 mini.parseISO8601 = function(dateStr, includeTime) {
     var a = dateStr.match(/^([0-9]{4})([-\/]([0-9]{1,2})([-\/]([0-9]{1,2})([T ]([0-9]{1,2}):([0-9]{1,2})(:([0-9]{1,2})(\.([0-9]+))?)?(Z|(([-+])([0-9]{2})(:?([0-9]{2}))?))?)?)?)?$/);
@@ -759,7 +744,6 @@ mini.parseISO8601 = function(dateStr, includeTime) {
  * @param  {String} [pattern] 时间格式，如 HH:mm:ss
  * @returns {Date} 转换后的日期对象，日期部分是 1970-01-01
  * @member mini
- * @static
  */
 mini.parseTime = function(timeStr, pattern) {
     if (!timeStr) {
