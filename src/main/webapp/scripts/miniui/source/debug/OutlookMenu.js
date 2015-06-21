@@ -1,3 +1,9 @@
+/**
+ * Outlook风格菜单导航控件。
+ * @class
+ * @extends mini.OutlookBar
+ * @constructor
+ */
 mini.OutlookMenu = function() {
     mini.OutlookMenu.superclass.constructor.call(this);
     this.data = []
@@ -81,6 +87,15 @@ mini.extend(mini.OutlookMenu, mini.OutlookBar, {
         this.createNavBarMenu(a);
         this.fire("load")
     },
+    /**
+     * 加载列表数据。比如：tree.loadList(list, "id", "pid")<br/>
+     * function loadList(Array, idField, parentField)
+     * @member mini.OutlookMenu
+     * @param  Array
+     * @param  idField
+     * @param  parentField
+     *
+     */
     loadList : function(c, b, d) {
         b = b || this.idField;
         d = d || this.parentField;
@@ -88,6 +103,13 @@ mini.extend(mini.OutlookMenu, mini.OutlookBar, {
         var a = mini.arrayToTree(c, this.nodesField, b, d);
         this.load(a)
     },
+    /**
+     * 加载树形数据。<br/>
+     * function load(Array)
+     * @member mini.OutlookMenu
+     * @param  Array
+     *
+     */
     load : function(b) {
         if (typeof b == "string") {
             this.setUrl(b)
@@ -101,22 +123,64 @@ mini.extend(mini.OutlookMenu, mini.OutlookBar, {
     setData : function(a) {
         this.load(a)
     },
+    /**
+     * 
+     * function setUrl(url)
+     * @member mini.OutlookMenu
+     * @param {String} url
+     *
+     */
     setUrl : function(a) {
         this.url = a;
         this._doLoad()
     },
+    /**
+     * 
+     * function getUrl()
+     * @member mini.OutlookMenu
+     * @returns {String}
+     *
+     */
     getUrl : function() {
         return this.url
     },
+    /**
+     * 
+     * function setTextField(textField)
+     * @member mini.OutlookMenu
+     * @param {String} textField
+     *
+     */
     setTextField : function(a) {
         this.textField = a
     },
+    /**
+     * 
+     * function getTextField()
+     * @member mini.OutlookMenu
+     * @returns {String}
+     *
+     */
     getTextField : function() {
         return this.textField
     },
+    /**
+     * 
+     * function setIconField(iconField)
+     * @member mini.OutlookMenu
+     * @param {String} iconField
+     *
+     */
     setIconField : function(a) {
         this.iconField = a
     },
+    /**
+     * 
+     * function getIconField()
+     * @member mini.OutlookMenu
+     * @returns {String}
+     *
+     */
     getIconField : function() {
         return this.iconField
     },
@@ -126,9 +190,23 @@ mini.extend(mini.OutlookMenu, mini.OutlookBar, {
     getUrlField : function() {
         return this.urlField
     },
+    /**
+     * 
+     * function setResultAsTree(resultAsTree)
+     * @member mini.OutlookMenu
+     * @param {Boolean} resultAsTree
+     *
+     */
     setResultAsTree : function(a) {
         this.resultAsTree = a
     },
+    /**
+     * 
+     * function getResultAsTree()
+     * @member mini.OutlookMenu
+     * @returns {Boolean}
+     *
+     */
     getResultAsTree : function() {
         return this.resultAsTree
     },
@@ -138,22 +216,63 @@ mini.extend(mini.OutlookMenu, mini.OutlookBar, {
     getNodesField : function() {
         return this.nodesField
     },
+    /**
+     * 
+     * function setIdField(idField)
+     * @member mini.OutlookMenu
+     * @param {String} idField
+     *
+     */
     setIdField : function(a) {
         this.idField = a
     },
+    /**
+     * 
+     * function getIdField()
+     * @member mini.OutlookMenu
+     * @returns {String}
+     *
+     */
     getIdField : function() {
         return this.idField
     },
+    /**
+     * 
+     * function setParentField(parentField)
+     * @member mini.OutlookMenu
+     * @param {String} parentField
+     *
+     */
     setParentField : function(a) {
         this.parentField = a
     },
+    /**
+     * 
+     * function getParentField()
+     * @member mini.OutlookMenu
+     * @returns {String}
+     *
+     */
     getParentField : function() {
         return this.parentField
     },
     _selected : null,
+    /**
+     * 获取选中项。<br/>
+     * function getSelected()
+     * @member mini.OutlookMenu
+     *
+     */
     getSelected : function() {
         return this._selected
     },
+    /**
+     * 选中节点<br/>
+     * function selectNode(node)
+     * @member mini.OutlookMenu
+     * @param  node
+     *
+     */
     selectNode : function(a) {
         a = this.getNode(a);
         if (!a) {

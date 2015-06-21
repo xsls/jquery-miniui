@@ -1,19 +1,73 @@
+/**
+ * 按钮。能设置文本、图标、下拉菜单等。
+ * 
+ *     @example
+ *     &lt;a class="mini-button" iconCls="icon-edit" onclick="onClick"&gt;Edit&lt;/a&gt;
+ * 
+ * @class
+ * @extends mini.Control
+ */
+
+/**
+ * 创建一个新的普通按钮实例
+ * @constructor
+ */
 mini.Button = function() {
     mini.Button.superclass.constructor.call(this)
 };
 mini.extend(mini.Button, mini.Control, {
+    /**
+     * @cfg {String} [text=""] 按钮文本
+     * @accessor
+     * @member mini.Button
+     */
     text : "",
+    /**
+     * @cfg {String} [iconCls=""] 按钮图标类
+     * @accessor
+     * @member mini.Button
+     */
     iconCls : "",
+    /**
+     * @cfg {String} [iconStyle=""] 按钮图标样式
+     * @accessor
+     * @member mini.Button
+     */
     iconStyle : "",
+    /**
+     * @cfg {Boolean} [plain=false] 背景透明
+     * @accessor
+     * @member mini.Button
+     */
     plain : false,
+    /**
+     * @cfg {Boolean} [checkOnClick=false] 点击时是否自动选中
+     * @accessor
+     * @member mini.Button
+     */
     checkOnClick : false,
+    /**
+     * @cfg {Boolean} [checked=false] 是否选中
+     * @accessor
+     * @member mini.Button
+     */
     checked : false,
+    /**
+     * @cfg {String} [groupName=""] 菜单项组名称。设置后，会单选菜单项组。
+     * @accessor
+     * @member mini.Button
+     */
     groupName : "",
     _plainCls : "mini-button-plain",
     _hoverCls : "mini-button-hover",
     _pressedCls : "mini-button-pressed",
     _checkedCls : "mini-button-checked",
     _disabledCls : "mini-button-disabled",
+    /**
+     * @cfg {String} [allowCls=""] 箭头样式类
+     * @accessor
+     * @member mini.Button
+     */
     allowCls : "",
     _clearBorder : false,
     set : function(a) {
@@ -29,6 +83,10 @@ mini.extend(mini.Button, mini.Control, {
         }
         return this
     },
+    /**
+     * @property {String} [uiCls="mini-button"] 控件样式类
+     * @member mini.Button
+     */
     uiCls : "mini-button",
     _create : function() {
         this.el = document.createElement("a");
@@ -84,6 +142,11 @@ mini.extend(mini.Button, mini.Control, {
         }
         this.el.innerHTML = c
     },
+    /**
+     * @cfg {String} [href=""] 超链接地址
+     * @accessor
+     * @member mini.Button
+     */
     href : "",
     setHref : function(b) {
         this.href = b;
@@ -96,6 +159,11 @@ mini.extend(mini.Button, mini.Control, {
     getHref : function() {
         return this.href
     },
+    /**
+     * @cfg {String} [target=""] 超链接弹出方式
+     * @accessor
+     * @member mini.Button
+     */
     target : "",
     setTarget : function(a) {
         this.target = a;
@@ -127,6 +195,11 @@ mini.extend(mini.Button, mini.Control, {
     getIconStyle : function() {
         return this.iconStyle
     },
+    /**
+     * @cfg {String} [img=""] 按钮图片
+     * @accessor
+     * @member mini.Button
+     */
     img : "",
     setImg : function(a) {
         this.img = a;
@@ -135,6 +208,11 @@ mini.extend(mini.Button, mini.Control, {
     getImg : function() {
         return this.img
     },
+    /**
+     * @cfg {String} [iconPosition="left"] 图标显示的位置
+     * @accessor
+     * @member mini.Button
+     */
     setIconPosition : function(a) {
         this.iconPosition = "left";
         this.doUpdate()
@@ -165,10 +243,22 @@ mini.extend(mini.Button, mini.Control, {
     getCheckOnClick : function() {
         return this.checkOnClick
     },
-    setChecked : function(b) {
-        var a = this.checked != b;
-        this.checked = b;
-        if (b) {
+    
+    /**
+     * @event checkedchanged 当按钮选中状态发生变化时触发的事件
+     * @member mini.Button
+     */
+    
+    /**
+     * 设置按钮是否选中
+     * @param {Boolean} checked 是否选中
+     * @member mini.Button
+     * @fires checkedchanged
+     */
+    setChecked : function(checked) {
+        var a = this.checked != checked;
+        this.checked = checked;
+        if (checked) {
             this.addCls(this._checkedCls)
         } else {
             this.removeCls(this._checkedCls)
@@ -180,12 +270,24 @@ mini.extend(mini.Button, mini.Control, {
     getChecked : function() {
         return this.checked
     },
+    /**
+     * 触发单击事件
+     * @method doClick
+     * @member mini.Button
+     * @fires click
+     */
     doClick : function() {
         this.__OnClick(null)
     },
-    __OnClick : function(f) {
-        if (!this.href && f) {
-            f.preventDefault()
+    /**
+     * @event click 单击事件
+     * @param {Object} event 当前事件对象
+     * @param {Object} event.htmlEvent 原生的 HTML 事件对象
+     * @member mini.Button
+     */
+    __OnClick : function(event) {
+        if (!this.href && event) {
+            event.preventDefault()
         }
         if (this.readOnly || this.enabled == false) {
             return
@@ -215,7 +317,7 @@ mini.extend(mini.Button, mini.Control, {
             }
         }
         this.fire("click", {
-            htmlEvent : f
+            htmlEvent : event
         })
     },
     __OnMouseDown : function(a) {
@@ -229,8 +331,16 @@ mini.extend(mini.Button, mini.Control, {
         this.removeCls(this._pressedCls);
         mini.un(document, "mouseup", this.__OnDocMouseUp, this)
     },
-    onClick : function(b, a) {
-        this.on("click", b, a)
+    /**
+     * 绑定单击事件
+     * @method onClick
+     * @param {Function} handler 事件处理方法
+     * @param {Object} handler.event {@link #click} 事件对象
+     * @param {Object} scope 事件处理方法的上下文
+     * @member mini.Button
+     */
+    onClick : function(handler, scope) {
+        this.on("click", handler, scope)
     },
     getAttrs : function(b) {
         var a = mini.Button.superclass.getAttrs.call(this, b);
@@ -243,29 +353,52 @@ mini.extend(mini.Button, mini.Control, {
     }
 });
 mini.regClass(mini.Button, "button");
+
+/**
+ * 菜单按钮
+ * @class mini.MenuButton
+ * @extends mini.Button
+ * 
+ * @constructor 创建一个新的菜单按钮实例
+ */
 mini.MenuButton = function() {
     mini.MenuButton.superclass.constructor.call(this)
 };
 mini.extend(mini.MenuButton, mini.Button, {
+    /**
+     * @property {String} [uiCls="mini-menubutton"] 控件样式类
+     * @member mini.MenuButton
+     */
     uiCls : "mini-menubutton",
+    /**
+     * @cfg {String} [allowCls="mini-button-menu"] 箭头样式类
+     * @accessor
+     * @member mini.MenuButton
+     */
     allowCls : "mini-button-menu",
-    setMenu : function(b) {
-        if (mini.isArray(b)) {
-            b = {
+
+    /**
+     * 设置菜单对象
+     * @param {Array/String/mini.Control} menu 菜单对象
+     * @member mini.MenuButton
+     */
+    setMenu : function(menu) {
+        if (mini.isArray(menu)) {
+            menu = {
                 type : "menu",
-                items : b
+                items : menu
             }
         }
-        if (typeof b == "string") {
-            var a = mini.byId(b);
+        if (typeof menu == "string") {
+            var a = mini.byId(menu);
             if (!a) {
                 return
             }
-            mini.parse(b);
-            b = mini.get(b)
+            mini.parse(menu);
+            menu = mini.get(menu)
         }
-        if (this.menu !== b) {
-            this.menu = mini.getAndCreate(b);
+        if (this.menu !== menu) {
+            this.menu = mini.getAndCreate(menu);
             this.menu.setPopupEl(this.el);
             this.menu.setPopupCls("mini-button-popup");
             this.menu.setShowAction("leftclick");
@@ -287,10 +420,31 @@ mini.extend(mini.MenuButton, mini.Button, {
     }
 });
 mini.regClass(mini.MenuButton, "menubutton");
+
+
+/**
+ * 右侧带有一个小的下拉箭头的按钮
+ *
+ *     @example
+ *     var btn = new mini.SplitButton();
+ *     btn.set({
+ *         text : "按钮",
+ *         tooltip : "按钮"
+ *     });
+ *     
+ * @class mini.SplitButton
+ * @extends mini.MenuButton
+ * @experimental 3.2.1 新增功能，还在试验阶段，可能存在兼容性问题
+ * @method constructor 创建一个新的右侧带有一个小的下拉箭头的按钮实例
+ */
 mini.SplitButton = function() {
     mini.SplitButton.superclass.constructor.call(this)
 };
 mini.extend(mini.SplitButton, mini.MenuButton, {
+    /**
+     * @property {String} [uiCls="mini-splitbutton"] 控件样式类
+     * @member mini.SplitButton
+     */
     uiCls : "mini-splitbutton",
     allowCls : "mini-button-split"
 });

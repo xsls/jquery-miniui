@@ -1,3 +1,13 @@
+/**
+ * 日期选择输入框。
+ * 
+ *     @example
+ *     &lt;input id="date1" class="mini-datepicker" value="2010-01-01" /&gt; 
+ * 
+ * @class
+ * @extends mini.PopupEdit
+ * @constructor
+ */
 mini.DatePicker = function() {
     mini.DatePicker.superclass.constructor.call(this);
     mini.addClass(this.el, "mini-datepicker");
@@ -171,6 +181,13 @@ mini.extend(mini.DatePicker, mini.PopupEdit, {
         this.setValue(a);
         this._OnValueChanged()
     },
+    /**
+     * 
+     * function setFormat(format)
+     * @member mini.DatePicker
+     * @param {String} format
+     *
+     */
     setFormat : function(a) {
         if (typeof a != "string") {
             return
@@ -180,6 +197,13 @@ mini.extend(mini.DatePicker, mini.PopupEdit, {
             this._textEl.value = this._valueEl.value = this.getFormValue()
         }
     },
+    /**
+     * 
+     * function getFormat()
+     * @member mini.DatePicker
+     * @returns {String}
+     *
+     */
     getFormat : function() {
         return this.format
     },
@@ -194,6 +218,13 @@ mini.extend(mini.DatePicker, mini.PopupEdit, {
     getValueFormat : function() {
         return this.valueFormat
     },
+    /**
+     * 设置值<br/>
+     * function setValue(value)
+     * @member mini.DatePicker
+     * @param  value
+     *
+     */
     setValue : function(a) {
         a = mini.parseDate(a);
         if (mini.isNull(a)) {
@@ -218,6 +249,12 @@ mini.extend(mini.DatePicker, mini.PopupEdit, {
     getNullValue : function() {
         return this.nullValue
     },
+    /**
+     * 获取值<br/>
+     * function getValue()
+     * @member mini.DatePicker
+     *
+     */
     getValue : function() {
         if (!mini.isDate(this.value)) {
             return this.nullValue
@@ -228,6 +265,13 @@ mini.extend(mini.DatePicker, mini.PopupEdit, {
         }
         return a
     },
+    /**
+     * 获取表单值<br/>
+     * function getFormValue()
+     * @member mini.DatePicker
+     * @returns {String}
+     *
+     */
     getFormValue : function(a) {
         if (!mini.isDate(this.value)) {
             return ""
@@ -235,6 +279,13 @@ mini.extend(mini.DatePicker, mini.PopupEdit, {
         a = a || this.format;
         return mini.formatDate(this.value, a)
     },
+    /**
+     * 
+     * function setViewDate(viewDate)
+     * @member mini.DatePicker
+     * @param {Date} viewDate
+     *
+     */
     setViewDate : function(a) {
         a = mini.parseDate(a);
         if (!mini.isDate(a)) {
@@ -242,40 +293,118 @@ mini.extend(mini.DatePicker, mini.PopupEdit, {
         }
         this.viewDate = a
     },
+    /**
+     * 
+     * function getViewDate()
+     * @member mini.DatePicker
+     * @returns {Date}
+     *
+     */
     getViewDate : function() {
         return this._calendar.getViewDate()
     },
+    /**
+     * 
+     * function setShowTime(showTime)
+     * @member mini.DatePicker
+     * @param {Boolean} showTime
+     *
+     */
     setShowTime : function(a) {
         if (this.showTime != a) {
             this.showTime = a
         }
     },
+    /**
+     * 
+     * function getShowTime()
+     * @member mini.DatePicker
+     * @returns {Boolean}
+     *
+     */
     getShowTime : function() {
         return this.showTime
     },
+    /**
+     * 
+     * function setTimeFormat(timeFormat)
+     * @member mini.DatePicker
+     * @param {String} timeFormat
+     *
+     */
     setTimeFormat : function(a) {
         if (this.timeFormat != a) {
             this.timeFormat = a
         }
     },
+    /**
+     * 
+     * function getTimeFormat()
+     * @member mini.DatePicker
+     * @returns {String}
+     *
+     */
     getTimeFormat : function() {
         return this.timeFormat
     },
+    /**
+     * 
+     * function setShowTodayButton(showTodayButton)
+     * @member mini.DatePicker
+     * @param {Boolean} showTodayButton
+     *
+     */
     setShowTodayButton : function(a) {
         this.showTodayButton = a
     },
+    /**
+     * 
+     * function getShowTodayButton()
+     * @member mini.DatePicker
+     * @returns {Boolean}
+     *
+     */
     getShowTodayButton : function() {
         return this.showTodayButton
     },
+
+    /**
+     * 
+     * function setShowClearButton(showClearButton)
+     * @member mini.DatePicker
+     * @param {Boolean} showClearButton
+     *
+     */
     setShowClearButton : function(a) {
         this.showClearButton = a
     },
+    /**
+     * 
+     * function getShowClearButton()
+     * @member mini.DatePicker
+     * @returns {Boolean}
+     *
+     */
     getShowClearButton : function() {
         return this.showClearButton
     },
+    /**
+     * 
+     * function setShowOkButton(showOkButton)
+     * @member mini.DatePicker
+     * @param {Boolean} showOkButton
+     *
+     */
     setShowOkButton : function(a) {
         this.showOkButton = a
     },
+    /**
+     * 
+     * function getShowOkButton()
+     * @member mini.DatePicker
+     * @returns {Boolean}
+     *
+     */
     getShowOkButton : function() {
         return this.showOkButton
     },
@@ -285,15 +414,43 @@ mini.extend(mini.DatePicker, mini.PopupEdit, {
     getShowWeekNumber : function() {
         return this.showWeekNumber
     },
+    /**
+     * 
+     * function setMaxDate(maxDate)
+     * @member mini.DatePicker
+     * @param {Date} maxDate
+     *
+     */
     setMaxDate : function(a) {
         this.maxDate = a
     },
+    /**
+     * 
+     * function getMaxDate()
+     * @member mini.DatePicker
+     * @returns {Date}
+     *
+     */
     getMaxDate : function() {
         return this.maxDate
     },
+    /**
+     * 
+     * function setMinDate(minDate)
+     * @member mini.DatePicker
+     * @param {Date} minDate
+     *
+     */
     setMinDate : function(a) {
         this.minDate = a
     },
+    /**
+     * 
+     * function getMinDate()
+     * @member mini.DatePicker
+     * @returns {Date}
+     *
+     */
     getMinDate : function() {
         return this.minDate
     },

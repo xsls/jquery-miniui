@@ -1,37 +1,68 @@
+/**
+ * 数据绑定。用于表格与表单的选择、数据变更同步。
+ * 
+ *     @example
+ *     //绑定表单
+ *     var db = new mini.DataBinding();
+ *     db.bindForm("editForm1", grid);
+ *     
+ *     //绑定控件
+ *     db.bindField(textbox, grid, "username");
+ * 
+ * @class
+ * @extends mini.Component
+ * @constructor
+ */
 mini.DataBinding = function() {
     this._bindFields = [];
     this._bindForms = [];
     mini.DataBinding.superclass.constructor.call(this)
 };
 mini.extend(mini.DataBinding, mini.Component, {
-    bindField : function(d, a, c, e, b) {
-        d = mini.get(d);
-        a = mini.get(a);
-        if (!d || !a || !c) {
+    /**
+     * 绑定表格与单个控件<br/>
+     * function bindField(control, grid, field)
+     * @member mini.DataBinding
+     * @param {mini.Control} control Form 中的字段
+     * @param  grid 表格控件
+     * @param  fieldName 字段名称，即 name 属性的值
+     */
+    bindField : function(control, grid, fieldName, mode, convert) {
+        control = mini.get(control);
+        grid = mini.get(grid);
+        if (!control || !grid || !fieldName) {
             return
         }
         var f = {
-            control : d,
-            source : a,
-            field : c,
-            convert : b,
-            mode : e
+            control : control,
+            source : grid,
+            field : fieldName,
+            convert : convert,
+            mode : mode
         };
         this._bindFields.push(f);
-        a.on("currentchanged", this.__OnCurrentChanged, this);
-        d.on("valuechanged", this.__OnValueChanged, this)
+        grid.on("currentchanged", this.__OnCurrentChanged, this);
+        control.on("valuechanged", this.__OnValueChanged, this)
     },
-    bindForm : function(d, e, h, g) {
-        d = mini.byId(d);
-        e = mini.get(e);
-        if (!d || !e) {
+    /**
+     * 绑定表格与表单
+     * @member mini.DataBinding
+     * @param {String} formId 表单控件的 id
+     * @param {String/mini.Control/HTMLElement} grid 表格控件， 或是表格控件的 id 或其对应的 DOM 节点
+     * @returns {Object}
+     *
+     */
+    bindForm : function(formId, grid, convert, mode) {
+        formId = mini.byId(formId);
+        grid = mini.get(grid);
+        if (!formId || !grid) {
             return
         }
-        var d = new mini.Form(d);
-        var b = d.getFields();
-        for (var c = 0, a = b.length; c < a; c++) {
-            var f = b[c];
-            this.bindField(f, e, f.getName(), h, g)
+        var form = new mini.Form(formId);
+        var fields = form.getFields();
+        for (var i = 0, len = fields.length; i < len; i++) {
+            var field = fields[i];
+            this.bindField(field, grid, field.getName(), convert, mode)
         }
     },
     __OnCurrentChanged : function(g) {

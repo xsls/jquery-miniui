@@ -1,13 +1,90 @@
 (function() {
+    /**
+     * 数据字典多选框组
+     * @class
+     * @extends mini.CheckBoxList
+     * @requires mini.TextArea
+     * 
+     * @cfg {String} dictTypeId 数据字典类型 id (required)
+     * @cfg {String} [textField="dictName"] 显示字典项名称的文本框的 name 属性值
+     * @cfg {String} [valueField="dictID"]  存放字典项值的隐藏表单域的 name 属性值
+     * @cfg {String} [uiCls="mini-dictcheckboxgroup"] 样式类名称
+     * 
+     * @property editor CKEDITOR 对象
+     * 
+     * @event initeditor 在富文本编辑器初始化完成后触发
+     * 
+     * @constructor 创建一个数据字典多选框组
+     * 
+     *     @example
+     *     var dictCheckboxGroup = new mini.DictCheckboxGroup();
+     *     dictCheckboxGroup({
+     *      dictTypeId : ".gender."
+     *     });
+     */
     mini.DictCheckboxGroup = function() {
         mini.DictCheckboxGroup.superclass.constructor.call(this)
     };
+    
+
+    /**
+     * 数据字典单选框组
+     * @class
+     * @extends mini.RadioButtonList
+     * @requires mini.TextArea
+     * 
+     * @cfg {String} dictTypeId 数据字典类型 id (required)
+     * @cfg {String} [textField="dictName"] 显示字典项名称的文本框的 name 属性值
+     * @cfg {String} [valueField="dictID"]  存放字典项值的隐藏表单域的 name 属性值
+     * @cfg {String} [uiCls="mini-dictradiogroup"] 样式类名称
+     * 
+     * @property editor CKEDITOR 对象
+     * 
+     * @event initeditor 在富文本编辑器初始化完成后触发
+     * 
+     * @constructor 创建一个数据字典单选框组
+     * 
+     *     @example
+     *     var dictRadioGroup = new mini.Richtext();
+     *     dictRadioGroup({
+     *      dictTypeId : ".gender."
+     *     });
+     */
     mini.DictRadioGroup = function() {
         mini.DictRadioGroup.superclass.constructor.call(this)
     };
+    
+
+    /**
+     * 数据字典下拉框
+     * @class
+     * @extends mini.ComboBox
+     * @requires mini.TextArea
+     * 
+     * @cfg {String} dictTypeId 数据字典类型 id (required)
+     * @cfg {String} [textField="dictName"] 显示字典项名称的文本框的 name 属性值
+     * @cfg {String} [valueField="dictID"]  存放字典项值的隐藏表单域的 name 属性值
+     * @cfg {String} [uiCls="mini-dictcombobox"] 样式类名称
+     * 
+     * @property editor CKEDITOR 对象
+     * 
+     * @event initeditor 在富文本编辑器初始化完成后触发
+     * 
+     * @constructor 创建一个数据字典下拉框
+     * 
+     *     @example
+     *     var dictComboBox = new mini.Richtext();
+     *     dictComboBox({
+     *      dictTypeId : ".gender."
+     *     });
+     */
     mini.DictComboBox = function() {
         mini.DictComboBox.superclass.constructor.call(this)
     };
+    /**
+     * @class mini.Dict
+     * @private
+     */
     var a = {
         map : {},
         loadingMap : {},
@@ -45,24 +122,34 @@
                         }
                     })
         },
-        getDictText : function(c, e) {
-            var d = a.map[c];
+        
+        /**
+         * 根据字典类型 id 和字典项的值获取字典项的名称
+         * @method getDictText
+         * @param {String} dictTypeId 字典类型 id
+         * @param {String/Number/Boolean} dictKey 字典项的值
+         * @return {String} 字典项的名称
+         * @member mini
+         * @static
+         */
+        getDictText : function(dictTypeId, dictKey) {
+            var d = a.map[dictTypeId];
             if (d) {
-                return a.getDictName(d, e)
+                return a.getDictName(d, dictKey)
             }
             var f = "";
             mini
                     .ajax({
                         url : "com.primeton.components.nui.DictLoader.getDictData.biz.ext",
                         data : {
-                            dictTypeId : c
+                            dictTypeId : dictTypeId
                         },
                         type : "POST",
                         async : false,
                         success : function(h) {
                             var g = h.dictList;
-                            a.map[c] = g;
-                            f = a.getDictName(g, e)
+                            a.map[dictTypeId] = g;
+                            f = a.getDictName(g, dictKey)
                         }
                     });
             return f
@@ -123,6 +210,7 @@
         }
     });
     mini.extend(mini.DictCheckboxGroup, mini.CheckBoxList, b);
+    
     jQuery.extend(b, {
         uiCls : "mini-dictradiogroup",
         set : function(c) {

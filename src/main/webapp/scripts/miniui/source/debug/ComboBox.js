@@ -1,3 +1,8 @@
+/**
+ * @class
+ * @extends mini.PopupEdit
+ * @constructor
+ */
 mini.ComboBox = function() {
     this.data = [];
     this.columns = [];
@@ -90,13 +95,19 @@ mini.extend(mini.ComboBox, mini.PopupEdit, {
         }
         this._listbox.setValue(this.value)
     },
-    select : function(a) {
-        this._listbox.deselectAll();
-        a = this.getItem(a);
-        if (a) {
-            this._listbox.select(a);
+    /**
+     * 选择项
+     * @param {Number} index
+     * @member mini.ComboBox
+     *
+     */
+    select : function(index) {
+        this._listbox.deselectindexll();
+        index = this.getItem(index);
+        if (index) {
+            this._listbox.select(index);
             this.__OnItemClick({
-                item : a
+                item : index
             })
         }
     },
@@ -116,6 +127,14 @@ mini.extend(mini.ComboBox, mini.PopupEdit, {
     getAt : function(a) {
         return this.data[a]
     },
+
+    /**
+     * 加载数据<br/>
+     * function load(url)
+     * @member mini.ComboBox
+     * @param  url
+     *
+     */
     load : function(a) {
         if (typeof a == "string") {
             this.setUrl(a)
@@ -126,6 +145,13 @@ mini.extend(mini.ComboBox, mini.PopupEdit, {
     _eval : function(_) {
         return eval("(" + _ + ")")
     },
+    /**
+     * 
+     * function setData(data)
+     * @member mini.ComboBox
+     * @param {Array} data
+     *
+     */
     setData : function(b) {
         if (typeof b == "string") {
             b = this._eval(b)
@@ -138,9 +164,23 @@ mini.extend(mini.ComboBox, mini.PopupEdit, {
         var a = this._listbox.getValueAndText(this.value);
         this.text = this._textEl.value = a[1]
     },
+    /**
+     * 
+     * function getData()
+     * @member mini.ComboBox
+     * @returns {Array}
+     *
+     */
     getData : function() {
         return this.data
     },
+    /**
+     * 
+     * function setUrl(url)
+     * @member mini.ComboBox
+     * @param {String} url
+     *
+     */
     setUrl : function(a) {
         this.getPopup();
         this._listbox.setUrl(a);
@@ -149,24 +189,59 @@ mini.extend(mini.ComboBox, mini.PopupEdit, {
         var b = this._listbox.getValueAndText(this.value);
         this.text = this._textEl.value = b[1]
     },
+    /**
+     * 
+     * function getUrl()
+     * @member mini.ComboBox
+     * @returns {String}
+     *
+     */
     getUrl : function() {
         return this.url
     },
+    /**
+     * 
+     * function setValueField(valueField)
+     * @member mini.ComboBox
+     * @param {String} valueField
+     *
+     */
     setValueField : function(a) {
         this.valueField = a;
         if (this._listbox) {
             this._listbox.setValueField(a)
         }
     },
+    /**
+     * 
+     * function getValueField()
+     * @member mini.ComboBox
+     * @returns {String}
+     *
+     */
     getValueField : function() {
         return this.valueField
     },
+    /**
+     * 
+     * function setTextField(textField)
+     * @member mini.ComboBox
+     * @param {String} textField
+     *
+     */
     setTextField : function(a) {
         if (this._listbox) {
             this._listbox.setTextField(a)
         }
         this.textField = a
     },
+    /**
+     * 
+     * function getTextField()
+     * @member mini.ComboBox
+     * @returns {String}
+     *
+     */
     getTextField : function() {
         return this.textField
     },
@@ -189,6 +264,13 @@ mini.extend(mini.ComboBox, mini.PopupEdit, {
     getDataField : function() {
         return this.dataField
     },
+    /**
+     * 设置值<br/>
+     * function setValue(value)
+     * @member mini.ComboBox
+     * @param  value
+     *
+     */
     setValue : function(b) {
         if (this.value !== b) {
             var a = this._listbox.getValueAndText(b);
@@ -201,6 +283,13 @@ mini.extend(mini.ComboBox, mini.PopupEdit, {
             this.text = this._textEl.value = a[1]
         }
     },
+    /**
+     * 
+     * function setMultiSelect(multiSelect)
+     * @member mini.ComboBox
+     * @param {Boolean} multiSelect
+     *
+     */
     setMultiSelect : function(a) {
         if (this.multiSelect != a) {
             this.multiSelect = a;
@@ -210,9 +299,23 @@ mini.extend(mini.ComboBox, mini.PopupEdit, {
             }
         }
     },
+    /**
+     * 
+     * function getMultiSelect()
+     * @member mini.ComboBox
+     * @returns {Boolean}
+     *
+     */
     getMultiSelect : function() {
         return this.multiSelect
     },
+    /**
+     * 
+     * function setColumns(columns)
+     * @member mini.ComboBox
+     * @param {Array} columns
+     *
+     */
     setColumns : function(a) {
         if (!mini.isArray(a)) {
             a = []
@@ -220,31 +323,80 @@ mini.extend(mini.ComboBox, mini.PopupEdit, {
         this.columns = a;
         this._listbox.setColumns(a)
     },
+    /**
+     * 
+     * function getColumns()
+     * @member mini.ComboBox
+     * @returns {Array}
+     *
+     */
     getColumns : function() {
         return this.columns
     },
     showNullItem : false,
+    /**
+     * 
+     * function setShowNullItem(showNullItem)
+     * @member mini.ComboBox
+     * @param {Boolean} showNullItem
+     *
+     */
     setShowNullItem : function(a) {
         if (this.showNullItem != a) {
             this.showNullItem = a;
             this._listbox.setShowNullItem(a)
         }
     },
+    /**
+     * 
+     * function getShowNullItem()
+     * @member mini.ComboBox
+     * @returns {Boolean}
+     *
+     */
     getShowNullItem : function() {
         return this.showNullItem
     },
+    /**
+     * 
+     * function setNullItemText(nullItemText)
+     * @member mini.ComboBox
+     * @param {String} nullItemText
+     *
+     */
     setNullItemText : function(a) {
         if (this.nullItemText != a) {
             this.nullItemText = a;
             this._listbox.setNullItemText(a)
         }
     },
+    /**
+     * 
+     * function getNullItemText()
+     * @member mini.ComboBox
+     * @returns {String}
+     *
+     */
     getNullItemText : function() {
         return this.nullItemText
     },
+    /**
+     * 
+     * function setValueFromSelect(valueFromSelect)
+     * @member mini.ComboBox
+     * @param {Boolean} valueFromSelect
+     *
+     */
     setValueFromSelect : function(a) {
         this.valueFromSelect = a
     },
+    /**
+     * 
+     * function getValueFromSelect()
+     * @member mini.ComboBox
+     * @returns {Boolean}
+     *
+     */
     getValueFromSelect : function() {
         return this.valueFromSelect
     },

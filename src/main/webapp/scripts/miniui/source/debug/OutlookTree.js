@@ -1,3 +1,9 @@
+/**
+ * Outlook风格树形导航控件。
+ * @class
+ * @extends mini.OutlookBar
+ * @constructor
+ */
 mini.OutlookTree = function() {
     mini.OutlookTree.superclass.constructor.call(this);
     this.data = []
@@ -78,6 +84,15 @@ mini.extend(mini.OutlookTree, mini.OutlookBar, {
         this.createNavBarTree(a);
         this.fire("load")
     },
+    /**
+     * 加载列表数据。比如：tree.loadList(list, "id", "pid")<br/>
+     * function loadList(Array, idField, parentField)
+     * @member mini.OutlookTree
+     * @param  Array
+     * @param  idField
+     * @param  parentField
+     *
+     */
     loadList : function(c, b, d) {
         b = b || this.idField;
         d = d || this.parentField;
@@ -85,6 +100,13 @@ mini.extend(mini.OutlookTree, mini.OutlookBar, {
         var a = mini.arrayToTree(c, this.nodesField, b, d);
         this.load(a)
     },
+    /**
+     * 加载树形数据。<br/>
+     * function load(Array)
+     * @member mini.OutlookTree
+     * @param  Array
+     *
+     */
     load : function(b) {
         if (typeof b == "string") {
             this.setUrl(b)
@@ -101,22 +123,64 @@ mini.extend(mini.OutlookTree, mini.OutlookBar, {
     getData : function() {
         return this.data
     },
+    /**
+     * 
+     * function setUrl(url)
+     * @member mini.OutlookTree
+     * @param {String} url
+     *
+     */
     setUrl : function(a) {
         this.url = a;
         this._doLoad()
     },
+    /**
+     * 
+     * function getUrl()
+     * @member mini.OutlookTree
+     * @returns {String}
+     *
+     */
     getUrl : function() {
         return this.url
     },
+    /**
+     * 
+     * function setTextField(textField)
+     * @member mini.OutlookTree
+     * @param {String} textField
+     *
+     */
     setTextField : function(a) {
         this.textField = a
     },
+    /**
+     * 
+     * function getTextField()
+     * @member mini.OutlookTree
+     * @returns {String}
+     *
+     */
     getTextField : function() {
         return this.textField
     },
+    /**
+     * 
+     * function setIconField(iconField)
+     * @member mini.OutlookTree
+     * @param {String} iconField
+     *
+     */
     setIconField : function(a) {
         this.iconField = a
     },
+    /**
+     * 
+     * function getIconField()
+     * @member mini.OutlookTree
+     * @returns {String}
+     *
+     */
     getIconField : function() {
         return this.iconField
     },
@@ -126,9 +190,23 @@ mini.extend(mini.OutlookTree, mini.OutlookBar, {
     getUrlField : function() {
         return this.urlField
     },
+    /**
+     * 
+     * function setResultAsTree(resultAsTree)
+     * @member mini.OutlookTree
+     * @param {Boolean} resultAsTree
+     *
+     */
     setResultAsTree : function(a) {
         this.resultAsTree = a
     },
+    /**
+     * 
+     * function getResultAsTree()
+     * @member mini.OutlookTree
+     * @returns {Boolean}
+     *
+     */
     getResultAsTree : function() {
         return this.resultAsTree
     },
@@ -138,19 +216,53 @@ mini.extend(mini.OutlookTree, mini.OutlookBar, {
     getNodesField : function() {
         return this.nodesField
     },
+    /**
+     * 
+     * function setIdField(idField)
+     * @member mini.OutlookTree
+     * @param {String} idField
+     *
+     */
     setIdField : function(a) {
         this.idField = a
     },
+    /**
+     * 
+     * function getIdField()
+     * @member mini.OutlookTree
+     * @returns {String}
+     *
+     */
     getIdField : function() {
         return this.idField
     },
+    /**
+     * 
+     * function setParentField(parentField)
+     * @member mini.OutlookTree
+     * @param {String} parentField
+     *
+     */
     setParentField : function(a) {
         this.parentField = a
     },
+    /**
+     * 
+     * function getParentField()
+     * @member mini.OutlookTree
+     * @returns {String}
+     *
+     */
     getParentField : function() {
         return this.parentField
     },
     _selected : null,
+    /**
+     * 获取选中节点。<br/>
+     * function getSelected()
+     * @member mini.OutlookTree
+     *
+     */
     getSelected : function() {
         return this._selected
     },
@@ -165,6 +277,13 @@ mini.extend(mini.OutlookTree, mini.OutlookBar, {
         }
         return a.isSelectedNode(b)
     },
+    /**
+     * 选中节点<br/>
+     * function selectNode(node)
+     * @member mini.OutlookTree
+     * @param  node
+     *
+     */
     selectNode : function(b) {
         b = this.getNode(b);
         if (!b) {
@@ -173,6 +292,13 @@ mini.extend(mini.OutlookTree, mini.OutlookBar, {
         var a = this._getOwnerTree(b);
         a.selectNode(b)
     },
+    /**
+     * 展开节点路径<br/>
+     * function expandPath(node)
+     * @member mini.OutlookTree
+     * @param  node
+     *
+     */
     expandPath : function(b) {
         b = this.getNode(b);
         if (!b) {
@@ -192,6 +318,13 @@ mini.extend(mini.OutlookTree, mini.OutlookBar, {
         }
         return c
     },
+    /**
+     * 根据值获取节点对象<br/>
+     * function getNode(value)
+     * @member mini.OutlookTree
+     * @param  value
+     *
+     */
     getNode : function(d) {
         for (var c = 0, b = this._trees.length; c < b; c++) {
             var a = this._trees[c];
@@ -223,9 +356,23 @@ mini.extend(mini.OutlookTree, mini.OutlookBar, {
         }
     },
     expandOnLoad : false,
+    /**
+     * 
+     * function setExpandOnLoad(expandOnLoad)
+     * @member mini.OutlookTree
+     * @param {Boolean} expandOnLoad
+     *
+     */
     setExpandOnLoad : function(a) {
         this.expandOnLoad = a
     },
+    /**
+     * 
+     * function getExpandOnLoad()
+     * @member mini.OutlookTree
+     * @returns {Boolean}
+     *
+     */
     getExpandOnLoad : function() {
         return this.expandOnLoad
     },

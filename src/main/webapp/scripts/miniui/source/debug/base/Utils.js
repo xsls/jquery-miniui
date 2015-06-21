@@ -84,20 +84,29 @@ mini.createElements = function(b) {
     mini.__wrap.innerHTML = b;
     return a ? mini.__wrap.firstChild.rows : mini.__wrap.childNodes
 };
-mini_byId = function(g, d) {
-    if (typeof g == "string") {
-        if (g.charAt(0) == "#") {
-            g = g.substr(1)
+
+/**
+ * 根据 ID 查找 DOM 树的 Element 节点。别名为 {@link mini#byId}
+ * @param {String/HTMLElement} id DOM 节点的 id 属性值
+ * @param {HTMLElement} [parent] 父节点
+ * @return 对应的 Element 节点， 如果没有找到匹配的节点，则返回 null<br>
+ *      注： 如果传入的 id 值不是一个字符串，则直接返回 id
+ * @member Window
+ */
+mini_byId = function(id, parent) {
+    if (typeof id == "string") {
+        if (id.charAt(0) == "#") {
+            id = id.substr(1)
         }
-        var f = document.getElementById(g);
+        var f = document.getElementById(id);
         if (f) {
             return f
         }
-        if (d && !mini.isAncestor(document.body, d)) {
-            var c = d.getElementsByTagName("*");
+        if (parent && !mini.isAncestor(document.body, parent)) {
+            var c = parent.getElementsByTagName("*");
             for (var b = 0, a = c.length; b < a; b++) {
                 var f = c[b];
-                if (f.id == g) {
+                if (f.id == id) {
                     return f
                 }
             }
@@ -105,7 +114,7 @@ mini_byId = function(g, d) {
         }
         return f
     } else {
-        return g
+        return id
     }
 };
 mini_hasClass = function(c, b) {
@@ -312,327 +321,329 @@ mini_findParent = function(f, c, h) {
     }
     return null
 };
-mini
-        .copyTo(
-                mini,
-                {
-                    byId : mini_byId,
-                    hasClass : mini_hasClass,
-                    addClass : mini_addClass,
-                    removeClass : mini_removeClass,
-                    getMargins : mini_getMargins,
-                    getBorders : mini_getBorders,
-                    getPaddings : mini_getPaddings,
-                    setWidth : mini_setWidth,
-                    setHeight : mini_setHeight,
-                    getWidth : mini_getWidth,
-                    getHeight : mini_getHeight,
-                    setBox : mini_setBox,
-                    getBox : mini_getBox,
-                    setStyle : mini_setStyle,
-                    getStyle : mini_getStyle,
-                    repaint : function(a) {
-                        if (!a) {
-                            a = document.body
-                        }
-                        mini.addClass(a, "mini-repaint");
-                        setTimeout(function() {
-                            mini.removeClass(a, "mini-repaint")
-                        }, 1)
-                    },
-                    getSize : function(a, b) {
-                        return {
-                            width : mini.getWidth(a, b),
-                            height : mini.getHeight(a, b)
-                        }
-                    },
-                    setSize : function(c, b, a) {
-                        mini.setWidth(c, b);
-                        mini.setHeight(c, a)
-                    },
-                    setX : function(b, a) {
-                        a = parseInt(a);
-                        var c = jQuery(b).offset();
-                        var d = parseInt(c.top);
-                        if (d === undefined) {
-                            d = c[1]
-                        }
-                        mini.setXY(b, a, d)
-                    },
-                    setY : function(b, d) {
-                        d = parseInt(d);
-                        var c = jQuery(b).offset();
-                        var a = parseInt(c.left);
-                        if (a === undefined) {
-                            a = c[0]
-                        }
-                        mini.setXY(b, a, d)
-                    },
-                    setXY : function(b, a, d) {
-                        var c = {
-                            left : parseInt(a),
-                            top : parseInt(d)
-                        };
-                        jQuery(b).offset(c);
-                        jQuery(b).offset(c)
-                    },
-                    getXY : function(a) {
-                        var b = jQuery(a).offset();
-                        return [ parseInt(b.left), parseInt(b.top) ]
-                    },
-                    getViewportBox : function() {
-                        var b = jQuery(window).width(), c = jQuery(window)
-                                .height();
-                        var a = jQuery(document).scrollLeft(), d = jQuery(
-                                document.body).scrollTop();
-                        if (d == 0 && document.documentElement) {
-                            d = document.documentElement.scrollTop
-                        }
-                        return {
-                            x : a,
-                            y : d,
-                            top : d,
-                            left : a,
-                            width : b,
-                            height : c,
-                            right : a + b,
-                            bottom : d + c
-                        }
-                    },
-                    showAt : function(m) {
-                        var g = jQuery;
-                        m = g.extend({
-                            el : null,
-                            x : "center",
-                            y : "center",
-                            offset : [ 0, 0 ],
-                            fixed : false,
-                            zindex : mini.zindex(),
-                            timeout : 0,
-                            timeoutHandler : null,
-                            animation : false
-                        }, m);
-                        var c = g(m.el)[0], i = m.x, h = m.y, b = m.offset[0], a = m.offset[1], j = m.zindex, f = m.fixed, d = m.animation;
-                        if (!c) {
-                            return
-                        }
-                        if (m.timeout) {
-                            setTimeout(function() {
-                                if (m.timeoutHandler) {
-                                    m.timeoutHandler()
-                                }
-                            }, m.timeout)
-                        }
-                        var l = ";position:absolute;display:block;left:auto;top:auto;right:auto;bottom:auto;margin:0;z-index:"
-                                + j + ";";
-                        mini.setStyle(c, l);
-                        var l = "";
-                        if (m && mini.isNumber(m.x) && mini.isNumber(m.y)) {
-                            if (m.fixed && !mini.isIE6) {
-                                l += ";position:fixed;"
-                            }
-                            mini.setStyle(c, l);
-                            mini.setXY(m.el, m.x, m.y);
-                            return
-                        }
-                        if (i == "left") {
-                            l += "left:" + b + "px;"
-                        } else {
-                            if (i == "right") {
-                                l += "right:" + b + "px;"
-                            } else {
-                                var k = mini.getSize(c);
-                                l += "left:50%;margin-left:" + (-k.width * 0.5)
-                                        + "px;"
-                            }
-                        }
-                        if (h == "top") {
-                            l += "top:" + a + "px;"
-                        } else {
-                            if (h == "bottom") {
-                                l += "bottom:" + a + "px;"
-                            } else {
-                                var k = mini.getSize(c);
-                                l += "top:50%;margin-top:" + (-k.height * 0.5)
-                                        + "px;"
-                            }
-                        }
-                        if (f && !mini.isIE6) {
-                            l += "position:fixed"
-                        }
-                        mini.setStyle(c, l)
-                    },
-                    getChildNodes : function(h, g) {
-                        h = mini.byId(h);
-                        if (!h) {
-                            return
-                        }
-                        var b = h.childNodes;
-                        var f = [];
-                        for (var d = 0, a = b.length; d < a; d++) {
-                            var j = b[d];
-                            if (j.nodeType == 1 || g === true) {
-                                f.push(j)
-                            }
-                        }
-                        return f
-                    },
-                    removeChilds : function(g, a) {
-                        g = mini.byId(g);
-                        if (!g) {
-                            return
-                        }
-                        var f = mini.getChildNodes(g, true);
-                        for (var d = 0, b = f.length; d < b; d++) {
-                            var h = f[d];
-                            if (a && h == a) {
-                            } else {
-                                g.removeChild(f[d])
-                            }
-                        }
-                    },
-                    isAncestor : mini_isAncestor,
-                    findParent : mini_findParent,
-                    findChild : function(f, b) {
-                        f = mini.byId(f);
-                        var d = f.getElementsByTagName("*");
-                        for (var c = 0, a = d.length; c < a; c++) {
-                            var f = d[c];
-                            if (mini.hasClass(f, b)) {
-                                return f
-                            }
-                        }
-                    },
-                    isAncestor : function(d, f) {
-                        var a = false;
-                        d = mini.byId(d);
-                        f = mini.byId(f);
-                        if (d === f) {
-                            return true
-                        }
-                        if (d && f) {
-                            if (d.contains) {
-                                try {
-                                    return d.contains(f)
-                                } catch (b) {
-                                    return false
-                                }
-                            } else {
-                                if (d.compareDocumentPosition) {
-                                    return !!(d.compareDocumentPosition(f) & 16)
-                                } else {
-                                    while (f = f.parentNode) {
-                                        a = f == d || a
-                                    }
-                                }
-                            }
-                        }
-                        return a
-                    },
-                    getOffsetsTo : function(a, c) {
-                        var d = this.getXY(a), b = this.getXY(c);
-                        return [ d[0] - b[0], d[1] - b[1] ]
-                    },
-                    scrollIntoView : function(h, f, i) {
-                        var p = mini.byId(f) || document.body, g = this
-                                .getOffsetsTo(h, p), k = g[0] + p.scrollLeft, u = g[1]
-                                + p.scrollTop, q = u + h.offsetHeight, d = k
-                                + h.offsetWidth, a = p.clientHeight, m = parseInt(
-                                p.scrollTop, 10), s = parseInt(p.scrollLeft, 10), j = m
-                                + a, n = s + p.clientWidth;
-                        if (h.offsetHeight > a || u < m) {
-                            p.scrollTop = u
-                        } else {
-                            if (q > j) {
-                                p.scrollTop = q - a
-                            }
-                        }
-                        p.scrollTop = p.scrollTop;
-                        if (i !== false) {
-                            if (h.offsetWidth > p.clientWidth || k < s) {
-                                p.scrollLeft = k
-                            } else {
-                                if (d > n) {
-                                    p.scrollLeft = d - p.clientWidth
-                                }
-                            }
-                            p.scrollLeft = p.scrollLeft
-                        }
-                        return this
-                    },
-                    setOpacity : function(b, a) {
-                        jQuery(b).css({
-                            opacity : a
-                        })
-                    },
-                    selectable : function(b, a) {
-                        b = mini.byId(b);
-                        if (!!a) {
-                            jQuery(b).removeClass("mini-unselectable");
-                            if (isIE) {
-                                b.unselectable = "off"
-                            } else {
-                                b.style.MozUserSelect = "";
-                                b.style.KhtmlUserSelect = "";
-                                b.style.UserSelect = ""
-                            }
-                        } else {
-                            jQuery(b).addClass("mini-unselectable");
-                            if (isIE) {
-                                b.unselectable = "on"
-                            } else {
-                                b.style.MozUserSelect = "none";
-                                b.style.UserSelect = "none";
-                                b.style.KhtmlUserSelect = "none"
-                            }
-                        }
-                    },
-                    selectRange : function(c, b, a) {
-                        if (c.createTextRange) {
-                            var f = c.createTextRange();
-                            f.moveStart("character", b);
-                            f.moveEnd("character", a - c.value.length);
-                            f.select()
-                        } else {
-                            if (c.setSelectionRange) {
-                                c.setSelectionRange(b, a)
-                            }
-                        }
-                        try {
-                            c.focus()
-                        } catch (d) {
-                        }
-                    },
-                    getSelectRange : function(b) {
-                        b = mini.byId(b);
-                        if (!b) {
-                            return
-                        }
-                        try {
-                            b.focus()
-                        } catch (d) {
-                        }
-                        var f = 0, a = 0;
-                        if (b.createTextRange && document.selection) {
-                            var c = document.selection.createRange()
-                                    .duplicate();
-                            c.moveEnd("character", b.value.length);
-                            if (c.text === "") {
-                                f = b.value.length
-                            } else {
-                                f = b.value.lastIndexOf(c.text)
-                            }
-                            var c = document.selection.createRange()
-                                    .duplicate();
-                            c.moveStart("character", -b.value.length);
-                            a = c.text.length
-                        } else {
-                            f = b.selectionStart;
-                            a = b.selectionEnd
-                        }
-                        return [ f, a ]
+mini.copyTo(mini, {
+    /**
+     * @method byId
+     * @member mini
+     * @alias Window#mini_byId
+     */
+    byId : mini_byId,
+    hasClass : mini_hasClass,
+    addClass : mini_addClass,
+    removeClass : mini_removeClass,
+    getMargins : mini_getMargins,
+    getBorders : mini_getBorders,
+    getPaddings : mini_getPaddings,
+    setWidth : mini_setWidth,
+    setHeight : mini_setHeight,
+    getWidth : mini_getWidth,
+    getHeight : mini_getHeight,
+    setBox : mini_setBox,
+    getBox : mini_getBox,
+    setStyle : mini_setStyle,
+    getStyle : mini_getStyle,
+    repaint : function(a) {
+        if (!a) {
+            a = document.body
+        }
+        mini.addClass(a, "mini-repaint");
+        setTimeout(function() {
+            mini.removeClass(a, "mini-repaint")
+        }, 1)
+    },
+    getSize : function(a, b) {
+        return {
+            width : mini.getWidth(a, b),
+            height : mini.getHeight(a, b)
+        }
+    },
+    setSize : function(c, b, a) {
+        mini.setWidth(c, b);
+        mini.setHeight(c, a)
+    },
+    setX : function(b, a) {
+        a = parseInt(a);
+        var c = jQuery(b).offset();
+        var d = parseInt(c.top);
+        if (d === undefined) {
+            d = c[1]
+        }
+        mini.setXY(b, a, d)
+    },
+    setY : function(b, d) {
+        d = parseInt(d);
+        var c = jQuery(b).offset();
+        var a = parseInt(c.left);
+        if (a === undefined) {
+            a = c[0]
+        }
+        mini.setXY(b, a, d)
+    },
+    setXY : function(b, a, d) {
+        var c = {
+            left : parseInt(a),
+            top : parseInt(d)
+        };
+        jQuery(b).offset(c);
+        jQuery(b).offset(c)
+    },
+    getXY : function(a) {
+        var b = jQuery(a).offset();
+        return [ parseInt(b.left), parseInt(b.top) ]
+    },
+    getViewportBox : function() {
+        var b = jQuery(window).width(), c = jQuery(window)
+                .height();
+        var a = jQuery(document).scrollLeft(), d = jQuery(
+                document.body).scrollTop();
+        if (d == 0 && document.documentElement) {
+            d = document.documentElement.scrollTop
+        }
+        return {
+            x : a,
+            y : d,
+            top : d,
+            left : a,
+            width : b,
+            height : c,
+            right : a + b,
+            bottom : d + c
+        }
+    },
+    showAt : function(m) {
+        var g = jQuery;
+        m = g.extend({
+            el : null,
+            x : "center",
+            y : "center",
+            offset : [ 0, 0 ],
+            fixed : false,
+            zindex : mini.zindex(),
+            timeout : 0,
+            timeoutHandler : null,
+            animation : false
+        }, m);
+        var c = g(m.el)[0], i = m.x, h = m.y, b = m.offset[0], a = m.offset[1], j = m.zindex, f = m.fixed, d = m.animation;
+        if (!c) {
+            return
+        }
+        if (m.timeout) {
+            setTimeout(function() {
+                if (m.timeoutHandler) {
+                    m.timeoutHandler()
+                }
+            }, m.timeout)
+        }
+        var l = ";position:absolute;display:block;left:auto;top:auto;right:auto;bottom:auto;margin:0;z-index:"
+                + j + ";";
+        mini.setStyle(c, l);
+        var l = "";
+        if (m && mini.isNumber(m.x) && mini.isNumber(m.y)) {
+            if (m.fixed && !mini.isIE6) {
+                l += ";position:fixed;"
+            }
+            mini.setStyle(c, l);
+            mini.setXY(m.el, m.x, m.y);
+            return
+        }
+        if (i == "left") {
+            l += "left:" + b + "px;"
+        } else {
+            if (i == "right") {
+                l += "right:" + b + "px;"
+            } else {
+                var k = mini.getSize(c);
+                l += "left:50%;margin-left:" + (-k.width * 0.5)
+                        + "px;"
+            }
+        }
+        if (h == "top") {
+            l += "top:" + a + "px;"
+        } else {
+            if (h == "bottom") {
+                l += "bottom:" + a + "px;"
+            } else {
+                var k = mini.getSize(c);
+                l += "top:50%;margin-top:" + (-k.height * 0.5)
+                        + "px;"
+            }
+        }
+        if (f && !mini.isIE6) {
+            l += "position:fixed"
+        }
+        mini.setStyle(c, l)
+    },
+    getChildNodes : function(h, g) {
+        h = mini.byId(h);
+        if (!h) {
+            return
+        }
+        var b = h.childNodes;
+        var f = [];
+        for (var d = 0, a = b.length; d < a; d++) {
+            var j = b[d];
+            if (j.nodeType == 1 || g === true) {
+                f.push(j)
+            }
+        }
+        return f
+    },
+    removeChilds : function(g, a) {
+        g = mini.byId(g);
+        if (!g) {
+            return
+        }
+        var f = mini.getChildNodes(g, true);
+        for (var d = 0, b = f.length; d < b; d++) {
+            var h = f[d];
+            if (a && h == a) {
+            } else {
+                g.removeChild(f[d])
+            }
+        }
+    },
+    isAncestor : mini_isAncestor,
+    findParent : mini_findParent,
+    findChild : function(f, b) {
+        f = mini.byId(f);
+        var d = f.getElementsByTagName("*");
+        for (var c = 0, a = d.length; c < a; c++) {
+            var f = d[c];
+            if (mini.hasClass(f, b)) {
+                return f
+            }
+        }
+    },
+    isAncestor : function(d, f) {
+        var a = false;
+        d = mini.byId(d);
+        f = mini.byId(f);
+        if (d === f) {
+            return true
+        }
+        if (d && f) {
+            if (d.contains) {
+                try {
+                    return d.contains(f)
+                } catch (b) {
+                    return false
+                }
+            } else {
+                if (d.compareDocumentPosition) {
+                    return !!(d.compareDocumentPosition(f) & 16)
+                } else {
+                    while (f = f.parentNode) {
+                        a = f == d || a
                     }
-                });
+                }
+            }
+        }
+        return a
+    },
+    getOffsetsTo : function(a, c) {
+        var d = this.getXY(a), b = this.getXY(c);
+        return [ d[0] - b[0], d[1] - b[1] ]
+    },
+    scrollIntoView : function(h, f, i) {
+        var p = mini.byId(f) || document.body, g = this
+                .getOffsetsTo(h, p), k = g[0] + p.scrollLeft, u = g[1]
+                + p.scrollTop, q = u + h.offsetHeight, d = k
+                + h.offsetWidth, a = p.clientHeight, m = parseInt(
+                p.scrollTop, 10), s = parseInt(p.scrollLeft, 10), j = m
+                + a, n = s + p.clientWidth;
+        if (h.offsetHeight > a || u < m) {
+            p.scrollTop = u
+        } else {
+            if (q > j) {
+                p.scrollTop = q - a
+            }
+        }
+        p.scrollTop = p.scrollTop;
+        if (i !== false) {
+            if (h.offsetWidth > p.clientWidth || k < s) {
+                p.scrollLeft = k
+            } else {
+                if (d > n) {
+                    p.scrollLeft = d - p.clientWidth
+                }
+            }
+            p.scrollLeft = p.scrollLeft
+        }
+        return this
+    },
+    setOpacity : function(b, a) {
+        jQuery(b).css({
+            opacity : a
+        })
+    },
+    selectable : function(b, a) {
+        b = mini.byId(b);
+        if (!!a) {
+            jQuery(b).removeClass("mini-unselectable");
+            if (isIE) {
+                b.unselectable = "off"
+            } else {
+                b.style.MozUserSelect = "";
+                b.style.KhtmlUserSelect = "";
+                b.style.UserSelect = ""
+            }
+        } else {
+            jQuery(b).addClass("mini-unselectable");
+            if (isIE) {
+                b.unselectable = "on"
+            } else {
+                b.style.MozUserSelect = "none";
+                b.style.UserSelect = "none";
+                b.style.KhtmlUserSelect = "none"
+            }
+        }
+    },
+    selectRange : function(c, b, a) {
+        if (c.createTextRange) {
+            var f = c.createTextRange();
+            f.moveStart("character", b);
+            f.moveEnd("character", a - c.value.length);
+            f.select()
+        } else {
+            if (c.setSelectionRange) {
+                c.setSelectionRange(b, a)
+            }
+        }
+        try {
+            c.focus()
+        } catch (d) {
+        }
+    },
+    getSelectRange : function(b) {
+        b = mini.byId(b);
+        if (!b) {
+            return
+        }
+        try {
+            b.focus()
+        } catch (d) {
+        }
+        var f = 0, a = 0;
+        if (b.createTextRange && document.selection) {
+            var c = document.selection.createRange()
+                    .duplicate();
+            c.moveEnd("character", b.value.length);
+            if (c.text === "") {
+                f = b.value.length
+            } else {
+                f = b.value.lastIndexOf(c.text)
+            }
+            var c = document.selection.createRange()
+                    .duplicate();
+            c.moveStart("character", -b.value.length);
+            a = c.text.length
+        } else {
+            f = b.selectionStart;
+            a = b.selectionEnd
+        }
+        return [ f, a ]
+    }
+});
 (function() {
     var a = {
         tabindex : "tabIndex",
@@ -1365,9 +1376,12 @@ mini.layoutIFrames = function(a) {
                 }
             }, 30)
 };
+
+// jQuery.ajax 全局设置
 $.ajaxSetup({
     cache : false
 });
+
 if (isIE) {
     setInterval(function() {
     }, 20000)
@@ -1528,6 +1542,14 @@ mini._placeholder = function(b) {
         c()
     })
 };
+
+/**
+ * 发起一个 Ajax 请求
+ * @method ajax
+ * @param {Object} options ajax 请求的选项，详见 jQuery 的 Ajax 请求选项
+ * @return jQuery 的 Ajax 实例
+ * @member mini
+ */
 mini.ajax = function(a) {
     if (!a.dataType) {
         a.dataType = "text"

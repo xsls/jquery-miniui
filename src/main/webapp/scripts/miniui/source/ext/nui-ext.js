@@ -1,4 +1,5 @@
 (function(c) {
+    // 重写 mini.getClassByUICls() 方法，支持名称为 nui-* 的样式类
     c.getClassByUICls = function(e) {
         e = e.toLowerCase();
         var d = this.uiClasses[e];
@@ -8,6 +9,8 @@
         }
         return d
     };
+    
+    // 修改日期控件的默认格式
     c.DatePicker.prototype.valueFormat = "yyyy-MM-dd HH:mm:ss";
     c.ajax = function(e) {
         var d = e.url;
@@ -33,18 +36,51 @@
         }
         return window.jQuery.ajax(e)
     };
+    
+    /**
+     * 通用工具方法的命名空间，该命名空间下主要定义了如下方法：
+     * <ul>
+     * <li>contains(String str1, String str2)  检查字符串中是否包含另外一个字符串  </li>
+     * <li>endWidth(String str1, String str2)  查检字符串是否以另外一个字符串结尾  </li>
+     * <li>startWidth(String str1, String str2)  查检字符串是否以另外一个字符串开始</li>
+     * </ul>
+     * @member mini
+     * @property fn
+     * @static
+     */
     c.fn = {
-        contains : function(d, e) {
-            return ("," + d + ",").indexOf("," + e + ",") != -1
+        /**
+         * 检查字符串中是否包含另外一个字符串
+         * @param {String} str1 原字符串
+         * @param {String} str2 被包含的字符串
+         * @returns {Boolean} 如果包含，则返回 true， 否则返回 false
+         * @member mini.fn
+         */
+        contains : function(str1, str2) {
+            return ("," + str1 + ",").indexOf("," + str2 + ",") != -1
         },
-        endWidth : function(d, e) {
-            if (d.length < e.length) {
+        /**
+         * 查检字符串是否以另外一个字符串结尾
+         * @param {String} str1 原字符串
+         * @param {String} str2 结尾字符串
+         * @returns {Boolean} 如果是以指定字符串结尾，则返回 true， 否则返回 false
+         * @member mini.fn
+         */
+        endWidth : function(str1, str2) {
+            if (str1.length < str2.length) {
                 return false
             }
-            return d.substr(d.length - e.length) === e
+            return str1.substr(str1.length - str2.length) === str2
         },
-        startWidth : function(d, e) {
-            return d.substr(0, e.length) === e
+        /**
+         * 查检字符串是否以另外一个字符串开始
+         * @param {String} str1 原字符串
+         * @param {String} str2 开头字符串
+         * @returns {Boolean} 如果是以指定字符串开头，则返回 true， 否则返回 false
+         * @member mini.fn
+         */
+        startWidth : function(str1, str2) {
+            return str1.substr(0, str2.length) === str2
         }
     };
     var b = jQuery;
@@ -53,15 +89,25 @@
         loaded : {},
         timeSeed : true,
         path : "",
-        isAbsolutePath : function(d) {
-            return c.fn.startWidth(d, "http") || c.fn.startWidth(d, "/")
+        /**
+         * 判断指定传入的路径是否为绝对路径
+         * @param {String} path 要进行判断的路径
+         * @returns {Boolean} 如果传入的路径以 http 或 / 开头，则返回 true， 否则返回 false
+         */
+        isAbsolutePath : function(path) {
+            return c.fn.startWidth(path, "http") || c.fn.startWidth(path, "/")
         },
-        getJSPath : function(h) {
+        /**
+         * 获取 JS 文件所在目录对应的的路径
+         * @param {String} fileName JS 文件名称
+         * @returns {String} JS 文件所在目录对应的的路径，如果没有引入相应的 JS 文件，则返回一个空字符串
+         */
+        getJSPath : function(fileName) {
             var e = document.scripts;
             for (var g = 0, d = e.length; g < d; g++) {
                 var j = e[g].src;
                 j = j.split("?")[0];
-                var f = c.fn.endWidth(j, h);
+                var f = c.fn.endWidth(j, fileName);
                 if (f) {
                     return j.substr(0, j.lastIndexOf("/")) + "/"
                 }
@@ -177,40 +223,104 @@
             return f
         }
     };
+    
+    // nui.js 文件所在目录的路径
     a.path = a.getJSPath("nui.js");
+
+    /**
+     * JS、CSS 等资源模块化管理的命名空间，该命名空间下主要定义了如下方法：
+     * <ul>
+     * <li>hasLoaded(String module)  检查指定模块是否已经被加载                    </li>
+     * <li>add(String module, Object modConfig)  新增模块                          </li>
+     * <li>remove(String module)  移除模块                                         </li>
+     * <li>get(String module)  获取模块                                            </li>
+     * <li>load(String module)  加载模块的 JS、CSS 等资源文件，别名为 mini.loadRes </li>
+     * </ul>
+     * @member mini
+     * @property {Object} res
+     * @static
+     */
     c.res = {
-        hasLoaded : function(d) {
-            return a.loaded[d]
+        /**
+         * 检查指定模块是否已经被加载
+         * @param {String} module 模块名称
+         * @returns {Object} 如果已经加载过了，则返回对应的模块，否则返回 undefined
+         */
+        hasLoaded : function(module) {
+            return a.loaded[module]
         },
-        add : function(d, e) {
-            e = e || {};
-            e.js = e.js || [];
-            e.css = e.css || [];
-            e.order = e.order || false;
-            a.map[d] = e
+        /**
+         * 新增模块
+         * @param {String} module 模块名称
+         * @param {Object} modConfig 模块
+         * @param {String[]} modConfig.css CSS 文件路径
+         * @param {String[]} modConfig.js JS 文件路径
+         * @param {Boolean} modConfig.order 是否顺序加载
+         */
+        add : function(module, modConfig) {
+            modConfig = modConfig || {};
+            modConfig.js = modConfig.js || [];
+            modConfig.css = modConfig.css || [];
+            modConfig.order = modConfig.order || false;
+            a.map[module] = modConfig
         },
-        remove : function(d) {
-            delete a.map[d]
+        /**
+         * 移除模块
+         * @param ${String} module 模块名称
+         */
+        remove : function(module) {
+            delete a.map[module]
         },
-        get : function(d) {
-            return a.map[d]
+        /**
+         * 获取模块
+         * @param ${String} module 模块名称
+         * @returns {Object} 对应的模块
+         * @returns {String[]} return.css CSS 文件路径
+         * @returns {String[]} return.js JS 文件路径
+         * @returns {Boolean} return.order 是否顺序加载
+         */
+        get : function(module) {
+            return a.map[module]
         },
-        load : function(f, d) {
-            var e = this.get(f);
+        /**
+         * 加载模块的 JS、CSS 等资源文件
+         * @param {String} module 模块名称
+         * @param {Function} callback 加载完成后的回调函数
+         */
+        load : function(module, callback) {
+            var e = this.get(module);
             if (!e) {
-                d();
+                callback();
                 return
             }
             a.loadCSS(e.css);
-            a.loadJS(e.js, d, e.order)
+            a.loadJS(e.js, callback, e.order)
         }
     };
-    c.loadRes = function(e, d) {
-        c.res.load(e, d)
+    
+    /**
+     * 加载指定模块的 JS 和 CSS 资源文件。如果使用的是相对路径，其参数路径为 nui.js 文件所在的目录路径
+     * @method loadRes
+     * @param {String} module 模块名称
+     * @param {Function} callback 加载完成后的回调函数
+     * @member mini
+     * @static
+     * @alias mini.res.load
+     */
+    c.loadRes = function(module, callback) {
+        c.res.load(module, callback)
     };
+    
+    /* 定义 ckeditor 和 swfupload 模块 */
     c.res.add("ckeditor", {
         js : [ "resource/ckeditor/ckeditor.js" ]
     });
     c.res.add("swfupload", {});
+    
+    /**
+     * @class nui
+     * @singleton
+     * @alias mini
+     */
     window.nui = c
 })(mini);

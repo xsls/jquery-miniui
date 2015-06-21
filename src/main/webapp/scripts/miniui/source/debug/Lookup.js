@@ -1,3 +1,29 @@
+/**
+ * 下拉搜索选择框。
+ * 
+ *     @example
+ *     &lt;input id="lookup2" class="mini-lookup" style="width:200px;" textField="name" valueField="id" popupWidth="auto" popup="#gridPanel" grid="#datagrid1"/&gt;
+ *     
+ *     &lt;div id="gridPanel" class="mini-panel" title="header" iconCls="icon-add" style="width:450px;height:250px;" showToolbar="true" showCloseButton="true" showHeader="false" bodyStyle="padding:0" borderStyle="border:0" &gt;
+ *         &lt;div property="toolbar" style="padding:5px;padding-left:8px;text-align:center;"&gt;
+ *             &lt;span&gt;姓名：&lt;/span&gt;
+ *             &lt;input id="keyText" class="mini-textbox" style="width:160px;" onenter="onSearchClick"/&gt;
+ *             &lt;a class="mini-button" onclick="onSearchClick"&gt;Search&lt;/a&gt;
+ *         &lt;/div&gt;
+ *         &lt;div id="datagrid1" class="mini-datagrid" style="width:100%;height:100%;" borderStyle="border:0" showPageSize="false" showPageIndex="false" multiSelect="true" url="../data/AjaxService.aspx?method=SearchEmployees"&gt;
+ *             &lt;div property="columns"&gt;
+ *                 &lt;div type="checkcolumn" &gt;#&lt;/div&gt;
+ *                 &lt;div field="loginname" width="120" headerAlign="center" allowSort="true"&gt;员工帐号&lt;/div&gt;
+ *                 &lt;div field="name" width="120" headerAlign="center" allowSort="true"&gt;姓名&lt;/div&gt;
+ *                 &lt;div field="createtime" width="100" headerAlign="center" dateFormat="yyyy-MM-dd" allowSort="true"&gt;创建日期&lt;/div&gt;
+ *             &lt;/div&gt;
+ *         &lt;/div&gt;
+ *     &lt;/div&gt;
+ * 
+ * @class
+ * @extends mini.PopupEdit
+ * @constructor
+ */
 mini.Lookup = function() {
     this.data = [];
     mini.Lookup.superclass.constructor.call(this);
@@ -28,6 +54,13 @@ mini.extend(mini.Lookup, mini.PopupEdit, {
             this.grid.setMultiSelect(a)
         }
     },
+    /**
+     * 
+     * function setGrid(grid)
+     * @member mini.Lookup
+     * @param {String} grid
+     *
+     */
     setGrid : function(a) {
         if (typeof a == "string") {
             mini.parse(a);
@@ -42,21 +75,62 @@ mini.extend(mini.Lookup, mini.PopupEdit, {
             this.grid.on("checkall", this.__OnGridRowClickChanged, this)
         }
     },
+    /**
+     * 
+     * function getGrid()
+     * @member mini.Lookup
+     * @returns {String}
+     *
+     */
     getGrid : function() {
         return this.grid
     },
+    /**
+     * 
+     * function setValueField(valueField)
+     * @member mini.Lookup
+     * @param {String} valueField
+     *
+     */
     setValueField : function(a) {
         this.valueField = a
     },
+    /**
+     * 
+     * function getValueField()
+     * @member mini.Lookup
+     * @returns {String}
+     *
+     */
     getValueField : function() {
         return this.valueField
     },
+    /**
+     * 
+     * function setTextField(textField)
+     * @member mini.Lookup
+     * @param {String} textField
+     *
+     */
     setTextField : function(a) {
         this.textField = a
     },
+    /**
+     * 
+     * function getTextField()
+     * @member mini.Lookup
+     * @returns {String}
+     *
+     */
     getTextField : function() {
         return this.textField
     },
+    /**
+     * 清除所有选中<br/>
+     * function deselectAll()
+     * @member mini.Lookup
+     *
+     */
     deselectAll : function() {
         this.data = [];
         this.setValue("");
@@ -115,6 +189,13 @@ mini.extend(mini.Lookup, mini.PopupEdit, {
         }
         return f
     },
+    /**
+     * 设置值<br/>
+     * function setValue(value)
+     * @member mini.Lookup
+     * @param  value
+     *
+     */
     setValue : function(a) {
         mini.Lookup.superclass.setValue.call(this, a);
         this._createData()

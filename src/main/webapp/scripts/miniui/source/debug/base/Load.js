@@ -1,6 +1,11 @@
+/**
+ * @property {String} [rootpath="/"]  应用系统的上下文路径
+ * @member Window
+ */
 if (typeof window.rootpath == "undefined") {
     rootpath = "/"
 }
+
 mini.loadJS = function(a, b) {
     if (!a) {
         return
@@ -80,6 +85,8 @@ mini.loadJS._sync = function(c) {
     a.appendChild(b);
     return b
 };
+
+
 mini.loadText = function(a) {
     var g = "";
     var c = document.all && location.protocol == "file:";
@@ -116,11 +123,15 @@ mini.loadText = function(a) {
     }
     return g
 };
+
+
 mini.loadJSON = function(url) {
     var text = loadText(url);
     var o = eval("(" + text + ")");
     return o
 };
+
+
 mini.loadCSS = function(c, d) {
     if (!c) {
         return
@@ -140,6 +151,8 @@ mini.loadCSS = function(c, d) {
     return b
 };
 mini.loadCSS._css = {};
+
+
 mini.innerHTML = function(b, a) {
     if (typeof b == "string") {
         b = document.getElementById(b)
@@ -152,6 +165,8 @@ mini.innerHTML = function(b, a) {
     mini.__executeScripts(b);
     var c = b.firstChild
 };
+
+
 mini.__executeScripts = function(h) {
     var a = h.getElementsByTagName("script");
     for (var c = 0, b = a.length; c < b; c++) {

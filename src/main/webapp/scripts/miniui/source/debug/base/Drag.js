@@ -1,14 +1,29 @@
-mini.Drag = function(a) {
-    mini.copyTo(this, a)
+/**
+ * 拖拽对象的定义
+ * @class
+ * 
+ * @constructor 创建一个拖拽对象的实例
+ * @param {Object} source 源对象
+ */
+mini.Drag = function(source) {
+    mini.copyTo(this, source)
 };
+
 mini.Drag.prototype = {
     onStart : mini.emptyFn,
+    
     onMove : mini.emptyFn,
+    
     onStop : mini.emptyFn,
+    
     capture : false,
+    
     fps : 20,
+    
     event : null,
+    
     delay : 80,
+    
     start : function(b) {
         b.preventDefault();
         if (b) {
@@ -38,6 +53,7 @@ mini.Drag.prototype = {
         this.started = false;
         this.startTime = new Date()
     },
+    
     contextmenu : function(a) {
         if (this.context) {
             mini.un(this.context, "contextmenu", this.contextmenu, this)
@@ -46,6 +62,7 @@ mini.Drag.prototype = {
         a.preventDefault();
         a.stopPropagation()
     },
+    
     move : function(b) {
         if (this.delay) {
             if (new Date() - this.startTime < this.delay) {
@@ -66,6 +83,7 @@ mini.Drag.prototype = {
             }, 5)
         }
     },
+    
     stop : function(c) {
         this.now = [ c.pageX, c.pageY ];
         this.event = c;

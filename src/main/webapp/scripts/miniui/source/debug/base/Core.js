@@ -1,16 +1,64 @@
+/*
+ * 使用 jsDuck 工具生成帮助文档：
+ * jsduck /D/myeclipse_workspace/jquery-miniui/src/main/webapp/scripts/miniui/source/debug --output /C/Users/Administrator/Desktop/out --external=jQuery,Document
+ */
+
+/**
+ * MiniUI 的全局变量。别名为 nui
+ * @class
+ * @singleton
+ */
 mini = {
+    /**
+     * 所有组件
+     * @property {Object} [components={}] 
+     * @protected
+     */
     components : {},
+    /**
+     * 所有组件实例的 uid 与组件实例映射关系
+     * @property {Object} [uids={}]
+     * @protected
+     */
     uids : {},
+    /**
+     * 所有用户自定义控件
+     * @property {Object} [ux={}]
+     * @protected
+     */
     ux : {},
+    /**
+     * Document 对象
+     * @property {Document} [doc=document]
+     */
     doc : document,
+    /**
+     * Window 对象
+     * @property {Window} [window=window]
+     */
     window : window,
+    /**
+     * 是否已就绪
+     * @property {Boolean} [isReady=false]
+     * @readonly
+     */
     isReady : false,
-    byClass : function(a, b) {
-        if (typeof b == "string") {
-            b = mini.byId(b)
+    /**
+     * 根据样式类获取对应的 DOM 节点
+     * @param {String} className 样式类名称
+     * @param {String/HTMLElement/jQuery} [parent] 父节点的 ID，值为 MiniUI 控件的 ID
+     * @return {HTMLElement} 符合条件的第一个 DOM 节点
+     */
+    byClass : function(className, parent) {
+        if (typeof parent == "string") {
+            parent = mini.byId(parent)
         }
-        return jQuery("." + a, b)[0]
+        return jQuery("." + className, parent)[0]
     },
+    /**
+     * 获取所有控件实例
+     * @return {mini.Control[]} 所有控件
+     */
     getComponents : function() {
         var a = [];
         for ( var d in mini.components) {
@@ -21,41 +69,73 @@ mini = {
         }
         return a
     },
-    get : function(b) {
-        if (!b) {
+
+    /**
+     * 根据 id 获取 MiniUI 组件实例，寻找规则：
+     * <ol>
+     * <li>如果传入的 id 为空或 `undefined`，则返回 null</li>
+     * <li>如果传入的 id mini.Control 实例对象，则直接返回传入的控件实例</li>
+     * <li>如果传入的 id 是一个字符串，则根据 ID 寻找对应的组件</li>
+     * <li>如果传入的 id 是一个 DOM 树的 Element 节点，则根据该节点的 uid 属性寻找对应的组件</li>
+     * <li>其他情况返回 null</li>
+     * </ol>
+     * @param {String/mini.Control/HTMLElement} sel 选择器
+     * @return {mini.Component} 对应的 MiniUI 组件实例，如果没有找到，则返回 null
+     */
+    get : function(id) {
+        // 如果传入的参数为空，则返回 null
+        if (!id) {
             return null
         }
-        if (mini.isControl(b)) {
-            return b
+        
+        // 如果传入的对象是 MiniUI 的控件，则直接返回传入的控件实例
+        if (mini.isControl(id)) {
+            return id
         }
-        if (typeof b == "string") {
-            if (b.charAt(0) == "#") {
-                b = b.substr(1)
+        
+        // 如果传入的是一个字符串，则根据 ID 寻找对应的组件
+        if (typeof id == "string") {
+            if (id.charAt(0) == "#") {
+                id = id.substr(1)
             }
         }
-        if (typeof b == "string") {
-            return mini.components[b]
-        } else {
-            var a = mini.uids[b.uid];
-            if (a && a.el == b) {
+        
+        if (typeof id == "string") {
+            return mini.components[id]
+        } else { // 根据传入参数的 uid 属性寻找对应的控件
+            var a = mini.uids[id.uid];
+            if (a && a.el == id) {
                 return a
             }
         }
         return null
     },
-    getbyUID : function(a) {
-        return mini.uids[a]
+    /**
+     * 根据 uid 获取控件实例
+     * @param {String} uid 组件的 UID 属性值
+     * @returns {mini.Component} 对应的控件实例，如果没有找到，则返回 `undefined`
+     */
+    getbyUID : function(uid) {
+        return mini.uids[uid]
     },
-    findControls : function(e, d) {
-        if (!e) {
+    /**
+     * 查找符合条件的控件
+     * @param {Function} filter 判断传入的组件是否符合要求的函数，该函数拥有一个参数：mini.Component，返回值类型为 `Boolean`。<br>
+     *      如果 `filter` 的值为 `null` 或 `undefined`，将直接返回一个长度为 0 的空数组。<br>
+     *      如果需要获取所有的 MiniUI 控件，可以调用 {@link mini#getComponents} 方法
+     * @param {Object} [context=mini] 调用 filter 函数时的上下文，即 `filter` 函数方法体中 `this` 指向的对象
+     * @returns {mini.Component[]} 所有符合条件的控件数组，如果没有任何符合条件的控件，将返回一个长度为 0 的空数组
+     */
+    findControls : function(filter, context) {
+        if (!filter) {
             return []
         }
-        d = d || mini;
+        context = context || mini;
         var a = [];
         var f = mini.uids;
         for ( var c in f) {
             var g = f[c];
-            var b = e.call(d, g);
+            var b = filter.call(context, g);
             if (b === true || b === 1) {
                 a.push(g);
                 if (b === 1) {
@@ -65,10 +145,15 @@ mini = {
         }
         return a
     },
-    getChildControls : function(b) {
-        var c = b.el ? b.el : b;
+    /**
+     * 获取父控件下的所有子控件
+     * @param {mini.Control/HTMLElement} parent 父控件
+     * @return {mini.Control[]} 所有子控件
+     */
+    getChildControls : function(parent) {
+        var c = parent.el ? parent.el : parent;
         var a = mini.findControls(function(d) {
-            if (!d.el || b == d) {
+            if (!d.el || parent == d) {
                 return false
             }
             if (mini.isAncestor(c, d.el) && d.within) {
@@ -78,16 +163,26 @@ mini = {
         });
         return a
     },
+    /**
+     * 空方法
+     */
     emptyFn : function() {
     },
-    createNameControls : function(h, g) {
-        if (!h || !h.el) {
+    /**
+     * 将父控件下的所有子控件与其进行关联。<br>
+     * 将前缀（_）加子控件的名称作为父控件的属性名，子控件实例作为对应的属性值，关联后可以通过 `control._childName` 取到对应的子控件
+     * @param {mini.Control} control 父控件
+     * @param {String} [prefix="_"] 前缀
+     * @returns 关联了子控件后的父控件
+     */
+    createNameControls : function(control, prefix) {
+        if (!control || !control.el) {
             return
         }
-        if (!g) {
-            g = "_"
+        if (!prefix) {
+            prefix = "_"
         }
-        var f = h.el;
+        var f = control.el;
         var b = mini.findControls(function(c) {
             if (!c.el || !c.name) {
                 return false
@@ -99,50 +194,70 @@ mini = {
         });
         for (var e = 0, a = b.length; e < a; e++) {
             var j = b[e];
-            var d = g + j.name;
-            if (g === true) {
+            var d = prefix + j.name;
+            if (prefix === true) {
                 d = j.name[0].toUpperCase()
                         + j.name.substring(1, j.name.length)
             }
-            h[d] = j
+            control[d] = j
         }
     },
-    getsbyName : function(d, a) {
-        var b = mini.isControl(a);
-        var e = a;
-        if (a && b) {
-            a = a.el
+
+    /**
+     * 根据控件名称获取多个 MiniUI 控件
+     * @param {String} name 控件名称
+     * @param {String/mini.Control/HTMLElement} [parent=document.body] 父控件，用于限定获取控件的范围。<br>
+     *      如果传入的值是一个字符串，则为父节点的 ID。
+     * @return {mini.Control[]} 对应的 MiniUI 控件数组，如果没有任何符合条件的控件，将返回一个长度为 0 的空数组
+     */
+    getsbyName : function(name, parent) {
+        var b = mini.isControl(parent);
+        var e = parent;
+        if (parent && b) {
+            parent = parent.el
         }
-        a = mini.byId(a);
-        a = a || document.body;
+        parent = mini.byId(parent);
+        parent = parent || document.body;
         var c = mini.findControls(function(g) {
             if (!g.el) {
                 return false
             }
-            if (g.name == d && mini.isAncestor(a, g.el)) {
+            if (g.name == name && mini.isAncestor(parent, g.el)) {
                 return true
             }
             return false
         }, this);
         if (b && c.length == 0 && e && e.getbyName) {
-            var f = e.getbyName(d);
+            var f = e.getbyName(name);
             if (f) {
                 c.push(f)
             }
         }
         return c
     },
-    getbyName : function(b, a) {
-        return mini.getsbyName(b, a)[0]
+    /**
+     * 根据控件名称获取单个 MiniUI 控件
+     * @param {String} name 控件名称
+     * @param {String/mini.Control/HTMLElement} [parent=document.body] 父控件，用于限定获取控件的范围。<br>
+     *      如果传入的值是一个字符串，则为父节点的 ID。
+     * @returns {mini.Control} 对应的 MiniUI 控件
+     */
+    getbyName : function(name, parent) {
+        return mini.getsbyName(name, parent)[0]
     },
-    getParams : function(b) {
-        if (!b) {
-            b = location.href
+    /**
+     * 获取 URL 中的所有参数
+     * @param {String} [url=location.href] 要解析的 URL
+     * @return {Object} 包含所有参数名称和参数值的 Object
+     */
+    getParams : function(url) {
+        if (!url) {
+            url = location.href
         }
-        b = b.split("?")[1];
+        url = url.split("?")[1];
         var g = {};
-        if (b) {
-            var e = b.split("&");
+        if (url) {
+            var e = url.split("&");
             for (var d = 0, a = e.length; d < a; d++) {
                 var f = e[d].split("=");
                 try {
@@ -153,38 +268,92 @@ mini = {
         }
         return g
     },
-    reg : function(a) {
-        this.components[a.id] = a;
-        this.uids[a.uid] = a
+    /**
+     * 注册一个 MiniUI 组件
+     * @param {mini.Component} comp 需要注册的 MiniUI 组件
+     */
+    reg : function(comp) {
+        this.components[comp.id] = comp;
+        this.uids[comp.uid] = comp
     },
-    unreg : function(a) {
-        delete mini.components[a.id];
-        delete mini.uids[a.uid]
+    /**
+     * 注销一个 MiniUI 组件
+     * @param comp {mini.Component} 需要注销的 MiniUI 组件
+     */
+    unreg : function(comp) {
+        delete mini.components[comp.id];
+        delete mini.uids[comp.uid]
     },
+    /**
+     * 组件类名称与 MiniUI 控件定义的对应关系
+     * @property {Object} [classes={}] 
+     * @protected
+     */
     classes : {},
+    /**
+     * uiClass 与 MiniUI 控件定义的对应关系
+     * @property {Object} [uiClasses={}] 
+     * @protected
+     */
     uiClasses : {},
-    getClass : function(a) {
-        if (!a) {
+    /**
+     * 根据组件类名称获取对应的 MiniUI 组件定义
+     * @param {String} className 组件类名称（全小写，不带前缀 mini-）
+     * @return {Function} 对应的 MiniUI 控件定义
+     */
+    getClass : function(className) {
+        if (!className) {
             return null
         }
-        return this.classes[a.toLowerCase()]
+        return this.classes[className.toLowerCase()]
     },
+    /**
+     * 根据 uiClass 获取对应的 MiniUI 组件定义
+     * @param uiCls {String} uiClass，一般前缀（mini-）加上样式类名称，如： mini-button
+     * @return {Function} 对应的 MiniUI 组件定义
+     */
     getClassByUICls : function(a) {
         return this.uiClasses[a.toLowerCase()]
     },
+    /**
+     * MiniUI 控件 ID 的前缀
+     * @property {String} [idPre="mini-"] 
+     */
     idPre : "mini-",
+    /**
+     * 全局的 ID 索引
+     * @property {Number} [idIndex=1] 
+     * @readonly
+     */
     idIndex : 1,
-    newId : function(a) {
-        return (a || this.idPre) + this.idIndex++
+    /**
+     * 生成一个新的控件 ID
+     * @param idPrefix {String} ID 前缀
+     * @return {String} 新生成的控件 ID
+     */
+    newId : function(idPrefix) {
+        return (idPrefix || this.idPre) + this.idIndex++
     },
-    copyTo : function(c, b) {
-        if (c && b) {
-            for ( var a in b) {
-                c[a] = b[a]
+    /**
+     * 对象浅复制，将 `source` 中的所有属性都复制给 `dest`。
+     * @param {Object} dest 目标对象
+     * @param {Object} source 源对象
+     * @return {Object} `dest` 对象
+     */
+    copyTo : function(dest, source) {
+        if (dest && source) {
+            for ( var a in source) {
+                dest[a] = source[a]
             }
         }
-        return c
+        return dest
     },
+    /**
+     * 对象浅复制，将 `source` 中所有在 `dest` 中为 `null` 或 `undefined` 的属性都复制给 `dest`。
+     * @param {Object} dest 目标对象
+     * @param {Object} source 源对象
+     * @return {Object} `dest` 对象
+     */
     copyIf : function(c, b) {
         if (c && b) {
             for ( var a in b) {
@@ -195,115 +364,223 @@ mini = {
         }
         return c
     },
-    createDelegate : function(b, a) {
-        if (!b) {
+    /**
+     * 委托执行指定的函数，即改变方法体内 `this` 的指向
+     * @param {Function} fn 需要进行委托调用的函数
+     * @param {Object} target 委托的目标对象，即委托函数方法体中 `this` 所指向的对象
+     */
+    createDelegate : function(fn, target) {
+        if (!fn) {
             return function() {
             }
         }
         return function() {
-            return b.apply(a, arguments)
+            return fn.apply(target, arguments)
         }
     },
-    isControl : function(a) {
-        return !!(a && a.isControl)
+    /**
+     * 判断传入的对象是否为 MiniUI 的控件
+     * @param {Object} obj 要进行检测的对象
+     * @return {Boolean} 如果传入的对象是 MiniUI 的控件，则返回 `true`， 否则返回 `false`
+     */
+    isControl : function(obj) {
+        return !!(obj && obj.isControl)
     },
+    /**
+     * 判断传入的对象是否为 DOM 树的 Element 节点
+     * @param {Object} obj 要进行检测的对象
+     * @return {Boolean} 如果传入的对象是 DOM 树的 HTMLElement 节点，则返回 `true`， 否则返回 `false`
+     */
     isElement : function(a) {
         return a && a.appendChild
     },
-    isDate : function(a) {
-        return !!(a && a.getFullYear)
+    /**
+     * 判断传入的对象是否为日期
+     * @param {Object} obj 要进行检测的对象
+     * @return {Boolean} 如果传入的对象是日期，则返回 `true`， 否则返回 `false`
+     */
+    isDate : function(obj) {
+        return !!(obj && obj.getFullYear)
     },
-    isArray : function(a) {
-        return !!(a && !!a.unshift)
+    /**
+     * 判断传入的对象是否为数组
+     * @param {Object} obj 要进行检测的对象
+     * @return {Boolean} 如果传入的对象是数组，则返回 `true`， 否则返回 `false`
+     */
+    isArray : function(obj) {
+        return !!(obj && !!obj.unshift)
     },
-    isNull : function(a) {
-        return a === null || a === undefined
+    /**
+     * 判断传入的对象是否为空对象
+     * @param {Object} obj 要进行检测的对象
+     * @return {Boolean} 如果传入的对象是空对象（`null` 或 `undefined`），则返回 `true`， 否则返回 `false`
+     */
+    isNull : function(obj) {
+        return obj === null || obj === undefined
     },
-    isNumber : function(a) {
-        return !isNaN(a) && typeof a == "number"
+    /**
+     * 判断传入的对象是否为数字
+     * @param {Object} obj 要进行检测的对象
+     * @return {Boolean} 如果传入的对象是数字，则返回 `true`， 否则返回 `false`
+     */
+    isNumber : function(obj) {
+        return !isNaN(obj) && typeof obj == "number"
     },
-    isEquals : function(d, c) {
-        if (d !== 0 && c !== 0) {
-            if ((mini.isNull(d) || d == "") && (mini.isNull(c) || c == "")) {
+    /**
+     * 判断两个对象的值是否相等，判断是否相等的规则：
+     * <ul>
+     * <li>`null`、`undefined` 和空字符串被认为相等</li>
+     * <li>两个日期的时间毫秒数相等时，被认为相等</li>
+     * <li>两个对象指向同一个引用，被认为相等</li>
+     * <li>两个对象转为字符串（`toString()`）时，转换后的字符串相等时，被认为相等</li>
+     * </ul>
+     * @param {Object} obj1 要进行比较的第一个对象
+     * @param {Object} obj2 要进行比较的第二个对象
+     * @return {Boolean} 如果传入的两个对象的值相等，，则返回 `true`， 否则返回 `false`
+     */
+    isEquals : function(obj1, obj2) {
+        if (obj1 !== 0 && obj2 !== 0) {
+            if ((mini.isNull(obj1) || obj1 == "") && (mini.isNull(obj2) || obj2 == "")) {
                 return true
             }
         }
-        if (d && c && d.getFullYear && c.getFullYear) {
-            return d.getTime() === c.getTime()
+        if (obj1 && obj2 && obj1.getFullYear && obj2.getFullYear) {
+            return obj1.getTime() === obj2.getTime()
         }
-        if (typeof d == "object" && typeof c == "object") {
-            return d === c
+        if (typeof obj1 == "object" && typeof obj2 == "object") {
+            return obj1 === obj2
         }
-        return String(d) === String(c)
+        return String(obj1) === String(obj2)
     },
-    forEach : function(g, f, c) {
-        var d = g.clone();
+    /**
+     * 对数组进行遍历。<br>
+     * 回调函数拥有两个参数：第一个为数组中对应的项，第二个为数组的索引（从 0 开始）。如果需要退出 `forEach` 循环可使回调函数返回 `false`，其它返回值将被忽略。
+     * @param {Array} items 需要例遍的数组
+     * @param {Function} callback 每个元素执行的回调函数
+     * @param {Object} scope 回调函数的上下文，即回调函数方法体中 `this` 所指向的对象
+     */
+    forEach : function(items, callback, scope) {
+        var d = items.clone();
         for (var b = 0, a = d.length; b < a; b++) {
             var e = d[b];
-            if (f.call(c, e, b, g) === false) {
+            if (callback.call(scope, e, b, items) === false) {
                 break
             }
         }
     },
-    sort : function(c, b, a) {
-        a = a || c;
-        c.sort(b)
+    /**
+     * 对数组进行排序
+     * @param {Array} array 要进行排序的数组
+     * @param {Function} fn 用来确定元素顺序的函数，该函数拥有两个参数，该函数必须返回下列值之一：
+     *  <ul>
+     *      <li><b>负数</b> &#45; 如果所传递的第一个参数比第二个参数小</li>
+     *      <li><b>0</b> &#45; 如果两个参数相等</li>
+     *      <li><b>正数</b> &#45; 如果第一个参数比第二个参数大</li>
+     *  </ul>
+     * @param a
+     */
+    sort : function(array, fn, a) {
+        a = a || array;
+        array.sort(fn)
     },
-    removeNode : function(a) {
-        jQuery(a).remove()
+    /**
+     * 从DOM中删除所有匹配的元素
+     * @param {String/HTMLElement/jQuery} selector jQuery 选择器
+     * @return {jQuery} 匹配元素对应的 jQuery 实例
+     */
+    removeNode : function(selector) {
+        jQuery(selector).remove()
     },
+    /**
+     * 包装控件的外层 HTMLElement 节点
+     * @property {HTMLElement} [elWarp=DIV] 
+     */
     elWarp : document.createElement("div")
 };
+
+//MiniUI 调试模式
 if (typeof mini_debugger == "undefined") {
     mini_debugger = true
 }
 if (typeof mini_useShims == "undefined") {
     mini_useShims = false
 }
-mini_regClass = function(a, b) {
-    b = b.toLowerCase();
-    if (!mini.classes[b]) {
-        mini.classes[b] = a;
-        a.prototype.type = b
+
+/**
+ * 注册 miniUI 控件类
+ * @param clazz 类定义。如： `mini.Button`
+ * @param type 样式类。如： `button`
+ * @member Window
+ */
+mini_regClass = function(clazz, type) {
+    type = type.toLowerCase();
+    if (!mini.classes[type]) {
+        mini.classes[type] = clazz;
+        clazz.prototype.type = type
     }
-    var c = a.prototype.uiCls;
-    if (!mini.isNull(c) && !mini.uiClasses[c]) {
-        mini.uiClasses[c] = a
+    var uiCls = clazz.prototype.uiCls;
+    if (!mini.isNull(uiCls) && !mini.uiClasses[uiCls]) {
+        mini.uiClasses[uiCls] = clazz
     }
 };
-mini_extend = function(e, b, f) {
-    if (typeof b != "function") {
+
+/**
+ * 属性和方法继承
+ * @param clazz 子类，如：`mini.Button`
+ * @param parent 父类，如：`mini.Control`
+ * @param proto 要追加到子类的 prototype 上的其他属性对象
+ * @returns 设置了继承关系后的子类
+ */
+mini_extend = function(clazz, parent, proto) {
+    if (typeof parent != "function") {
         return this
     }
-    var g = e, d = g.prototype, a = b.prototype;
+    var g = clazz, d = g.prototype, a = parent.prototype;
     if (g.superclass == a) {
         return
     }
     g.superclass = a;
-    g.superclass.constructor = b;
+    g.superclass.constructor = parent;
     for ( var c in a) {
         d[c] = a[c]
     }
-    if (f) {
-        for ( var c in f) {
-            d[c] = f[c]
+    if (proto) {
+        for ( var c in proto) {
+            d[c] = proto[c]
         }
     }
     return g
 };
+
 mini.copyTo(mini, {
+    /**
+     * @method extend
+     * @member mini
+     * @alias Window.mini_extend
+     */
     extend : mini_extend,
+    /**
+     * @method regClass
+     * @member mini
+     * @alias Window.mini_regClass
+     */
     regClass : mini_regClass,
     debug : false
 });
-mini.namespace = function(f) {
-    if (typeof f != "string") {
+
+/**
+ * @method namespace 声明一个命名空间
+ * @param {String} ns 命名空间的名称，如：my.ns.hello
+ * @member mini
+ */
+mini.namespace = function(ns) {
+    if (typeof ns != "string") {
         return
     }
-    f = f.split(".");
+    ns = ns.split(".");
     var d = window;
-    for (var c = 0, a = f.length; c < a; c++) {
-        var b = f[c];
+    for (var c = 0, a = ns.length; c < a; c++) {
+        var b = ns[c];
         var e = d[b];
         if (!e) {
             e = d[b] = {}
@@ -311,6 +588,7 @@ mini.namespace = function(f) {
         d = e
     }
 };
+
 mini._BindCallbacks = [];
 mini._BindEvents = function(b, a) {
     mini._BindCallbacks.push([ b, a ]);
@@ -328,6 +606,7 @@ mini._FireBindEvents = function() {
     mini._BindCallbacks = [];
     mini._EventTimer = null
 };
+
 mini._getFunctoin = function(f) {
     if (typeof f != "string") {
         return null
@@ -454,8 +733,26 @@ mini.create = function(a) {
     c.set(a);
     return c
 };
+
+
+/**
+ * MiniUI 组件定义，所有的 MiniUI 控件都是 Component 的子类
+ * @class mini.Component
+ * @abstract
+ *
+ * @constructor 构造方法
+ */
 mini.Component = function() {
+    /**
+     * 绑定的事件
+     * @property {Object}
+     * @private
+     */
     this._events = {};
+    /**
+     * UID，内置的组件唯一标识
+     * @property {String}
+     */
     this.uid = mini.newId(this._idPre);
     this._id = this.uid;
     if (!this.id) {
@@ -464,32 +761,76 @@ mini.Component = function() {
     mini.reg(this)
 };
 mini.Component.prototype = {
+    /**
+     * 当前组件是否为 mini.Control 的实例
+     * @property {Boolean} [isControl=true]
+     * @readonly
+     */
     isControl : true,
+    /**
+     * @cfg {String} 控件唯一标识符。<br>
+     * <b>重要提示：</b>每个组件实例只允许调用一次 {@link #setId} 方法，再次调用时会抛出异常
+     * @accessor
+     */
     id : null,
+    /**
+     * 生成的 UID 前缀
+     * @property {String} [_idPre="mini-"] 
+     * @private
+     */
     _idPre : "mini-",
+    /**
+     * 是否已经调用过 {@link #setId} 方法设置过 ID 了
+     * @property {Boolean} [_idSet=false] 
+     * @private
+     */
     _idSet : false,
+    /**
+     * 是否可以通过调用 fire 方法触发指定事件
+     * @property {Boolean} [_canFire=true] 
+     * @private
+     */
     _canFire : true,
-    set : function(e) {
-        if (typeof e == "string") {
+
+    /**
+     * 批量设置组件的属性和事件
+     * 
+     *     @example
+     *     control.set({
+     *         visible: false,
+     *         width: 200,
+     *         onclick: functoin(e){
+     *         }
+     *     });
+     *     
+     * @param {Object} options 需要设置的属性对象 
+     * @param {String/HTMLElement} options.render 需要追加到哪个 DOM 节点中， 与 `renderTo` 等价
+     * @param {Function} options.onxxx 需要绑定的事件，对应的事件类型为 `xxx` 对应的真实值
+     * @param {Object} options.yyy 如果存在对应的 `set` 方法，则调用其 `set` 方法，反之则直接为对象设置属性（`this[<i>yyy</i>] = value`）
+     * @returns {mini.Component} this
+     * @chainable
+     */
+    set : function(options) {
+        if (typeof options == "string") {
             return this
         }
         var d = this._allowLayout;
         this._allowLayout = false;
-        var f = e.renderTo || e.render;
-        delete e.renderTo;
-        delete e.render;
-        for ( var b in e) {
+        var f = options.renderTo || options.render;
+        delete options.renderTo;
+        delete options.render;
+        for ( var b in options) { // 绑定事件
             if (b.toLowerCase().indexOf("on") == 0) {
                 if (this["_$" + b]) {
                     continue
                 }
-                var c = e[b];
+                var c = options[b];
                 this.on(b.substring(2, b.length).toLowerCase(), c);
-                delete e[b]
+                delete options[b]
             }
         }
-        for ( var b in e) {
-            var a = e[b];
+        for ( var b in options) { // 设置属性
+            var a = options[b];
             var h = "set" + b.charAt(0).toUpperCase()
                     + b.substring(1, b.length);
             var g = this[h];
@@ -499,39 +840,58 @@ mini.Component.prototype = {
                 this[b] = a
             }
         }
-        if (f && this.render) {
+        if (f && this.render) { // 添加到 DOM 树
             this.render(f)
         }
         this._allowLayout = d;
-        if (this.doLayout) {
+        if (this.doLayout) { // 设置布局
             this.doLayout()
         }
         return this
     },
-    fire : function(d, e) {
+    /**
+     * 触发指定类型的事件
+     * @param {String} type 事件类型，如：click 
+     * @param {Event} [evt] 原始事件
+     * @member mini.Component
+     */
+    fire : function(type, evt) {
         if (this._canFire == false) {
             return
         }
-        d = d.toLowerCase();
-        var b = this._events[d];
+        type = type.toLowerCase();
+        var b = this._events[type];
         if (b) {
-            if (!e) {
-                e = {}
+            if (!evt) {
+                evt = {}
             }
-            if (e && e != this) {
-                e.source = e.sender = this;
-                if (!e.type) {
-                    e.type = d
+            if (evt && evt != this) {
+                evt.source = evt.sender = this;
+                if (!evt.type) {
+                    evt.type = type
                 }
             }
             for (var c = 0, a = b.length; c < a; c++) {
                 var f = b[c];
                 if (f) {
-                    f[0].apply(f[1], [ e ])
+                    f[0].apply(f[1], [ evt ])
                 }
             }
         }
     },
+    /**
+     * 监听事件。 例如：
+     *     @example
+     *     control.on("click", function(e){
+     *         //...
+     *     });
+     * @param {String} type 事件类型，比如”click”
+     * @param {Function} fn 事件处理函数
+     * @param {Object} [scope] 事件处理函数的作用域对象
+     * @return {mini.Component} this
+     * @chainable
+     * @member mini.Component
+     */
     on : function(type, fn, scope) {
         if (typeof fn == "string") {
             var f = mini._getFunctoin(fn);
@@ -559,29 +919,46 @@ mini.Component.prototype = {
         }
         return this
     },
-    un : function(c, b, a) {
-        if (typeof b != "function") {
+    /**
+     * 取消监听事件
+     * @param {String} type 事件类型，比如”click”
+     * @param {Function} fn 事件处理函数
+     * @param {Object} [scope] 事件处理函数的作用域对象
+     * @return {mini.Component} this
+     * @chainable
+     * @member mini.Component
+     */
+    un : function(type, fn, scope) {
+        if (typeof fn != "function") {
             return false
         }
-        c = c.toLowerCase();
-        var d = this._events[c];
+        type = type.toLowerCase();
+        var d = this._events[type];
         if (d) {
-            a = a || this;
-            var e = this.findListener(c, b, a);
+            scope = scope || this;
+            var e = this.findListener(type, fn, scope);
             if (e) {
                 d.remove(e)
             }
         }
         return this
     },
-    findListener : function(f, e, d) {
-        f = f.toLowerCase();
-        d = d || this;
-        var b = this._events[f];
+    /**
+     * 查找事件监听器
+     * @param {String} type 事件类型，比如”click”
+     * @param {Function} fn 事件处理函数
+     * @param {Object} [scope] 事件处理函数的作用域对象
+     * @returns {Array} 对应的事件处理句柄。是一个长度为 2 的数组：第1个元素为事件的处理方法，第2个元素为 scope 对象
+     * @member mini.Component
+     */
+    findListener : function(type, fn, scope) {
+        type = type.toLowerCase();
+        scope = scope || this;
+        var b = this._events[type];
         if (b) {
             for (var c = 0, a = b.length; c < a; c++) {
                 var g = b[c];
-                if (g[0] === e && g[1] === d) {
+                if (g[0] === fn && g[1] === scope) {
                     return g
                 }
             }
@@ -594,7 +971,7 @@ mini.Component.prototype = {
         if (this._idSet) {
             throw new Error("id just set only one")
         }
-        mini.unreg(this);
+        mini.unreg(this); // 先注销原组件
         this.id = a;
         if (this.el) {
             this.el.id = a
@@ -606,36 +983,89 @@ mini.Component.prototype = {
             this._textEl.id = a + "$text"
         }
         this._idSet = true;
-        mini.reg(this)
+        mini.reg(this) // 重新注册组件
     },
     getId : function() {
         return this.id
     },
+    /**
+     * 销毁组件
+     * @member mini.Component
+     * @fires destroy
+     */
     destroy : function() {
-        mini.unreg(this);
-        this.fire("destroy")
+        mini.unreg(this); // 注销组件
+        this.fire("destroy") // 触发 destroy 事件
     }
 };
+
+
+/**
+ * 控件基类。<br>
+ * 是表单、表格、树形、布局、菜单等所有控件的基类。<br>
+ * 提供宽度、高度、样式外观、显示、启用。<br>
+ * <b>它本身无法被实例化。</b>
+ * @class mini.Control
+ * @extends mini.Component
+ * @abstract
+ *
+ * @constructor 构造方法
+ */
 mini.Control = function() {
     mini.Control.superclass.constructor.call(this);
-    this._create();
-    this.el.uid = this.uid;
-    this._initEvents();
-    if (this._clearBorder) {
+    this._create(); // 创建 DOM 节点
+    this.el.uid = this.uid; // 设置 uid
+    this._initEvents(); // 初始化事件绑定
+    if (this._clearBorder) { // 不显示边框
         this.el.style.borderWidth = "0"
     }
-    this.addCls(this.uiCls);
-    this.setWidth(this.width);
-    this.setHeight(this.height);
-    this.el.style.display = this.visible ? this._displayStyle : "none"
+    this.addCls(this.uiCls); // 设置样式类
+    this.setWidth(this.width); // 设置宽度
+    this.setHeight(this.height); // 设置高度
+    this.el.style.display = this.visible ? this._displayStyle : "none" // 设置显示状态
 };
 mini.extend(mini.Control, mini.Component, {
+    /**
+     * @cfg {String} jsName 指向此控件实例的全局 JS 变量名称
+     * @accessor
+     * @member mini.Control
+     */
     jsName : null,
+    /**
+     * @cfg {Number} width 宽度，单位为 px
+     * @accessor
+     * @member mini.Control
+     */
     width : "",
+    /**
+     * @cfg {Number} height 高度，单位为 px
+     * @accessor
+     * @member mini.Control
+     */
     height : "",
+    /**
+     * @cfg {Boolean} [visible=true] 是否显示控件
+     * @accessor
+     * @member mini.Control
+     */
     visible : true,
+    /**
+     * @cfg {Boolean} [readOnly=false] 是否只读
+     * @accessor
+     * @member mini.Control
+     */
     readOnly : false,
+    /**
+     * @cfg {Boolean} [enabled=true] 控件是否可用，值为 true 时 ${@link #readOnly} 将被忽略
+     * @accessor
+     * @member mini.Control
+     */
     enabled : true,
+    /**
+     * @cfg {String} tooltip 提示信息
+     * @accessor
+     * @member mini.Control
+     */
     tooltip : "",
     _readOnlyCls : "mini-readonly",
     _disabledCls : "mini-disabled",
@@ -650,6 +1080,11 @@ mini.extend(mini.Control, mini.Component, {
         }
         return false
     },
+    /**
+     * @cfg {String} name 控件名称
+     * @accessor
+     * @member mini.Control
+     */
     name : "",
     setName : function(a) {
         this.name = a
@@ -676,31 +1111,46 @@ mini.extend(mini.Control, mini.Component, {
     isRender : function(a) {
         return !!(this.el && this.el.parentNode && this.el.parentNode.tagName)
     },
-    render : function(b, a) {
-        if (typeof b === "string") {
-            if (b == "#body") {
-                b = document.body
+    /**
+     * 控件加入 DOM 元素呈现，如：
+     *     @example
+     *     control.render(document.body);
+     * @param {HTMLElement/String} element 参考节点。
+     *      传入的参数类型为 String 时，表示参数值是 HTML 节点或 mini.Component 的 id 属性值，"#body" 代表 document.body 节点
+     * @param {String} [renderType="append"] 渲染方式，有效值分别为：<ul>
+     *      <li>append</li>
+     *      <li>preend</li>
+     *      <li>before</li>
+     *      <li>after </li>
+     *  </ul>
+     * @member mini.Control
+     * @fires render
+     */
+    render : function(element, renderType) {
+        if (typeof element === "string") {
+            if (element == "#body") {
+                element = document.body
             } else {
-                b = mini.byId(b)
+                element = mini.byId(element)
             }
         }
-        if (!b) {
+        if (!element) {
             return
         }
-        if (!a) {
-            a = "append"
+        if (!renderType) {
+            renderType = "append"
         }
-        a = a.toLowerCase();
-        if (a == "before") {
-            jQuery(b).before(this.el)
+        renderType = renderType.toLowerCase();
+        if (renderType == "before") {
+            jQuery(element).before(this.el)
         } else {
-            if (a == "preend") {
-                jQuery(b).preend(this.el)
+            if (renderType == "preend") {
+                jQuery(element).preend(this.el)
             } else {
-                if (a == "after") {
-                    jQuery(b).after(this.el)
+                if (renderType == "after") {
+                    jQuery(element).after(this.el)
                 } else {
-                    b.appendChild(this.el)
+                    element.appendChild(this.el)
                 }
             }
         }
@@ -708,6 +1158,10 @@ mini.extend(mini.Control, mini.Component, {
         this.doLayout();
         this.fire("render")
     },
+    /**
+     * 获取控件DOM元素
+     * @member mini.Control
+     */
     getEl : function() {
         return this.el
     },
@@ -767,6 +1221,11 @@ mini.extend(mini.Control, mini.Component, {
     getBox : function() {
         return mini.getBox(this.el)
     },
+    /**
+     * @cfg {String} borderStyle 边框样式。针对 datagrid, panel, textbox, combobox 等
+     * @accessor
+     * @member mini.Control
+     */
     setBorderStyle : function(b) {
         var a = this._borderEl || this.el;
         mini.setStyle(a, b);
@@ -776,6 +1235,12 @@ mini.extend(mini.Control, mini.Component, {
         return this.borderStyle
     },
     _clearBorder : true,
+
+    /**
+     * @cfg {String} style 样式
+     * @accessor
+     * @member mini.Control
+     */
     setStyle : function(a) {
         this.style = a;
         mini.setStyle(this.el, a);
@@ -790,17 +1255,32 @@ mini.extend(mini.Control, mini.Component, {
     getStyle : function() {
         return this.style
     },
+    /**
+     * @cfg {String} cls 样式类
+     * @accessor
+     * @member mini.Control
+     */
     setCls : function(a) {
         this.addCls(a)
     },
     getCls : function() {
         return this.cls
     },
-    addCls : function(a) {
-        mini.addClass(this.el, a)
+    /**
+     * 增加样式类
+     * @param {String} cls 样式类名称
+     * @member mini.Control
+     */
+    addCls : function(cls) {
+        mini.addClass(this.el, cls)
     },
-    removeCls : function(a) {
-        mini.removeClass(this.el, a)
+    /**
+     * 去除样式类
+     * @param {String} cls 样式类名称
+     * @member mini.Control
+     */
+    removeCls : function(cls) {
+        mini.removeClass(this.el, cls)
     },
     _doReadOnly : function() {
         if (this.readOnly) {
@@ -855,9 +1335,17 @@ mini.extend(mini.Control, mini.Component, {
     getEnabled : function() {
         return this.enabled
     },
+    /**
+     * 启用控件
+     * @member mini.Control
+     */
     enable : function() {
         this.setEnabled(true)
     },
+    /**
+     * 禁用控件
+     * @member mini.Control
+     */
     disable : function() {
         this.setEnabled(false)
     },
@@ -872,9 +1360,17 @@ mini.extend(mini.Control, mini.Component, {
     getVisible : function() {
         return this.visible
     },
+    /**
+     * 显示控件
+     * @member mini.Control
+     */
     show : function() {
         this.setVisible(true)
     },
+    /**
+     * 隐藏控件
+     * @member mini.Control
+     */
     hide : function() {
         this.setVisible(false)
     },
@@ -920,6 +1416,10 @@ mini.extend(mini.Control, mini.Component, {
         }
         return this.isDisplay()
     },
+    /**
+     * 调整控件布局
+     * @member mini.Control
+     */
     doLayout : function() {
     },
     layoutChanged : function() {
@@ -939,6 +1439,17 @@ mini.extend(mini.Control, mini.Component, {
             }
         }
     },
+    
+    /**
+     * @event destroy 在销毁控件时触发
+     * @member mini.Control
+     */
+    
+    /**
+     * 销毁控件
+     * @member mini.Control
+     * @fires destroy
+     */
     destroy : function(a) {
         if (this.destroyed !== true) {
             this._destroyChildren(a)
@@ -958,6 +1469,17 @@ mini.extend(mini.Control, mini.Component, {
         this.destroyed = true;
         this.fire("destroy")
     },
+    
+    /**
+     * @event focus 在控件获取焦点时触发
+     * @member mini.Control
+     */
+    
+    /**
+     * 获取焦点
+     * @member mini.Control
+     * @fires focus
+     */
     focus : function() {
         try {
             var a = this;
@@ -965,6 +1487,17 @@ mini.extend(mini.Control, mini.Component, {
         } catch (b) {
         }
     },
+    
+    /**
+     * @event blur 在控件失去焦点时触发
+     * @member mini.Control
+     */
+    
+    /**
+     * 失去焦点
+     * @member mini.Control
+     * @fires blur
+     */
     blur : function() {
         try {
             var a = this;
@@ -1109,6 +1642,56 @@ mini.extend(mini.Control, mini.Component, {
     getTabIndex : function() {
         return this.tabIndex
     },
+    /**
+     * 获取 DOM 节点的属性列表
+     * @member mini.Control
+     * @param {HTMLElement} el 要进行解析的 DOM 节点
+     * @return {Object} 有效的属性列表。会进行解析的属性包括但不限于：
+     * <ul>
+     * <li>
+     *   <div>String：</div>
+     *   <ul>
+     *   <li>id</li>
+     *   <li>name</li>
+     *   <li>value</li>
+     *   <li>defaultValue</li>
+     *   <li>class</li>
+     *   <li>style</li>
+     *   <li>borderStyle</li>
+     *   <li>width</li>
+     *   <li>height</li>
+     *   <li>tabIndex</li>
+     *   <li>contextMenu</li>
+     *   <li>tooltip</li>
+     *   <li>data-placement</li>
+     *   <li>ajaxType</li>
+     *   <li>dataField</li>
+     *   </ul>
+     * </li>
+     * <li>
+     *   <div>Boolean</div>
+     *   <ul>
+     *   <li>visible</li>
+     *   <li>enabled</li>
+     *   <li>readOnly</li>
+     *   </ul>
+     * </li>
+     * <li>
+     *   <div>Object</div>
+     *   <ul>
+     *   <li>ajaxData</li>
+     *   <li>ajaxOptions</li>
+     *   <li>data-options</li>
+     *   </ul>
+     * </li>
+     * <li>
+     *   <div>Function（Event）</div>
+     *   <ul>
+     *   <li>ondestroy</li>
+     *   </ul>
+     * </li>
+     * </ul>
+     */
     getAttrs : function(el) {
         var attrs = {};
         var cls = el.className;
@@ -1236,6 +1819,12 @@ __mini_setControls = function(b, f, e) {
     e.doLayout();
     return e
 };
+/**
+ * 容器控件的基类
+ * @class
+ * @extends mini.Control
+ * @abstract
+ */
 mini.Container = function() {
     mini.Container.superclass.constructor.call(this);
     this._contentEl = this.el
@@ -1262,20 +1851,84 @@ mini.extend(mini.Container, mini.Control, {
         return false
     }
 });
+
+/**
+ * 可校验的控件基类
+ * @class
+ * @extends mini.Control
+ * @abstract
+ */
 mini.ValidatorBase = function() {
     mini.ValidatorBase.superclass.constructor.call(this)
 };
 mini.extend(mini.ValidatorBase, mini.Control, {
+    /**
+     * @cfg {Boolean} [required=false] 是否必填
+     * @accessor
+     * @member mini.ValidatorBase
+     */
     required : false,
+    /**
+     * @cfg {String} [requiredErrorText="This field is required."] 必填校验的错误提示
+     * @accessor
+     * @member mini.ValidatorBase
+     */
     requiredErrorText : "This field is required.",
+    /**
+     * @property {String} [_requiredCls="mini-required"] 必填字段的样式类
+     * @member mini.ValidatorBase
+     * @private
+     */
     _requiredCls : "mini-required",
+    /**
+     * @cfg {String} [errorText=""] 校验不通过时的错误提示
+     * @accessor
+     * @member mini.ValidatorBase
+     */
     errorText : "",
+    /**
+     * @property {String} [_errorCls="mini-error"] 校验不通过时字段的样式类
+     * @member mini.ValidatorBase
+     * @private
+     */
     _errorCls : "mini-error",
+    /**
+     * @property {String} [_invalidCls="mini-invalid"] 值无效时字段的样式类
+     * @member mini.ValidatorBase
+     * @private
+     */
     _invalidCls : "mini-invalid",
+    /**
+     * @cfg {String} [errorMode="icon"] 错误提示的展现方式，可选值有："icon" 和 "border"
+     * @accessor
+     * @member mini.ValidatorBase
+     */
     errorMode : "icon",
+    /**
+     * @cfg {Boolean} [validateOnChanged=true] 值发生改变时是否进行校验
+     * @accessor
+     * @member mini.ValidatorBase
+     */
     validateOnChanged : true,
+    /**
+     * @cfg {Boolean} [validateOnLeave=true] 失去焦点时是否进行校验
+     * @accessor
+     * @member mini.ValidatorBase
+     */
     validateOnLeave : true,
+    /**
+     * @property {Boolean} [_IsValid=true] 值是否有效
+     * @member mini.ValidatorBase
+     * @private
+     * @readonly
+     */
     _IsValid : true,
+    /**
+     * 是否可编辑
+     * @method isEditable
+     * @return {Boolean} 可编辑时返回 true，反之返回 false
+     * @member mini.ValidatorBase
+     */
     isEditable : function() {
         if (this.readOnly || !this.allowInput || !this.enabled) {
             return false
@@ -1291,6 +1944,13 @@ mini.extend(mini.ValidatorBase, mini.Control, {
             a.validate()
         }, 30)
     },
+    /**
+     * 进行校验
+     * @method validate
+     * @return {Boolean} 校验通过返回 true，反之则返回 false
+     * @member mini.ValidatorBase
+     * @fires validation
+     */
     validate : function() {
         if (this.enabled == false) {
             this.setIsValid(true);
@@ -1312,13 +1972,29 @@ mini.extend(mini.ValidatorBase, mini.Control, {
         this.setIsValid(a.isValid);
         return this.isValid()
     },
+    /**
+     * @method isValid
+     * @member mini.ValidatorBase
+     * @alias mini.ValidatorBase#getIsValid
+     */
     isValid : function() {
         return this._IsValid
     },
+    /**
+     * 设置校验结果
+     * @method setIsValid
+     * @member mini.ValidatorBase
+     */
     setIsValid : function(a) {
         this._IsValid = a;
         this.doUpdateValid()
     },
+    /**
+     * 获取校验结果
+     * @method getIsValid
+     * @return {Boolean} 校验通过返回 true，反之则返回 false
+     * @member mini.ValidatorBase
+     */
     getIsValid : function() {
         return this._IsValid
     },
@@ -1372,16 +2048,28 @@ mini.extend(mini.ValidatorBase, mini.Control, {
     getRequiredErrorText : function() {
         return this.requiredErrorText
     },
+    /**
+     * @property {String} [errorIconEl=null] 错误图标元素
+     */
     errorIconEl : null,
     getErrorIconEl : function() {
         return this._errorIconEl
     },
     _RemoveErrorIcon : function() {
     },
+    /**
+     * 更新校验状态（重新校验）
+     * @method doUpdateValid
+     * @member mini.ValidatorBase
+     */
     doUpdateValid : function() {
         var a = this;
         a.__doUpdateValid()
     },
+    /**
+     * @property {String} [errorTooltipPlacement="right"] 错误提示的显示位置
+     * @member mini.ValidatorBase
+     */
     errorTooltipPlacement : "right",
     __doUpdateValid : function() {
         if (!this.el) {
@@ -1412,6 +2100,12 @@ mini.extend(mini.ValidatorBase, mini.Control, {
         }
         this.doLayout()
     },
+    /**
+     * 触发 valuechanged 事件
+     * @method doValueChanged
+     * @member mini.ValidatorBase
+     * @fires valuechanged
+     */
     doValueChanged : function() {
         this._OnValueChanged()
     },
@@ -1423,11 +2117,26 @@ mini.extend(mini.ValidatorBase, mini.Control, {
             value : this.getValue()
         })
     },
-    onValueChanged : function(b, a) {
-        this.on("valuechanged", b, a)
+    
+    /**
+     * @event valuechanged 在发生改变时触发
+     * @param {Object} event 当前事件对象
+     * @param {String} event.value 改变后的值
+     * @member mini.ValidatorBase
+     */
+    onValueChanged : function(event, scope) {
+        this.on("valuechanged", event, scope)
     },
-    onValidation : function(b, a) {
-        this.on("validation", b, a)
+    /**
+     * @event validation 在进行校验时触发
+     * @param {Object} event 当前事件对象
+     * @param {String} event.value 值
+     * @param {String} event.errorText 错误提示
+     * @param {Boolean} event.isValid 是否有效
+     * @member mini.ValidatorBase
+     */
+    onValidation : function(event, scope) {
+        this.on("validation", event, scope)
     },
     getAttrs : function(b) {
         var a = mini.ValidatorBase.superclass.getAttrs.call(this, b);
@@ -1465,9 +2174,29 @@ mini.extend(mini.ValidatorBase, mini.Control, {
             b.style.marginLeft = 0
         }
     },
+    /**
+     * @property {String} [_labelFieldCls="mini-labelfield"] 标签字段的样式类
+     * @member mini.ValidatorBase
+     * @private
+     */
     _labelFieldCls : "mini-labelfield",
+    /**
+     * @cfg {Boolean} [labelField=false] 是否为标签字段
+     * @accessor
+     * @member mini.ValidatorBase
+     */
     labelField : false,
+    /**
+     * @cfg {String} [label=""] 标签
+     * @accessor
+     * @member mini.ValidatorBase
+     */
     label : "",
+    /**
+     * @cfg {String} [labelStyle=""] 标签样式
+     * @accessor
+     * @member mini.ValidatorBase
+     */
     labelStyle : "",
     setLabelField : function(a) {
         if (this.labelField != a) {
@@ -1518,24 +2247,92 @@ mini.extend(mini.ValidatorBase, mini.Control, {
         this.labelStyle
     }
 });
+
+/**
+ * 列表控件的基类
+ * @class
+ * @extends mini.ValidatorBase
+ * @abstract
+ * 
+ * @constructor
+ */
 mini.ListControl = function() {
     this.data = [];
     this._selecteds = [];
     mini.ListControl.superclass.constructor.call(this);
     this.doUpdate()
 };
+/**
+ * @property {String} [ajaxType="get"] 
+ * @member mini.ListControl
+ */
 mini.ListControl.ajaxType = "get";
 mini.extend(mini.ListControl, mini.ValidatorBase, {
+    /**
+     * @cfg {String} [defaultValue=""] 默认值
+     * @accessor
+     * @member mini.ListControl
+     */
     defaultValue : "",
+    /**
+     * @cfg {String} [value=""] 值
+     * @accessor
+     * @member mini.ListControl
+     */
     value : "",
+    /**
+     * @cfg {String} [valueField="id"] 值字段
+     * @accessor
+     * @member mini.ListControl
+     */
     valueField : "id",
+    /**
+     * @cfg {String} [textField="text"] 文本字段
+     * @accessor
+     * @member mini.ListControl
+     */
     textField : "text",
+    /**
+     * @cfg {String} [dataField=""] 数据列表字段
+     * @accessor
+     * @member mini.ListControl
+     */
     dataField : "",
+    /**
+     * @cfg {String} [delimiter=","] 分隔符
+     * @accessor
+     * @member mini.ListControl
+     */
     delimiter : ",",
+    /**
+     * @cfg {Object} [data=null] 数据对象
+     * @accessor
+     * @member mini.ListControl
+     */
     data : null,
+    /**
+     * @cfg {String} [url=""] 数据加载地址
+     * @accessor
+     * @member mini.ListControl
+     */
     url : "",
+    /**
+     * @property {String} [_itemCls="mini-list-item"] 数据项的样式类
+     * @member mini.ListControl
+     * @private
+     */
     _itemCls : "mini-list-item",
+    /**
+     * @property {String} [_itemHoverCls="mini-list-item-hover"] 鼠标悬停项的样式类
+     * @member mini.ListControl
+     * @private
+     */
     _itemHoverCls : "mini-list-item-hover",
+    /**
+     * @property {String} [_itemSelectedCls="mini-list-item-selected"] 选中项的样式类
+     * @member mini.ListControl
+     * @private
+     */
     _itemSelectedCls : "mini-list-item-selected",
     set : function(d) {
         if (typeof d == "string") {
@@ -1559,6 +2356,10 @@ mini.extend(mini.ListControl, mini.ValidatorBase, {
         }
         return this
     },
+    /**
+     * @property {String} [uiCls="mini-button"] 控件样式类
+     * @member mini.ListControl
+     */
     uiCls : "mini-list",
     _create : function() {
     },
@@ -1670,41 +2471,80 @@ mini.extend(mini.ListControl, mini.ValidatorBase, {
         } catch (d) {
         }
     },
-    getItem : function(a) {
-        if (typeof a == "object") {
-            return a
+    /**
+     * 获取项
+     * @param {Number/String/Function/Object} value 类型为 Number 时表示下拉项索引；类型为 String 时为下拉项的值
+     * @return {Object} 下拉项对象
+     * @member mini.ListControl
+     */
+    getItem : function(value) {
+        if (typeof value == "object") {
+            return value
         }
-        if (typeof a == "number") {
-            return this.data[a]
+        if (typeof value == "number") {
+            return this.data[value]
         }
-        return this.findItems(a)[0]
+        return this.findItems(value)[0]
     },
+    /**
+     * 获取总项数
+     * @return {Number} 总项数
+     * @member mini.ListControl
+     */
     getCount : function() {
         return this.data.length
     },
-    indexOf : function(a) {
-        return this.data.indexOf(a)
+    /**
+     * 获取对象索引号
+     * @param {Object} obj 数据对象
+     * @return {Number} 对应的索引
+     * @member mini.ListControl
+     */
+    indexOf : function(obj) {
+        return this.data.indexOf(obj)
     },
-    getAt : function(a) {
-        return this.data[a]
+    /**
+     * 获取索引处对象
+     * @param {Number} index 索引
+     * @return {Object} 对应索引处的对象
+     * @member mini.ListControl
+     */
+    getAt : function(index) {
+        return this.data[index]
     },
-    updateItem : function(b, a) {
-        b = this.getItem(b);
-        if (!b) {
+    /**
+     * 更新项
+     * @param {Object} obj 数据对象
+     * @param {Object} options 需要更新的属性选项
+     * @member mini.ListControl
+     */
+    updateItem : function(obj, options) {
+        obj = this.getItem(obj);
+        if (!obj) {
             return
         }
-        mini.copyTo(b, a);
+        mini.copyTo(obj, options);
         this.doUpdate()
     },
-    load : function(a) {
-        if (typeof a == "string") {
-            this.setUrl(a)
+    /**
+     * 加载数据
+     * @param {String} url URL
+     * @member mini.ListControl
+     */
+    load : function(url) {
+        if (typeof url == "string") {
+            this.setUrl(url)
         } else {
-            this.setData(a)
+            this.setData(url)
         }
     },
-    loadData : function(a) {
-        this.setData(a)
+    /**
+     * 加载数据
+     * @param {Array} data 数据对象
+     * @member mini.ListControl
+     */
+    loadData : function(data) {
+        this.setData(data)
     },
     setData : function(data) {
         if (typeof data == "string") {
@@ -1888,12 +2728,18 @@ mini.extend(mini.ListControl, mini.ValidatorBase, {
         }
         return [ c.join(this.delimiter), f.join(this.delimiter) ]
     },
-    findItems : function(o) {
-        if (mini.isNull(o) || o === "") {
+    /**
+     * 根据值获取项数组
+     * @param {String/Function} values 值，多值之间使用 `,` 分隔
+     * @return {Array} 对应的项数组
+     * @member mini.ListControl
+     */
+    findItems : function(values) {
+        if (mini.isNull(values) || values === "") {
             return []
         }
-        if (typeof o == "function") {
-            var n = o;
+        if (typeof values == "function") {
+            var n = values;
             var h = [];
             var f = this.data;
             for (var d = 0, c = f.length; d < c; d++) {
@@ -1904,7 +2750,7 @@ mini.extend(mini.ListControl, mini.ValidatorBase, {
             }
             return h
         }
-        var q = String(o).split(this.delimiter);
+        var q = String(values).split(this.delimiter);
         var f = this.data;
         var m = {};
         for (var d = 0, c = f.length; d < c; d++) {
@@ -1922,65 +2768,102 @@ mini.extend(mini.ListControl, mini.ValidatorBase, {
         }
         return a
     },
+    /**
+     * 删除所有项
+     * @member mini.ListControl
+     */
     removeAll : function() {
         var a = this.getData();
         this.removeItems(a)
     },
-    addItems : function(a, b) {
-        if (!mini.isArray(a)) {
+    /**
+     * 加入多个项
+     * @param {Array} items 要加入的项
+     * @param {Number} index 插入位置，从 0 开始
+     * @member mini.ListControl
+     */
+    addItems : function(items, index) {
+        if (!mini.isArray(items)) {
             return
         }
-        if (mini.isNull(b)) {
-            b = this.data.length
+        if (mini.isNull(index)) {
+            index = this.data.length
         }
-        this.data.insertRange(b, a);
+        this.data.insertRange(index, items);
         this.doUpdate()
     },
-    addItem : function(b, a) {
-        if (!b) {
+    /**
+     * 加入单个项
+     * @param {Object} item 要加入的项
+     * @param {Number} index 插入位置，从 0 开始
+     * @member mini.ListControl
+     */
+    addItem : function(item, index) {
+        if (!item) {
             return
         }
-        if (this.data.indexOf(b) != -1) {
+        if (this.data.indexOf(item) != -1) {
             return
         }
-        if (mini.isNull(a)) {
-            a = this.data.length
+        if (mini.isNull(index)) {
+            index = this.data.length
         }
-        this.data.insert(a, b);
+        this.data.insert(index, item);
         this.doUpdate()
     },
-    removeItems : function(a) {
-        if (!mini.isArray(a)) {
+    /**
+     * 删除多个项
+     * @param {Array} items 要删除的项
+     * @member mini.ListControl
+     */
+    removeItems : function(items) {
+        if (!mini.isArray(items)) {
             return
         }
-        this.data.removeRange(a);
+        this.data.removeRange(items);
         this._checkSelecteds();
         this.doUpdate()
     },
-    removeItem : function(b) {
-        var a = this.data.indexOf(b);
+    /**
+     * 删除项
+     * @param {Array} item 要删除的项
+     * @member mini.ListControl
+     */
+    removeItem : function(item) {
+        var a = this.data.indexOf(item);
         if (a != -1) {
             this.data.removeAt(a);
             this._checkSelecteds();
             this.doUpdate()
         }
     },
-    moveItem : function(b, a) {
-        if (!b || !mini.isNumber(a)) {
+    /**
+     * 移动项到新索引位置
+     * @param {Object} item 要移动的项
+     * @param {Number} index 新位置，从 0 开始
+     * @member mini.ListControl
+     */
+    moveItem : function(item, index) {
+        if (!item || !mini.isNumber(index)) {
             return
         }
-        if (a < 0) {
-            a = 0
+        if (index < 0) {
+            index = 0
         }
-        if (a > this.data.length) {
-            a = this.data.length
+        if (index > this.data.length) {
+            index = this.data.length
         }
-        this.data.remove(b);
-        this.data.insert(a, b);
+        this.data.remove(item);
+        this.data.insert(index, item);
         this.doUpdate()
     },
     _selected : null,
     _selecteds : [],
+    /**
+     * @cfg {Boolean} [multiSelect=false] 多选
+     * @accessor
+     * @member mini.ListControl
+     */
     multiSelect : false,
     _checkSelecteds : function() {
         for (var b = this._selecteds.length - 1; b >= 0; b--) {
@@ -2001,12 +2884,23 @@ mini.extend(mini.ListControl, mini.ValidatorBase, {
     getMultiSelect : function() {
         return this.multiSelect
     },
-    isSelected : function(a) {
-        if (!a) {
+    /**
+     * 是否选中项
+     * @param {Object} item
+     * @return {Boolean} 选中时返回 true， 否则返回 false
+     * @member mini.ListControl
+     */
+    isSelected : function(item) {
+        if (!item) {
             return false
         }
-        return this._selecteds.indexOf(a) != -1
+        return this._selecteds.indexOf(item) != -1
     },
+    /**
+     * 获取选中项集合
+     * @return {Array} 所有选中项
+     * @member mini.ListControl
+     */
     getSelecteds : function() {
         var a = this._selecteds.clone();
         var b = this;
@@ -2023,25 +2917,45 @@ mini.extend(mini.ListControl, mini.ValidatorBase, {
         });
         return a
     },
-    setSelected : function(a) {
-        if (a) {
-            this._selected = a;
-            this.select(a)
+    /**
+     * 设置选中项
+     * @param {Number/String/Function/Object} value 类型为 Number 时表示下拉项索引；类型为 String 时为下拉项的值
+     * @member mini.ListControl
+     */
+    setSelected : function(value) {
+        if (value) {
+            this._selected = value;
+            this.select(value)
         }
     },
+    /**
+     * 获取当前选中项
+     * @return {Object} 当前选中项
+     * @member mini.ListControl
+     */
     getSelected : function() {
         return this._selected
     },
-    select : function(a) {
-        a = this.getItem(a);
-        if (!a) {
+    /**
+     * 选中项
+     * @param {Number/String/Function/Object} value 类型为 Number 时表示下拉项索引；类型为 String 时为下拉项的值
+     * @member mini.ListControl
+     */
+    select : function(value) {
+        value = this.getItem(value);
+        if (!value) {
             return
         }
-        if (this.isSelected(a)) {
+        if (this.isSelected(value)) {
             return
         }
-        this.selects([ a ])
+        this.selects([ value ])
     },
+    /**
+     * deselect
+     * @param {Number/String/Function/Object} value 类型为 Number 时表示下拉项索引；类型为 String 时为下拉项的值
+     * @member mini.ListControl
+     */
     deselect : function(a) {
         a = this.getItem(a);
         if (!a) {
@@ -2052,26 +2966,44 @@ mini.extend(mini.ListControl, mini.ValidatorBase, {
         }
         this.deselects([ a ])
     },
+    /**
+     * 选中所有项
+     * @member mini.ListControl
+     */
     selectAll : function() {
         var a = this.data.clone();
         this.selects(a)
     },
+    /**
+     * 取消选中所有项
+     * @member mini.ListControl
+     */
     deselectAll : function() {
         this.deselects(this._selecteds)
     },
+    /**
+     * @method clearSelect
+     * @member mini.ListControl
+     * @alias #deselectAll
+     */
     clearSelect : function() {
         this.deselectAll()
     },
-    selects : function(c) {
-        if (!c || c.length == 0) {
+    /**
+     * 选中多个项
+     * @param {Array} values 要选中的项
+     * @member mini.ListControl
+     */
+    selects : function(values) {
+        if (!values || values.length == 0) {
             return
         }
-        c = c.clone();
-        if (this.multiSelect == false && c.length > 1) {
-            c.length = 1
+        values = values.clone();
+        if (this.multiSelect == false && values.length > 1) {
+            values.length = 1
         }
-        for (var d = 0, b = c.length; d < b; d++) {
-            var a = c[d];
+        for (var d = 0, b = values.length; d < b; d++) {
+            var a = values[d];
             if (!this.isSelected(a)) {
                 this._selecteds.push(a)
             }
@@ -2079,13 +3011,18 @@ mini.extend(mini.ListControl, mini.ValidatorBase, {
         var e = this;
         e._doSelects()
     },
-    deselects : function(b) {
-        if (!b || b.length == 0) {
+    /**
+     * 取消选中多个项
+     * @param {Array} values 要取消选中的项
+     * @member mini.ListControl
+     */
+    deselects : function(values) {
+        if (!values || values.length == 0) {
             return
         }
-        b = b.clone();
-        for (var c = b.length - 1; c >= 0; c--) {
-            var a = b[c];
+        values = values.clone();
+        for (var c = values.length - 1; c >= 0; c--) {
+            var a = values[c];
             if (this.isSelected(a)) {
                 this._selecteds.remove(a)
             }
@@ -2285,7 +3222,18 @@ mini.extend(mini.ListControl, mini.ValidatorBase, {
         return h
     }
 });
+
+/**
+ * 所有 MiniUI 控件的 uid 与其布局的对应关系
+ * @member mini
+ * @private
+ */
 mini._Layouts = {};
+
+/**
+ * 布局，调整控件达到合适尺寸
+ * @member mini
+ */
 mini.layout = function(b, a) {
     if (!document.body) {
         return
@@ -2391,9 +3339,32 @@ mini._doParse = function(b) {
         }
     }
 };
+
+/**
+ * 被移除的 MiniUI 控件数组
+ * @property {mini.Component[]} [_Removes=[]] 
+ * @static
+ * @private
+ * @readonly
+ */
 mini._Removes = [];
+/**
+ * 是否为第一次将页面中的 DOM 节点解析为 MiniUI 控件
+ * @property {Boolean} [_firstParse=true] 
+ * @static
+ * @private
+ * @readonly
+ */
 mini._firstParse = true;
-mini.parse = function(e, j) {
+
+/**
+ * 将html标签解析为miniui控件。<br>
+ * 解析后，才能使用 {@link mini#get} 获取到控件对象。
+ * @param {String/HTMLElement/mini.Control} [element=document.body] 需要进行解析的 DOM 节点，如果传入的是一个字符串，则其值为 MiniUI 控件的 ID。
+ * @param {Boolean} [relayout=true] 是否重新调整 element 的布局
+ * @member mini
+ */
+mini.parse = function(element, relayout) {
     if (mini._firstParse) {
         mini._firstParse = false;
         var m = document.getElementsByTagName("iframe");
@@ -2427,27 +3398,27 @@ mini.parse = function(e, j) {
             }
         }, 20)
     }
-    if (typeof e == "string") {
-        var b = e;
-        e = mini.byId(b);
-        if (!e) {
-            e = document.body
+    if (typeof element == "string") {
+        var b = element;
+        element = mini.byId(b);
+        if (!element) {
+            element = document.body
         }
     }
-    if (e && !mini.isElement(e)) {
-        e = e.el
+    if (element && !mini.isElement(element)) {
+        element = element.el
     }
-    if (!e) {
-        e = document.body
+    if (!element) {
+        element = document.body
     }
     var f = mini.WindowVisible;
     if (isIE) {
         mini.WindowVisible = false
     }
-    mini._doParse(e);
+    mini._doParse(element);
     mini.WindowVisible = f;
-    if (j !== false) {
-        mini.layout(e)
+    if (relayout !== false) {
+        mini.layout(element)
     }
 };
 mini._ParseString = function(e, c, b) {
@@ -3323,6 +4294,54 @@ mini._doOpen = function(c) {
     f.show();
     return f
 };
+/**
+ * 弹出子页面。别名为 {@link mini#openTop}
+ * 
+ *     @example
+ *     mini.open({
+ *         url: "http://www.hemw.cn",
+ *         title: "标题",
+ *         width: 800,
+ *         height: 600,
+ *         allowResize: true,
+ *         allowDrag: true,
+ *         showCloseButton: true,
+ *         showMaxButton: true,
+ *         showModal: true,
+ *         onload: function () { //弹出页面加载完成
+ *             var iframe = this.getIFrameEl();
+ *             var data = {};
+ *             // 调用弹出页面方法进行初始化
+ *             iframe.contentWindow.SetData(data);
+ *     
+ *         },
+ *         ondestroy: function (action) { // 弹出页面关闭前
+ *             if (action == "ok") {
+ *                 var iframe = this.getIFrameEl();
+ *                 //获取选中、编辑的结果
+ *                 var data = iframe.contentWindow.GetData();
+ *                 data = mini.clone(data);
+ *                 ......
+ *             }
+ *         }
+ *     });
+ * @param {Object} options 弹出窗口的设置选项
+ * @param {Number/String} [options.width = 700] 宽度，单位为像素，也可以是一个百分比
+ * @param {Number/String} [options.height = 400] 高度，单位为像素，也可以是一个百分比
+ * @param {Boolean} [options.allowResize = true] 是否允许调整窗口尺寸
+ * @param {Boolean} [options.allowModal = true] 是否显示为模态窗口
+ * @param {String} [options.closeAction = "destroy"] 关闭时的操作： destroy &#45; 销毁；hide &#45; 隐藏。
+ * @param {String} [options.title = ""] 标题
+ * @param {String} [options.titleIcon = ""] 标题栏的图标
+ * @param {String} [options.iconCls = ""] 图标样式类
+ * @param {String} [options.iconStyle = ""] 图标样式
+ * @param {String} [options.bodyStyle = "padding:0"] 窗口主内容区域的样式
+ * @param {String} [options.url = ""] 子页面的 URL
+ * @param {Boolean} [options.showCloseButton = true] 是否显示关闭按钮
+ * @param {Boolean} [options.showFooter = false] 是否显示底部栏
+ * @return {String} 弹出窗口的唯一标识符
+ * @member mini
+ */
 mini.open = function(b) {
     if (!b) {
         return
@@ -3362,7 +4381,13 @@ mini.open = function(b) {
     var e = g[g.length - 1];
     return e.mini._doOpen(b)
 };
+/**
+ * @member mini
+ * @method openTop
+ * @alias mini#open
+ */
 mini.openTop = mini.open;
+
 mini._getResult = function(a, b, g, f, e, k) {
     var i = null;
     var h = mini.getText(a, b, function(m, l) {

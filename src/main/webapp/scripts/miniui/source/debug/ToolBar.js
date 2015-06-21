@@ -1,3 +1,24 @@
+/**
+ * 工具栏。
+ * 
+ *     @example
+ *     &lt;div class="mini-toolbar"&gt;
+ *         &lt;a class="mini-button" iconCls="icon-add"&gt;增加&lt;/a&gt;
+ *         &lt;a class="mini-button" iconCls="icon-edit"&gt;修改&lt;/a&gt;
+ *         &lt;a class="mini-button" iconCls="icon-remove"&gt;删除&lt;/a&gt;
+ *         &lt;span class="separator"&gt;&lt;/span&gt;
+ *         &lt;a class="mini-button" plain="true"&gt;增加&lt;/a&gt;
+ *         &lt;a class="mini-button" plain="true"&gt;修改&lt;/a&gt;
+ *         &lt;a class="mini-button" plain="true"&gt;删除&lt;/a&gt;
+ *         &lt;span class="separator"&gt;&lt;/span&gt;
+ *         &lt;input class="mini-textbox" /&gt;      
+ *         &lt;a class="mini-button" plain="true"&gt;查询&lt;/a&gt;
+ *     &lt;/div&gt;
+ * 
+ * @class
+ * @extends mini.Container
+ * @constructor
+ */
 mini.ToolBar = function() {
     mini.ToolBar.superclass.constructor.call(this)
 };

@@ -1,3 +1,13 @@
+/**
+ * 单选框组。
+ * 
+ *     @example
+ *     &lt;div class="mini-radiobuttonlist" repeatItems="2" repeatLayout="table" repeatDirection="vertical" textField="text" valueField="id" value="cn" url="../data/countrys.txt" &gt;&lt;/div&gt;
+ * 
+ * @class
+ * @extends mini.CheckBoxList
+ * @constructor
+ */
 mini.RadioButtonList = function() {
     mini.RadioButtonList.superclass.constructor.call(this)
 };

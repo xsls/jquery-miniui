@@ -1,14 +1,53 @@
+/**
+ * @class
+ * @extends mini.Control
+ * @constructor
+ */
 mini.CheckBox = function() {
     mini.CheckBox.superclass.constructor.call(this)
 };
 mini.extend(mini.CheckBox, mini.Control, {
+    /**
+     * @cfg {Boolean} [formField=true] 是否为表单字段
+     * @accessor
+     * @member mini.CheckBox
+     */
     formField : true,
     _clearText : false,
+    /**
+     * @cfg {String} [text=""] 文本
+     * @accessor
+     * @member mini.CheckBox
+     */
     text : "",
+    /**
+     * @cfg {Boolean} [checked=false] 是否选中
+     * @accessor
+     * @member mini.CheckBox
+     */
     checked : false,
+    /**
+     * @cfg {Boolean} [defaultValue=false] 默认值
+     * @accessor
+     * @member mini.CheckBox
+     */
     defaultValue : false,
+    /**
+     * @cfg {Boolean} [trueValue=true] “真”值
+     * @accessor
+     * @member mini.CheckBox
+     */
     trueValue : true,
+    /**
+     * @cfg {Boolean} [falseValue=false] “假”值
+     * @accessor
+     * @member mini.CheckBox
+     */
     falseValue : false,
+    /**
+     * @property {String} [uiCls="mini-checkbox"] 控件样式类
+     * @member mini.CheckBox
+     */
     uiCls : "mini-checkbox",
     _create : function() {
         var a = this.uid + "$check";
@@ -86,6 +125,11 @@ mini.extend(mini.CheckBox, mini.Control, {
     getChecked : function() {
         return this.checked
     },
+    /**
+     * @cfg {String} [value] 值
+     * @accessor
+     * @member mini.CheckBox
+     */
     setValue : function(a) {
         if (this.checked !== a) {
             this.setChecked(a);
@@ -95,6 +139,11 @@ mini.extend(mini.CheckBox, mini.Control, {
     getValue : function() {
         return String(this.checked == true ? this.trueValue : this.falseValue)
     },
+    /**
+     * 获取表单值
+     * @member mini.CheckBox
+     * @returns {String} 表单值
+     */
     getFormValue : function() {
         return this.getValue()
     },
@@ -111,6 +160,27 @@ mini.extend(mini.CheckBox, mini.Control, {
     getFalseValue : function() {
         return this.falseValue
     },
+    
+    /**
+     * @event checkedchanged 选中变化时发生的事件
+     * @param {Object} event 当前事件对象
+     * @param {Boolean} event.checked 是否选中
+     * @member mini.CheckBox
+     */
+    
+    /**
+     * @event valuechanged 值改变时发生的事件
+     * @param {Object} event 当前事件对象
+     * @param {Object} event.value 改变后的值
+     * @member mini.CheckBox
+     */
+    
+    /**
+     * @event click 单击事件
+     * @param {Object} event 当前事件对象
+     * @member mini.CheckBox
+     */
+    
     __onClick : function(a) {
         if (this.isReadOnly()) {
             return

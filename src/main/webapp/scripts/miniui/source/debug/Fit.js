@@ -1,3 +1,9 @@
+/**
+ * 高度撑满布局控件。它的高度为：父元素高度 - 其他同级元素高度。
+ * @class
+ * @extends mini.Container
+ * @constructor
+ */
 mini.Fit = function() {
     mini.Fit.superclass.constructor.call(this)
 };

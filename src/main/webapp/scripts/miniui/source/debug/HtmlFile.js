@@ -1,3 +1,16 @@
+/**
+ * 文件上传控件（html实现）。
+ * 
+ *     @example
+ *     &lt;form id="upload" action="upload.aspx" method="post" enctype="multipart/form-data"&gt;
+ *         图片：&lt;input class="mini-htmlfile" name="Fdata" limitType="*.txt" /&gt;
+ *         &lt;input type="submit" value="上传"/&gt;
+ *     &lt;/form&gt;
+ * 
+ * @class
+ * @extends mini.ButtonEdit
+ * @constructor
+ */
 mini.HtmlFile = function() {
     mini.HtmlFile.superclass.constructor.call(this);
     this.on("validation", this.__OnValidation, this)
@@ -72,6 +85,13 @@ mini.extend(mini.HtmlFile, mini.ButtonEdit, {
     getValue : function() {
         return this._textEl.value
     },
+    /**
+     * 
+     * function setButtonText(buttonText)
+     * @member mini.HtmlFile
+     * @param {String} buttonText
+     *
+     */
     setButtonText : function(b) {
         this.buttonText = b;
         var a = mini.byClass("mini-buttonedit-button", this.el);
@@ -79,12 +99,33 @@ mini.extend(mini.HtmlFile, mini.ButtonEdit, {
             a.innerHTML = b
         }
     },
+    /**
+     * 
+     * function getButtonText()
+     * @member mini.HtmlFile
+     * @returns {String}
+     *
+     */
     getButtonText : function() {
         return this.buttonText
     },
+    /**
+     * 
+     * function setLimitType(limitType)
+     * @member mini.HtmlFile
+     * @param {String} limitType
+     *
+     */
     setLimitType : function(a) {
         this.limitType = a
     },
+    /**
+     * 
+     * function getLimitType()
+     * @member mini.HtmlFile
+     * @returns {String}
+     *
+     */
     getLimitType : function() {
         return this.limitType
     },

@@ -1,3 +1,13 @@
+/**
+ * 树形下拉选择框。
+ * 
+ *     @example
+ *     &lt;input class="mini-treeselect" url="../data/tree.txt" valueField="id" textField="text"/&lt;
+ * 
+ * @class
+ * @extends mini.PopupEdit
+ * @constructor
+ */
 mini.TreeSelect = function() {
     this.data = [];
     mini.TreeSelect.superclass.constructor.call(this)
@@ -161,6 +171,13 @@ mini.extend(mini.TreeSelect, mini.PopupEdit, {
     getList : function() {
         return this.tree.getList()
     },
+    /**
+     * 加载数据<br/>
+     * function load(url)
+     * @member mini.TreeSelect
+     * @param  url
+     *
+     */
     load : function(a) {
         this.tree.load(a);
         this.data = this.tree.data;
@@ -169,6 +186,13 @@ mini.extend(mini.TreeSelect, mini.PopupEdit, {
     _eval : function(_) {
         return eval("(" + _ + ")")
     },
+    /**
+     * 
+     * function setData(data)
+     * @member mini.TreeSelect
+     * @param {Array} data
+     *
+     */
     setData : function(a) {
         if (typeof a == "string") {
             a = this._eval(a)
@@ -180,6 +204,13 @@ mini.extend(mini.TreeSelect, mini.PopupEdit, {
         this.data = this.tree.data;
         this._getCheckedValue()
     },
+    /**
+     * 
+     * function getData()
+     * @member mini.TreeSelect
+     * @returns {Array}
+     *
+     */
     getData : function() {
         return this.data
     },
@@ -187,6 +218,13 @@ mini.extend(mini.TreeSelect, mini.PopupEdit, {
         var a = this.tree.getValue();
         this.setValue(a)
     },
+    /**
+     * 
+     * function setUrl(url)
+     * @member mini.TreeSelect
+     * @param {String} url
+     *
+     */
     setUrl : function(a) {
         this.getPopup();
         this.tree.setUrl(a);
@@ -194,6 +232,13 @@ mini.extend(mini.TreeSelect, mini.PopupEdit, {
         this.data = this.tree.data;
         this._getCheckedValue()
     },
+    /**
+     * 
+     * function getUrl()
+     * @member mini.TreeSelect
+     * @returns {String}
+     *
+     */
     getUrl : function() {
         return this.url
     },
@@ -214,12 +259,26 @@ mini.extend(mini.TreeSelect, mini.PopupEdit, {
     getPinyinField : function() {
         return this.pinyinField
     },
+    /**
+     * 
+     * function setTextField(textField)
+     * @member mini.TreeSelect
+     * @param {String} textField
+     *
+     */
     setTextField : function(a) {
         if (this.tree) {
             this.tree.setTextField(a)
         }
         this.textField = a
     },
+    /**
+     * 
+     * function getTextField()
+     * @member mini.TreeSelect
+     * @returns {String}
+     *
+     */
     getTextField : function() {
         return this.textField
     },
@@ -241,6 +300,12 @@ mini.extend(mini.TreeSelect, mini.PopupEdit, {
     getDataField : function() {
         return this.dataField
     },
+    /**
+     * 获取值<br/>
+     * function getValue()
+     * @member mini.TreeSelect
+     *
+     */
     getValue : function() {
         var a = mini.TreeSelect.superclass.getValue.call(this);
         if (this.valueFromSelect && a && this.findItems(a).length == 0) {
@@ -248,6 +313,13 @@ mini.extend(mini.TreeSelect, mini.PopupEdit, {
         }
         return a
     },
+    /**
+     * 设置值<br/>
+     * function setValue(value)
+     * @member mini.TreeSelect
+     * @param  value
+     *
+     */
     setValue : function(b) {
         var a = this.tree.getValueAndText(b);
         if (a[1] == "" && !this.valueFromSelect) {
@@ -259,6 +331,13 @@ mini.extend(mini.TreeSelect, mini.PopupEdit, {
         this.text = this._textEl.value = a[1];
         this._doEmpty()
     },
+    /**
+     * 
+     * function setMultiSelect(multiSelect)
+     * @member mini.TreeSelect
+     * @param {Boolean} multiSelect
+     *
+     */
     setMultiSelect : function(a) {
         if (this.multiSelect != a) {
             this.multiSelect = a;
@@ -267,6 +346,13 @@ mini.extend(mini.TreeSelect, mini.PopupEdit, {
             this.tree.setEnableHotTrack(!a)
         }
     },
+    /**
+     * 
+     * function getMultiSelect()
+     * @member mini.TreeSelect
+     * @returns {Boolean}
+     *
+     */
     getMultiSelect : function() {
         return this.multiSelect
     },
@@ -373,57 +459,141 @@ mini.extend(mini.TreeSelect, mini.PopupEdit, {
         this.tree.expandAll();
         this.showPopup()
     },
+    /**
+     * 
+     * function setCheckRecursive(checkRecursive)
+     * @member mini.TreeSelect
+     * @param {Boolean} checkRecursive
+     *
+     */
     setCheckRecursive : function(a) {
         this.checkRecursive = a;
         if (this.tree) {
             this.tree.setCheckRecursive(a)
         }
     },
+    /**
+     * 
+     * function getCheckRecursive()
+     * @member mini.TreeSelect
+     * @returns {Boolean}
+     *
+     */
     getCheckRecursive : function() {
         return this.checkRecursive
     },
+    /**
+     * 
+     * function setResultAsTree(resultAsTree)
+     * @member mini.TreeSelect
+     * @param {Boolean} resultAsTree
+     *
+     */
     setResultAsTree : function(a) {
         this.resultAsTree = a;
         if (this.tree) {
             this.tree.setResultAsTree(a)
         }
     },
+    /**
+     * 
+     * function getResultAsTree()
+     * @member mini.TreeSelect
+     * @returns {Boolean}
+     *
+     */
     getResultAsTree : function() {
         return this.resultAsTree
     },
+    /**
+     * 
+     * function setParentField(parentField)
+     * @member mini.TreeSelect
+     * @param {String} parentField
+     *
+     */
     setParentField : function(a) {
         this.parentField = a;
         if (this.tree) {
             this.tree.setParentField(a)
         }
     },
+    /**
+     * 
+     * function getParentField()
+     * @member mini.TreeSelect
+     * @returns {String}
+     *
+     */
     getParentField : function() {
         return this.parentField
     },
+    /**
+     * 
+     * function setValueField(valueField)
+     * @member mini.TreeSelect
+     * @param {String} valueField
+     *
+     */
     setValueField : function(a) {
         if (this.tree) {
             this.tree.setIdField(a)
         }
         this.valueField = a
     },
+    /**
+     * 
+     * function getValueField()
+     * @member mini.TreeSelect
+     * @returns {String}
+     *
+     */
     getValueField : function() {
         return this.valueField
     },
+    /**
+     * 
+     * function setShowTreeIcon(showTreeIcon)
+     * @member mini.TreeSelect
+     * @param {Boolean} showTreeIcon
+     *
+     */
     setShowTreeIcon : function(a) {
         this.showTreeIcon = a;
         if (this.tree) {
             this.tree.setShowTreeIcon(a)
         }
     },
+    /**
+     * 
+     * function getShowTreeIcon()
+     * @member mini.TreeSelect
+     * @returns {Boolean}
+     *
+     */
     getShowTreeIcon : function() {
         return this.showTreeIcon
     },
+    /**
+     * 
+     * function setShowTreeLines(showTreeLines)
+     * @member mini.TreeSelect
+     * @param {Boolean} showTreeLines
+     *
+     */
     setShowTreeLines : function(a) {
         this.showTreeLines = a;
         if (this.tree) {
             this.tree.setShowTreeLines(a)
         }
     },
+    /**
+     * 
+     * function getShowTreeLines()
+     * @member mini.TreeSelect
+     * @returns {Boolean}
+     *
+     */
     getShowTreeLines : function() {
         return this.showTreeLines
     },
@@ -445,27 +615,69 @@ mini.extend(mini.TreeSelect, mini.PopupEdit, {
     getShowRadioButton : function() {
         return this.showRadioButton
     },
+    /**
+     * 
+     * function setAutoCheckParent(autoCheckParent)
+     * @member mini.TreeSelect
+     * @param {Boolean} autoCheckParent
+     *
+     */
     setAutoCheckParent : function(a) {
         this.autoCheckParent = a;
         if (this.tree) {
             this.tree.setAutoCheckParent(a)
         }
     },
+    /**
+     * 
+     * function getAutoCheckParent()
+     * @member mini.TreeSelect
+     * @returns {Boolean}
+     *
+     */
     getAutoCheckParent : function() {
         return this.autoCheckParent
     },
+    /**
+     * 
+     * function setExpandOnLoad(expandOnLoad)
+     * @member mini.TreeSelect
+     * @param {Boolean} expandOnLoad
+     *
+     */
     setExpandOnLoad : function(a) {
         this.expandOnLoad = a;
         if (this.tree) {
             this.tree.setExpandOnLoad(a)
         }
     },
+    /**
+     * 
+     * function getExpandOnLoad()
+     * @member mini.TreeSelect
+     * @returns {Boolean}
+     *
+     */
     getExpandOnLoad : function() {
         return this.expandOnLoad
     },
+    /**
+     * 
+     * function setValueFromSelect(valueFromSelect)
+     * @member mini.TreeSelect
+     * @param {Boolean} valueFromSelect
+     *
+     */
     setValueFromSelect : function(a) {
         this.valueFromSelect = a
     },
+    /**
+     * 
+     * function getValueFromSelect()
+     * @member mini.TreeSelect
+     * @returns {Boolean}
+     *
+     */
     getValueFromSelect : function() {
         return this.valueFromSelect
     },

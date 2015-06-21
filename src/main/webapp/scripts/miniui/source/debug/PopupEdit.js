@@ -1,3 +1,8 @@
+/**
+ * @class
+ * @extends mini.ButtonEdit
+ * @constructor
+ */
 mini.PopupEdit = function() {
     mini.PopupEdit.superclass.constructor.call(this);
     this._createPopup();
@@ -116,6 +121,13 @@ mini.extend(mini.PopupEdit, mini.ButtonEdit, {
     popupHeight : "",
     popupMinHeight : 30,
     popupMaxHeight : 2000,
+    /**
+     * 
+     * function setPopup(popup)
+     * @member mini.PopupEdit
+     * @param {String} popup
+     *
+     */
     setPopup : function(a) {
         if (typeof a == "string") {
             mini.parse(a);
@@ -130,6 +142,13 @@ mini.extend(mini.PopupEdit, mini.ButtonEdit, {
         b.owner = this;
         b.on("beforebuttonclick", this.__OnPopupButtonClick, this)
     },
+    /**
+     * 
+     * function getPopup()
+     * @member mini.PopupEdit
+     * @returns {String}
+     *
+     */
     getPopup : function() {
         if (!this.popup) {
             this._createPopup()
@@ -259,9 +278,23 @@ mini.extend(mini.PopupEdit, mini.ButtonEdit, {
     setPopupMaxWidth : function(a) {
         this.popupMaxWidth = a
     },
+    /**
+     * 
+     * function setPopupWidth(popupWidth)
+     * @member mini.PopupEdit
+     * @param {String} popupWidth
+     *
+     */
     setPopupMinWidth : function(a) {
         this.popupMinWidth = a
     },
+    /**
+     * 
+     * function getPopupWidth()
+     * @member mini.PopupEdit
+     * @returns {String}
+     *
+     */
     getPopupWidth : function(a) {
         return this.popupWidth
     },
@@ -277,9 +310,23 @@ mini.extend(mini.PopupEdit, mini.ButtonEdit, {
     setPopupMaxHeight : function(a) {
         this.popupMaxHeight = a
     },
+    /**
+     * 
+     * function setPopupHeight(popupHeight)
+     * @member mini.PopupEdit
+     * @param {String} popupHeight
+     *
+     */
     setPopupMinHeight : function(a) {
         this.popupMinHeight = a
     },
+    /**
+     * 
+     * function getPopupHeight()
+     * @member mini.PopupEdit
+     * @returns {String}
+     *
+     */
     getPopupHeight : function(a) {
         return this.popupHeight
     },

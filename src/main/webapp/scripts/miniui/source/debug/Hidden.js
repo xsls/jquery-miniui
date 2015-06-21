@@ -1,3 +1,9 @@
+/**
+ * 隐藏字段。
+ * @class
+ * @extends mini.Control
+ * @constructor
+ */
 mini.Hidden = function() {
     mini.Hidden.superclass.constructor.call(this)
 };
@@ -15,6 +21,13 @@ mini.extend(mini.Hidden, mini.Control, {
         this.name = a;
         this.el.name = a
     },
+    /**
+     * 设置值<br/>
+     * function setValue(value)
+     * @member mini.Hidden
+     * @param  value
+     *
+     */
     setValue : function(b) {
         if (b === null || b === undefined) {
             b = ""
@@ -31,6 +44,12 @@ mini.extend(mini.Hidden, mini.Control, {
             this.el.value = b
         }
     },
+    /**
+     * 获取值<br/>
+     * function getValue()
+     * @member mini.Hidden
+     *
+     */
     getValue : function() {
         return this.value
     },
