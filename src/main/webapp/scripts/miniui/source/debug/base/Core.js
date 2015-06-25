@@ -783,8 +783,6 @@ mini.create = function(options) {
  * MiniUI 组件定义，所有的 MiniUI 控件都是 Component 的子类
  * @class mini.Component
  * @abstract
- *
- * @constructor 构造方法
  */
 mini.Component = function() {
     /**
@@ -937,8 +935,8 @@ mini.Component.prototype = {
      * @param {Function} fn 事件处理函数
      * @param {Object} fn.event 事件对象
      * @param {String} fn.event.type 事件类型
-     * @param {Object} fn.event.source 事件源
-     * @param {Object} fn.event.sender 事件发送者
+     * @param {mini.Control} fn.event.source 事件源
+     * @param {mini.Control} fn.event.sender 事件发送者
      * @param {Object} [scope] 事件处理函数的作用域对象
      * @return {mini.Component} this
      * @chainable
@@ -1299,6 +1297,7 @@ mini.extend(mini.Control, mini.Component, {
     /**
      * 尺寸发生调整后执行的方法
      * @member mini.Control
+     * @private
      */
     _sizeChanged : function() {
         this.doLayout()
@@ -1414,6 +1413,7 @@ mini.extend(mini.Control, mini.Component, {
     /**
      * 处理只读状态
      * @member mini.Control
+     * @private
      */
     _doReadOnly : function() {
         if (this.readOnly) {
@@ -1608,6 +1608,7 @@ mini.extend(mini.Control, mini.Component, {
     /**
      * 销毁所有子控件
      * @member mini.Control
+     * @private
      */
     _destroyChildren : function(d) {
         if (this.el) {
@@ -1702,6 +1703,7 @@ mini.extend(mini.Control, mini.Component, {
      * 获取遮罩层对应的 DOM 节点
      * @member mini.Control
      * @returns {HTMLElement} 遮罩层对应的 DOM 节点
+     * @private
      */
     _getMaskWrapEl : function() {
         return this.el
@@ -1798,7 +1800,7 @@ mini.extend(mini.Control, mini.Component, {
     },
     /**
      * 显示上下文菜单的方法
-     * @param {Object} htmlEvt 原生的 DOM 事件
+     * @param {Event} htmlEvt 原生的 DOM 事件
      * @fires mini.Menu#BeforeOpen
      * @fires mini.Menu#opening
      * @fires mini.Menu#Open
@@ -1946,7 +1948,7 @@ mini.extend(mini.Control, mini.Component, {
      *   </ul>
      * </li>
      * <li>
-     *   <div>Boolean</div>
+     *   <div>Boolean：</div>
      *   <ul>
      *   <li>visible</li>
      *   <li>enabled</li>
@@ -1954,7 +1956,7 @@ mini.extend(mini.Control, mini.Component, {
      *   </ul>
      * </li>
      * <li>
-     *   <div>Object</div>
+     *   <div>Object：</div>
      *   <ul>
      *   <li>ajaxData</li>
      *   <li>ajaxOptions</li>
@@ -1962,7 +1964,7 @@ mini.extend(mini.Control, mini.Component, {
      *   </ul>
      * </li>
      * <li>
-     *   <div>Function（Event）</div>
+     *   <div>Function（Event）：</div>
      *   <ul>
      *   <li>ondestroy</li>
      *   </ul>
@@ -2139,9 +2141,17 @@ mini.extend(mini.Container, mini.Control, {
      * @chainable
      */
     setControls : __mini_setControls,
+    /**
+     * 获取内容区域的 DOM 节点
+     * @returns {HTMLElement} 内容区域的 DOM 节点
+     */
     getContentEl : function() {
         return this._contentEl
     },
+    /**
+     * 获取主体区域的 DOM 节点
+     * @returns {HTMLElement} 主体区域的 DOM 节点
+     */
     getBodyEl : function() {
         return this._contentEl
     },
@@ -2254,8 +2264,7 @@ mini.extend(mini.ValidatorBase, mini.Control, {
     },
     /**
      * 进行校验
-     * @method validate
-     * @return {Boolean} 校验通过返回 true，反之则返回 false
+     * @return {Boolean} 校验通过返回 true，否则则返回 false
      * @member mini.ValidatorBase
      * @fires validation
      */
@@ -2358,11 +2367,22 @@ mini.extend(mini.ValidatorBase, mini.Control, {
     },
     /**
      * @property {String} [errorIconEl=null] 错误图标元素
+     * @member mini.ValidatorBase
      */
     errorIconEl : null,
+    /**
+     * 获取错误图标的 DOM 节点
+     * @returns {HTMLElement} 错误图标的 DOM 节点
+     * @member mini.ValidatorBase
+     */
     getErrorIconEl : function() {
         return this._errorIconEl
     },
+    /**
+     * 移除错误图标的 DOM 节点
+     * @member mini.ValidatorBase
+     * @private
+     */
     _RemoveErrorIcon : function() {
     },
     /**
@@ -2392,8 +2412,7 @@ mini.extend(mini.ValidatorBase, mini.Control, {
                 var a = this.getErrorIconEl();
                 if (a) {
                     a.title = this.errorText;
-                    jQuery(a)
-                            .attr("data-placement", this.errorTooltipPlacement)
+                    jQuery(a).attr("data-placement", this.errorTooltipPlacement)
                 }
                 break;
             case "border":
@@ -2410,13 +2429,18 @@ mini.extend(mini.ValidatorBase, mini.Control, {
     },
     /**
      * 触发 valuechanged 事件
-     * @method doValueChanged
      * @member mini.ValidatorBase
      * @fires valuechanged
      */
     doValueChanged : function() {
         this._OnValueChanged()
     },
+    /**
+     * _OnValueChanged
+     * @member mini.ValidatorBase
+     * @fires valuechanged
+     * @private
+     */
     _OnValueChanged : function() {
         if (this.validateOnChanged) {
             this._tryValidate()
@@ -2429,6 +2453,9 @@ mini.extend(mini.ValidatorBase, mini.Control, {
     /**
      * @event valuechanged 在发生改变时触发
      * @param {Object} event 当前事件对象
+     * @param {String} event.type 事件类型
+     * @param {mini.Control} event.source 事件源
+     * @param {mini.Control} event.sender 事件发送者
      * @param {String} event.value 改变后的值
      * @member mini.ValidatorBase
      */
@@ -2438,6 +2465,9 @@ mini.extend(mini.ValidatorBase, mini.Control, {
     /**
      * @event validation 在进行校验时触发
      * @param {Object} event 当前事件对象
+     * @param {String} event.type 事件类型
+     * @param {mini.Control} event.source 事件源
+     * @param {mini.Control} event.sender 事件发送者
      * @param {String} event.value 值
      * @param {String} event.errorText 错误提示
      * @param {Boolean} event.isValid 是否有效
@@ -2446,13 +2476,46 @@ mini.extend(mini.ValidatorBase, mini.Control, {
     onValidation : function(event, scope) {
         this.on("validation", event, scope)
     },
+    /**
+     * 获取 DOM 节点的属性列表。除了父类解析的属性外，还会解析以下属性：
+     * <ul>
+     * <li>
+     *   <div>String：</div>
+     *   <ul>
+     *   <li>label</li>
+     *   <li>labelStyle</li>
+     *   <li>requiredErrorText</li>
+     *   <li>errorMode</li>
+     *   <li>errorTooltipPlacement</li>
+     *   </ul>
+     * </li>
+     * <li>
+     *   <div>Boolean：</div>
+     *   <ul>
+     *   <li>validateOnChanged</li>
+     *   <li>validateOnLeave</li>
+     *   <li>labelField</li>
+     *   <li>required</li>
+     *   </ul>
+     * </li>
+     * <li>
+     *   <div>Function（Event）：</div>
+     *   <ul>
+     *   <li>onvaluechanged</li>
+     *   <li>onvalidation</li>
+     *   </ul>
+     * </li>
+     * </ul>
+     * @param {HTMLElement} el 要进行解析的 DOM 节点
+     * @return {Object} 有效的属性列表。
+     * @member mini.ValidatorBase
+     * @protected
+     */
     getAttrs : function(b) {
         var a = mini.ValidatorBase.superclass.getAttrs.call(this, b);
         mini._ParseString(b, a, [ "onvaluechanged", "onvalidation", "label",
-                "labelStyle", "requiredErrorText", "errorMode",
-                "errorTooltipPlacement" ]);
-        mini._ParseBool(b, a, [ "validateOnChanged", "validateOnLeave",
-                "labelField" ]);
+                "labelStyle", "requiredErrorText", "errorMode", "errorTooltipPlacement" ]);
+        mini._ParseBool(b, a, [ "validateOnChanged", "validateOnLeave", "labelField" ]);
         var d = b.getAttribute("required");
         if (!d) {
             d = b.required
@@ -2468,6 +2531,11 @@ mini.extend(mini.ValidatorBase, mini.Control, {
         }
         return a
     },
+    /**
+     * 调整标签布局
+     * @member mini.ValidatorBase
+     * @private
+     */
     _labelLayout : function() {
         var b = this._borderEl;
         if (!b) {
@@ -2561,8 +2629,6 @@ mini.extend(mini.ValidatorBase, mini.Control, {
  * @class
  * @extends mini.ValidatorBase
  * @abstract
- * 
- * @constructor
  */
 mini.ListControl = function() {
     this.data = [];
@@ -2571,7 +2637,8 @@ mini.ListControl = function() {
     this.doUpdate()
 };
 /**
- * @property {String} [ajaxType="get"] 
+ * @cfg {String} [ajaxType="get"] 发起 ajax 请求时的请求方式
+ * @accessor
  * @member mini.ListControl
  */
 mini.ListControl.ajaxType = "get";
@@ -2642,6 +2709,11 @@ mini.extend(mini.ListControl, mini.ValidatorBase, {
      * @private
      */
     _itemSelectedCls : "mini-list-item-selected",
+    /**
+     * @inheritdoc mini.Component#set
+     * @returns {mini.ListControl} this
+     * @member mini.ListControl
+     */
     set : function(d) {
         if (typeof d == "string") {
             return this
@@ -2669,8 +2741,18 @@ mini.extend(mini.ListControl, mini.ValidatorBase, {
      * @member mini.ListControl
      */
     uiCls : "mini-list",
+    /**
+     * @inheritdoc mini.Control#_create
+     * @member mini.ListControl
+     * @private
+     */
     _create : function() {
     },
+    /**
+     * @inheritdoc mini.Control#_initEvents
+     * @member mini.ListControl
+     * @private
+     */
     _initEvents : function() {
         mini._BindEvents(function() {
             mini_onOne(this.el, "click", this.__OnClick, this);
@@ -2685,6 +2767,10 @@ mini.extend(mini.ListControl, mini.ValidatorBase, {
             mini_onOne(this.el, "contextmenu", this.__OnContextMenu, this)
         }, this)
     },
+    /**
+     * @inheritdoc mini.Control#destroy
+     * @member mini.ListControl
+     */
     destroy : function(a) {
         if (this.el) {
             this.el.onclick = null;
@@ -2700,6 +2786,11 @@ mini.extend(mini.ListControl, mini.ValidatorBase, {
         }
         mini.ListControl.superclass.destroy.call(this, a)
     },
+    /**
+     * @cfg {String} [name=""] 控件名称
+     * @accessor
+     * @member mini.ListControl
+     */
     name : "",
     setName : function(a) {
         this.name = a;
@@ -2707,8 +2798,15 @@ mini.extend(mini.ListControl, mini.ValidatorBase, {
             mini.setAttr(this._valueEl, "name", this.name)
         }
     },
-    getItemByEvent : function(c) {
-        var b = mini.findParent(c.target, this._itemCls);
+    /**
+     * 根据事件对象获取下拉项
+     * @param {Object} event 事件对象
+     * @param {Object} event.target 事件源
+     * @returns {Object} 对应的下拉项
+     * @member mini.ListControl
+     */
+    getItemByEvent : function(event) {
+        var b = mini.findParent(event.target, this._itemCls);
         if (b) {
             var a = parseInt(mini.getAttr(b, "index"));
             return this.data[a]
@@ -3044,7 +3142,9 @@ mini.extend(mini.ListControl, mini.ValidatorBase, {
     },
     /**
      * 根据值获取项数组
-     * @param {String/Function} values 值，多值之间使用 `,` 分隔
+     * @param {Function/String} values 值，多值之间使用 `,` 分隔，如果传入值为 Function，则包含两个参数：
+     * @param {values.item} 下拉项
+     * @param {values.index} 下拉项的索引，从 0 开始
      * @return {Array} 对应的项数组
      * @member mini.ListControl
      */
