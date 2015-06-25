@@ -1,8 +1,3 @@
-/*
- * 使用 jsDuck 工具生成帮助文档：
- * jsduck /D/myeclipse_workspace/jquery-miniui/src/main/webapp/scripts/miniui/source/debug --output /C/Users/Administrator/Desktop/out --external=jQuery,Document
- */
-
 /**
  * MiniUI 的全局变量。别名为 nui
  * @class
@@ -10,7 +5,7 @@
  */
 mini = {
     /**
-     * 所有组件
+     * 所有组件 id 与组件实例的对应关系
      * @property {Object} [components={}] 
      * @protected
      */
@@ -119,10 +114,10 @@ mini = {
         return mini.uids[uid]
     },
     /**
-     * 查找符合条件的控件
-     * @param {Function} filter 判断传入的组件是否符合要求的函数，该函数拥有一个参数：mini.Component，返回值类型为 `Boolean`。<br>
-     *      如果 `filter` 的值为 `null` 或 `undefined`，将直接返回一个长度为 0 的空数组。<br>
-     *      如果需要获取所有的 MiniUI 控件，可以调用 {@link mini#getComponents} 方法
+     * 查找符合条件的控件，如果需要获取所有的 MiniUI 控件，可以调用 {@link mini#getComponents} 方法
+     * @param {Function} filter 判断传入的组件是否符合要求的函数。如果 `filter` 的值为 `null` 或 `undefined`，将直接返回一个长度为 0 的空数组。
+     * @param {mini.Component} filter.comp 当前控件对象
+     * @param {Boolean} filter.return 如果返回 true 则保留当前控件对象，否则将被过滤掉
      * @param {Object} [context=mini] 调用 filter 函数时的上下文，即 `filter` 函数方法体中 `this` 指向的对象
      * @returns {mini.Component[]} 所有符合条件的控件数组，如果没有任何符合条件的控件，将返回一个长度为 0 的空数组
      */
@@ -278,7 +273,7 @@ mini = {
     },
     /**
      * 注销一个 MiniUI 组件
-     * @param comp {mini.Component} 需要注销的 MiniUI 组件
+     * @param {mini.Component} comp 需要注销的 MiniUI 组件
      */
     unreg : function(comp) {
         delete mini.components[comp.id];
@@ -309,7 +304,7 @@ mini = {
     },
     /**
      * 根据 uiClass 获取对应的 MiniUI 组件定义
-     * @param uiCls {String} uiClass，一般前缀（mini-）加上样式类名称，如： mini-button
+     * @param {String} uiCls uiClass，一般前缀（mini-）加上样式类名称，如： mini-button
      * @return {Function} 对应的 MiniUI 组件定义
      */
     getClassByUICls : function(a) {
@@ -328,7 +323,7 @@ mini = {
     idIndex : 1,
     /**
      * 生成一个新的控件 ID
-     * @param idPrefix {String} ID 前缀
+     * @param {String} idPrefix ID 前缀
      * @return {String} 新生成的控件 ID
      */
     newId : function(idPrefix) {
@@ -368,6 +363,7 @@ mini = {
      * 委托执行指定的函数，即改变方法体内 `this` 的指向
      * @param {Function} fn 需要进行委托调用的函数
      * @param {Object} target 委托的目标对象，即委托函数方法体中 `this` 所指向的对象
+     * @returns {Function} 委托函数
      */
     createDelegate : function(fn, target) {
         if (!fn) {
@@ -453,10 +449,12 @@ mini = {
         return String(obj1) === String(obj2)
     },
     /**
-     * 对数组进行遍历。<br>
-     * 回调函数拥有两个参数：第一个为数组中对应的项，第二个为数组的索引（从 0 开始）。如果需要退出 `forEach` 循环可使回调函数返回 `false`，其它返回值将被忽略。
+     * 对数组进行遍历
      * @param {Array} items 需要例遍的数组
      * @param {Function} callback 每个元素执行的回调函数
+     * @param {Object} callback.obj 当前被迭代的对象
+     * @param {Number} callback.index 索引，从 0 开始
+     * @param {Boolean} callback.return 如果返回 `false` 则会中止循环
      * @param {Object} scope 回调函数的上下文，即回调函数方法体中 `this` 所指向的对象
      */
     forEach : function(items, callback, scope) {
@@ -471,7 +469,10 @@ mini = {
     /**
      * 对数组进行排序
      * @param {Array} array 要进行排序的数组
-     * @param {Function} fn 用来确定元素顺序的函数，该函数拥有两个参数，该函数必须返回下列值之一：
+     * @param {Function} fn 用来确定元素顺序的函数
+     * @param {Object} fn.obj1 第 1 个比较对象
+     * @param {Object} fn.obje2 第 2 个比较对象
+     * @param {Number} fn.return 该函数必须返回下列值之一：
      *  <ul>
      *      <li><b>负数</b> &#45; 如果所传递的第一个参数比第二个参数小</li>
      *      <li><b>0</b> &#45; 如果两个参数相等</li>
@@ -508,8 +509,8 @@ if (typeof mini_useShims == "undefined") {
 
 /**
  * 注册 miniUI 控件类
- * @param clazz 类定义。如： `mini.Button`
- * @param type 样式类。如： `button`
+ * @param clazz {Function} 类定义。如： `mini.Button`
+ * @param type {String} 样式类。如： `"button"`
  * @member Window
  */
 mini_regClass = function(clazz, type) {
@@ -526,10 +527,11 @@ mini_regClass = function(clazz, type) {
 
 /**
  * 属性和方法继承
- * @param clazz 子类，如：`mini.Button`
- * @param parent 父类，如：`mini.Control`
- * @param proto 要追加到子类的 prototype 上的其他属性对象
+ * @param {Function} clazz 子类，如：`mini.Button`
+ * @param {Function} parent 父类，如：`mini.Control`
+ * @param {Object} proto 要追加到子类的 prototype 上的其他属性对象
  * @returns 设置了继承关系后的子类
+ * @member Window
  */
 mini_extend = function(clazz, parent, proto) {
     if (typeof parent != "function") {
@@ -556,15 +558,19 @@ mini.copyTo(mini, {
     /**
      * @method extend
      * @member mini
-     * @alias Window.mini_extend
+     * @alias Window#mini_extend
      */
     extend : mini_extend,
     /**
      * @method regClass
      * @member mini
-     * @alias Window.mini_regClass
+     * @alias Window#mini_regClass
      */
     regClass : mini_regClass,
+    /**
+     * @property {Boolean} [debug=false] 是否开启调试，值为 true 时，如果发起 ajax 请求出现错误，则会 alert 对应的错误代码
+     * @member mini
+     */
     debug : false
 });
 
@@ -590,8 +596,8 @@ mini.namespace = function(ns) {
 };
 
 mini._BindCallbacks = [];
-mini._BindEvents = function(b, a) {
-    mini._BindCallbacks.push([ b, a ]);
+mini._BindEvents = function(callback, scope) {
+    mini._BindCallbacks.push([ callback, scope ]);
     if (!mini._EventTimer) {
         mini._EventTimer = setTimeout(function() {
             mini._FireBindEvents()
@@ -599,22 +605,30 @@ mini._BindEvents = function(b, a) {
     }
 };
 mini._FireBindEvents = function() {
-    for (var b = 0, a = mini._BindCallbacks.length; b < a; b++) {
-        var c = mini._BindCallbacks[b];
+    for (var i = 0, len = mini._BindCallbacks.length; i < len; i++) {
+        var c = mini._BindCallbacks[i];
         c[0].call(c[1])
     }
     mini._BindCallbacks = [];
     mini._EventTimer = null
 };
 
-mini._getFunctoin = function(f) {
-    if (typeof f != "string") {
+/**
+ * 根据方法名获取对应的方法
+ * @method _getFunctoin
+ * @param {String} functionName 方法名，如："mini.get"
+ * @returns {Function} 对应的方法，如果方法不存在，则返回 `null`
+ * @member mini
+ * @private
+ */
+mini._getFunctoin = function(functionName) {
+    if (typeof functionName != "string") {
         return null
     }
-    var e = f.split(".");
+    var parts = functionName.split(".");
     var d = null;
-    for (var c = 0, a = e.length; c < a; c++) {
-        var b = e[c];
+    for (var i = 0, len = parts.length; i < len; i++) {
+        var b = parts[i];
         if (!d) {
             d = window[b]
         } else {
@@ -626,6 +640,15 @@ mini._getFunctoin = function(f) {
     }
     return d
 };
+/**
+ * 获取键值对对象
+ * @method _getMap
+ * @param {String} name 属性名称
+ * @param {String} obj 源对象
+ * @returns {Object} 对应对象，如果不存在则返回 `null`
+ * @member mini
+ * @private
+ */
 mini._getMap = function(name, obj) {
     if (!name) {
         return null
@@ -698,40 +721,61 @@ mini._setMap = function(a, m, e) {
     }
     return m
 };
-mini.getAndCreate = function(a) {
-    if (!a) {
+/**
+ * 获取或创建组件
+ * @method getAndCreate
+ * @param {String/mini.Control/HTMLElement/Object} param 参数，为不同类型时表示的含义分别如下：<ul>
+ * <li>`String` &#45; 组件的 id</li>
+ * <li>`mini.Control` &#45; 组件，将直接返回此组件</li>
+ * <li>`HTMLElement` &#45; 根据 DOM 节点的 uid 属性寻找对应的组件</li>
+ * <li>`Object` &#45; 创建组件实例的选项，具体请参见 {@link #create} 方法中的参数描述</li>
+ * </ul>
+ * @returns {mini.Control} 控件对象，如果不存在则返回 `null` 或 `undefined`
+ * @member mini
+ */
+mini.getAndCreate = function(param) {
+    if (!param) {
         return null
     }
-    if (typeof a == "string") {
-        return mini.components[a]
+    if (typeof param == "string") {
+        return mini.components[param]
     }
-    if (typeof a == "object") {
-        if (mini.isControl(a)) {
-            return a
+    if (typeof param == "object") {
+        if (mini.isControl(param)) {
+            return param
         } else {
-            if (mini.isElement(a)) {
-                return mini.uids[a.uid]
+            if (mini.isElement(param)) {
+                return mini.uids[param.uid]
             } else {
-                return mini.create(a)
+                return mini.create(param)
             }
         }
     }
     return null
 };
-mini.create = function(a) {
-    if (!a) {
+/**
+ * 创建一个组件实例，如果已经存在 id 相同的组件，则会返回已存在的那个组件
+ * @method create
+ * @param {Object} options 选项，必须包含 id 和 type 属性
+ * @param {String} options.id 组件的 id
+ * @param {String} options.type 组件的类名，如：`"mini.Button"`
+ * @returns {mini.Control} 控件对象，如果 `options` 或 `options.type` 无效，则返回 `null`
+ * @member mini
+ */
+mini.create = function(options) {
+    if (!options) {
         return null
     }
-    if (mini.get(a.id) === a) {
-        return a
+    if (mini.get(options.id) === options) {
+        return options
     }
-    var b = this.getClass(a.type);
-    if (!b) {
+    var className = this.getClass(options.type);
+    if (!className) {
         return null
     }
-    var c = new b();
-    c.set(a);
-    return c
+    var control = new className();
+    control.set(options);
+    return control
 };
 
 
@@ -805,8 +849,12 @@ mini.Component.prototype = {
      *     
      * @param {Object} options 需要设置的属性对象 
      * @param {String/HTMLElement} options.render 需要追加到哪个 DOM 节点中， 与 `renderTo` 等价
-     * @param {Function} options.onxxx 需要绑定的事件，对应的事件类型为 `xxx` 对应的真实值
-     * @param {Object} options.yyy 如果存在对应的 `set` 方法，则调用其 `set` 方法，反之则直接为对象设置属性（`this[<i>yyy</i>] = value`）
+     * @param {Object} options.xxx 如果存在对应的 `set` 方法，则调用其 `set` 方法，反之则直接为对象设置属性（`this[xxx] = value`）
+     * @param {Function} options.onxxx 需要绑定的事件，`xxx` 为事件类型
+     * @param {Object} options.onxxx.event 事件对象
+     * @param {String} options.onxxx.event.type 事件类型
+     * @param {Object} options.onxxx.event.source 事件源
+     * @param {Object} options.onxxx.event.sender 事件发送者
      * @returns {mini.Component} this
      * @chainable
      */
@@ -885,8 +933,12 @@ mini.Component.prototype = {
      *     control.on("click", function(e){
      *         //...
      *     });
-     * @param {String} type 事件类型，比如”click”
+     * @param {String} type 事件类型，比如 ”click”
      * @param {Function} fn 事件处理函数
+     * @param {Object} fn.event 事件对象
+     * @param {String} fn.event.type 事件类型
+     * @param {Object} fn.event.source 事件源
+     * @param {Object} fn.event.sender 事件发送者
      * @param {Object} [scope] 事件处理函数的作用域对象
      * @return {mini.Component} this
      * @chainable
@@ -921,7 +973,7 @@ mini.Component.prototype = {
     },
     /**
      * 取消监听事件
-     * @param {String} type 事件类型，比如”click”
+     * @param {String} type 事件类型，比如 ”click”
      * @param {Function} fn 事件处理函数
      * @param {Object} [scope] 事件处理函数的作用域对象
      * @return {mini.Component} this
@@ -945,7 +997,7 @@ mini.Component.prototype = {
     },
     /**
      * 查找事件监听器
-     * @param {String} type 事件类型，比如”click”
+     * @param {String} type 事件类型，比如 ”click”
      * @param {Function} fn 事件处理函数
      * @param {Object} [scope] 事件处理函数的作用域对象
      * @returns {Array} 对应的事件处理句柄。是一个长度为 2 的数组：第1个元素为事件的处理方法，第2个元素为 scope 对象
@@ -1008,8 +1060,18 @@ mini.Component.prototype = {
  * @class mini.Control
  * @extends mini.Component
  * @abstract
- *
- * @constructor 构造方法
+ */
+
+/**
+ * 构造方法，创建一个新的控件对象，主要步骤：
+ * <ol>
+ * <li>先调用父类的构造方法</li>
+ * <li>再执行 `_create()` 方法创建相关的 DOM 节点</li>
+ * <li>然后执行 `_initEvents()` 方法绑定事件</li>
+ * <li>最后设置宽度、高度、样式等属性</li>
+ * </ol>
+ * @constructor
+ * @member mini.Control
  */
 mini.Control = function() {
     mini.Control.superclass.constructor.call(this);
@@ -1032,13 +1094,13 @@ mini.extend(mini.Control, mini.Component, {
      */
     jsName : null,
     /**
-     * @cfg {Number} width 宽度，单位为 px
+     * @cfg {Number/String} [width=""] 宽度，如果为数字，单位为 px，如果为字符串，则为百分比或 `"auto"`
      * @accessor
      * @member mini.Control
      */
     width : "",
     /**
-     * @cfg {Number} height 高度，单位为 px
+     * @cfg {Number/String} [height=""] 高度，如果为数字，单位为 px，如果为字符串，则为百分比或 `"auto"`
      * @accessor
      * @member mini.Control
      */
@@ -1067,15 +1129,43 @@ mini.extend(mini.Control, mini.Component, {
      * @member mini.Control
      */
     tooltip : "",
+    /**
+     * @property {String} [_readOnlyCls="mini-readonly"] 只读状态时的展现样式类
+     * @member mini.Control
+     * @private
+     */
     _readOnlyCls : "mini-readonly",
+    /**
+     * @property {String} [_disabledCls="mini-disabled"] 禁用状态时的展现样式类
+     * @member mini.Control
+     * @private
+     */
     _disabledCls : "mini-disabled",
+    /**
+     * 创建控件的 DOM 节点
+     * @member mini.Control
+     * @private
+     */
     _create : function() {
         this.el = document.createElement("div")
     },
+    /**
+     * 为控件绑定事件
+     * @member mini.Control
+     * @private
+     */
     _initEvents : function() {
     },
-    within : function(a) {
-        if (mini.isAncestor(this.el, a.target)) {
+    
+    /**
+     * 判断指定组件是否在当前控件中
+     * @param {Object} comp 组件对象
+     * @param {Object} comp.target (required) 组件对象对应的 DOM 节点
+     * @returns {Boolean} 如果传入的组件在当前控件中，返回 `true`，否则返回 `false`
+     * @member mini.Control
+     */
+    within : function(comp) {
+        if (mini.isAncestor(this.el, comp.target)) {
             return true
         }
         return false
@@ -1092,14 +1182,30 @@ mini.extend(mini.Control, mini.Component, {
     getName : function() {
         return this.name
     },
+    /**
+     * 是否自适应高度
+     * @returns {Boolean} 如果 `height` 的值为 "" 或 "auto"，返回 `true`，否则返回 `false`
+     * @member mini.Control
+     */
     isAutoHeight : function() {
         var a = this.el.style.height;
         return a == "auto" || a == ""
     },
+    /**
+     * 
+     * 是否自适应宽度
+     * @returns {Boolean} 如果 `width` 的值为 "" 或 "auto"，返回 `true`，否则返回 `false`
+     * @member mini.Control
+     */
     isAutoWidth : function() {
         var a = this.el.style.width;
         return a == "auto" || a == ""
     },
+    /**
+     * 是否为固定尺寸
+     * @returns {Boolean} 如果 `width` 和 `height` 都指定了固定高度，返回 `true`，否则返回 `false`
+     * @member mini.Control
+     */
     isFixedSize : function() {
         var b = this.width;
         var a = this.height;
@@ -1108,16 +1214,23 @@ mini.extend(mini.Control, mini.Component, {
         }
         return false
     },
+    /**
+     * 是否为绘制者
+     * @returns {Boolean} 
+     * @member mini.Control
+     */
     isRender : function(a) {
         return !!(this.el && this.el.parentNode && this.el.parentNode.tagName)
     },
     /**
-     * 控件加入 DOM 元素呈现，如：
+     * 将控件加入到 DOM 节点中进行展现，如：
+     * 
      *     @example
      *     control.render(document.body);
-     * @param {HTMLElement/String} element 参考节点。
-     *      传入的参数类型为 String 时，表示参数值是 HTML 节点或 mini.Component 的 id 属性值，"#body" 代表 document.body 节点
-     * @param {String} [renderType="append"] 渲染方式，有效值分别为：<ul>
+     *     
+     * @param {HTMLElement/String} element 参考节点。<br>
+     *      传入的参数类型为 `String` 时，表示 DOM 节点的 id 或 mini.Component 的 id 属性值，"#body" 代表 document.body 节点
+     * @param {String} [renderType="append"] 渲染方式，可选值为：<ul>
      *      <li>append</li>
      *      <li>preend</li>
      *      <li>before</li>
@@ -1159,7 +1272,8 @@ mini.extend(mini.Control, mini.Component, {
         this.fire("render")
     },
     /**
-     * 获取控件DOM元素
+     * 获取控件 DOM 节点
+     * @returns {HTMLElement} 控件对应的 DOM 节点
      * @member mini.Control
      */
     getEl : function() {
@@ -1182,6 +1296,10 @@ mini.extend(mini.Control, mini.Component, {
     getTooltip : function() {
         return this.tooltip
     },
+    /**
+     * 尺寸发生调整后执行的方法
+     * @member mini.Control
+     */
     _sizeChanged : function() {
         this.doLayout()
     },
@@ -1218,6 +1336,11 @@ mini.extend(mini.Control, mini.Component, {
         }
         return b
     },
+    /**
+     * 获取盒子模型，请参考 {@link mini#getBox}
+     * @returns {Object} 盒子模型
+     * @member mini.Control
+     */
     getBox : function() {
         return mini.getBox(this.el)
     },
@@ -1234,6 +1357,11 @@ mini.extend(mini.Control, mini.Component, {
     getBorderStyle : function() {
         return this.borderStyle
     },
+    /**
+     * @property {Boolean} [_clearBorder=true] 是否清除边框
+     * @member mini.Control
+     * @private
+     */
     _clearBorder : true,
 
     /**
@@ -1282,6 +1410,11 @@ mini.extend(mini.Control, mini.Component, {
     removeCls : function(cls) {
         mini.removeClass(this.el, cls)
     },
+
+    /**
+     * 处理只读状态
+     * @member mini.Control
+     */
     _doReadOnly : function() {
         if (this.readOnly) {
             this.addCls(this._readOnlyCls)
@@ -1296,7 +1429,14 @@ mini.extend(mini.Control, mini.Component, {
     getReadOnly : function() {
         return this.readOnly
     },
-    getParent : function(d) {
+
+    /**
+     * 获取父控件
+     * @param {String} [uiCls] 父控件的样式类。如果传入了此参数，则一直往上找，直到找到类型相匹配才终止
+     * @returns {mini.Control} 父控件，如果没有父控件，则返回 `null`
+     * @member mini.Control
+     */
+    getParent : function(uiCls) {
         var b = document;
         var a = this.el.parentNode;
         while (a != b && a != null) {
@@ -1305,7 +1445,7 @@ mini.extend(mini.Control, mini.Component, {
                 if (!mini.isControl(c)) {
                     return null
                 }
-                if (!d || c.uiCls == d) {
+                if (!uiCls || c.uiCls == uiCls) {
                     return c
                 }
             }
@@ -1313,6 +1453,11 @@ mini.extend(mini.Control, mini.Component, {
         }
         return null
     },
+    /**
+     * 判断当前控件是否为只读
+     * @returns {Boolean} 如果当前控件为只读或禁用状态，或者其父控件为只读或禁用状态，返回 `true`，否则返回 `false`
+     * @member mini.Control
+     */
     isReadOnly : function() {
         if (this.readOnly || !this.enabled) {
             return true
@@ -1349,6 +1494,11 @@ mini.extend(mini.Control, mini.Component, {
     disable : function() {
         this.setEnabled(false)
     },
+    /**
+     * @property {String} [_displayStyle=""] 样式的 display 值
+     * @member mini.Control
+     * @private
+     */
     _displayStyle : "",
     setVisible : function(a) {
         this.visible = a;
@@ -1374,42 +1524,65 @@ mini.extend(mini.Control, mini.Component, {
     hide : function() {
         this.setVisible(false)
     },
+    /**
+     * 控件当前是否为可见状态
+     * @returns {Boolean} 控件可见时返回 `true`，否则返回 `false`
+     * @member mini.Control
+     */
     isDisplay : function(c) {
         if (mini.WindowVisible == false || !this.el) {
             return false
         }
-        var b = document.body;
-        var a = this.el;
+        var body = document.body;
+        var el = this.el;
         while (1) {
-            if (a == null || !a.style) {
+            if (el == null || !el.style) {
                 return false
             }
-            if (a && a.style && a.style.display == "none") {
+            if (el && el.style && el.style.display == "none") {
                 if (c) {
-                    if (c(a) !== true) {
+                    if (c(el) !== true) {
                         return false
                     }
                 } else {
                     return false
                 }
             }
-            if (a == b) {
+            if (el == body) {
                 return true
             }
-            a = a.parentNode
+            el = el.parentNode
         }
         return true
     },
     _allowUpdate : true,
+
+    /**
+     * 开始更新
+     * @member mini.Control
+     */
     beginUpdate : function() {
         this._allowUpdate = false
     },
+    /**
+     * 结束更新
+     * @member mini.Control
+     */
     endUpdate : function() {
         this._allowUpdate = true;
         this.doUpdate()
     },
+    /**
+     * 更新
+     * @member mini.Control
+     */
     doUpdate : function() {
     },
+    /**
+     * 是否允许调用布局
+     * @returns {Boolean} 允许调整且当前为可见状态时返回 `true`，否则返回 `false`
+     * @member mini.Control
+     */
     canLayout : function() {
         if (this._allowLayout == false) {
             return false
@@ -1422,12 +1595,20 @@ mini.extend(mini.Control, mini.Component, {
      */
     doLayout : function() {
     },
+    /**
+     * 布局发生改变
+     * @member mini.Control
+     */
     layoutChanged : function() {
         if (this.canLayout() == false) {
             return
         }
         this.doLayout()
     },
+    /**
+     * 销毁所有子控件
+     * @member mini.Control
+     */
     _destroyChildren : function(d) {
         if (this.el) {
             var c = mini.getChildControls(this);
@@ -1505,6 +1686,11 @@ mini.extend(mini.Control, mini.Component, {
         } catch (b) {
         }
     },
+    /**
+     * @cfg {Boolean} [allowAnim=true] 是否允许动画
+     * @accessor
+     * @member mini.Control
+     */
     allowAnim : true,
     setAllowAnim : function(a) {
         this.allowAnim = a
@@ -1512,30 +1698,62 @@ mini.extend(mini.Control, mini.Component, {
     getAllowAnim : function() {
         return this.allowAnim
     },
+    /**
+     * 获取遮罩层对应的 DOM 节点
+     * @member mini.Control
+     * @returns {HTMLElement} 遮罩层对应的 DOM 节点
+     */
     _getMaskWrapEl : function() {
         return this.el
     },
-    mask : function(a) {
-        if (typeof a == "string") {
-            a = {
-                html : a
+    /**
+     * 显示遮罩层
+     * @param {String/Object} options，遮罩层选项。如果类型为 `String`，则来遮罩层的提示消息
+     * @param {String} options.html 提示消息
+     * @param {HTMLElement} options.el 遮罩层的 DOM 节点
+     * @param {HTMLElement} [options.cls="mini-mask-loading"] 遮罩层的样式类
+     * @member mini.Control
+     */
+    mask : function(options) {
+        if (typeof options == "string") {
+            options = {
+                html : options
             }
         }
-        a = a || {};
-        a.el = this._getMaskWrapEl();
-        if (!a.cls) {
-            a.cls = this._maskCls
+        options = options || {};
+        options.el = this._getMaskWrapEl();
+        if (!options.cls) {
+            options.cls = this._maskCls
         }
-        mini.mask(a)
+        mini.mask(options)
     },
+    /**
+     * 取消遮罩
+     * @member mini.Control
+     */
     unmask : function() {
         mini.unmask(this._getMaskWrapEl());
         this.isLoading = false
     },
+    /**
+     * @property {String} [_maskCls="mini-mask-loading"] 遮罩层的默认样式类
+     * @member mini.Control
+     * @private
+     */
     _maskCls : "mini-mask-loading",
+    /**
+     * @cfg {String} [loadingMsg="Loading..."] 数据加载的遮罩层提示消息
+     * @accessor
+     * @member mini.Control
+     */
     loadingMsg : "Loading...",
-    loading : function(a) {
-        this.mask(a || this.loadingMsg)
+    /**
+     * 显示数据加载的遮罩层
+     * @param {String} [msg="Loading..."] 提示消息
+     * @member mini.Control
+     */
+    loading : function(msg) {
+        this.mask(msg || this.loadingMsg)
     },
     setLoadingMsg : function(a) {
         this.loadingMsg = a
@@ -1543,46 +1761,73 @@ mini.extend(mini.Control, mini.Component, {
     getLoadingMsg : function() {
         return this.loadingMsg
     },
-    _getContextMenu : function(b) {
-        var a = b;
-        if (typeof b == "string") {
-            a = mini.get(b);
-            if (!a) {
-                mini.parse(b);
-                a = mini.get(b)
+    /**
+     * 获取上下文菜单
+     * @param {String/Array/Object/mini.Control} menu 该参数可以是如下以种值：
+     * <ul>
+     * <li>String &#45; 菜单控件的 id 或可以被解析为菜单控件的 HTML 源代码</li>
+     * <li>Array &#45; 菜单项（mini.MenuItem）数组</li>
+     * <li>Object &#45; 创建菜单的配置对象，参数具体选项请参见 {@link mini#create} 方法中的参数描述</li>
+     * <li>mini.Control &#45; 这个原样返回此对象</li>
+     * </ul>
+     * @returns {mini.Menu} 上下文菜单
+     * @member mini.Control
+     * @private
+     */
+    _getContextMenu : function(menu) {
+        var result = menu;
+        if (typeof menu == "string") {
+            result = mini.get(menu);
+            if (!result) {
+                mini.parse(menu);
+                result = mini.get(menu)
             }
         } else {
-            if (mini.isArray(b)) {
-                a = {
+            if (mini.isArray(menu)) {
+                result = {
                     type : "menu",
-                    items : b
+                    items : menu
                 }
             } else {
-                if (!mini.isControl(b)) {
-                    a = mini.create(b)
+                if (!mini.isControl(menu)) {
+                    result = mini.create(menu)
                 }
             }
         }
-        return a
+        return result
     },
-    __OnHtmlContextMenu : function(b) {
-        var a = {
+    /**
+     * 显示上下文菜单的方法
+     * @param {Object} htmlEvt 原生的 DOM 事件
+     * @fires mini.Menu#BeforeOpen
+     * @fires mini.Menu#opening
+     * @fires mini.Menu#Open
+     * @member mini.Control
+     * @private
+     */
+    __OnHtmlContextMenu : function(htmlEvt) {
+        var evt = {
             popupEl : this.el,
-            htmlEvent : b,
+            htmlEvent : htmlEvt,
             cancel : false
         };
-        this.contextMenu.fire("BeforeOpen", a);
-        if (a.cancel == true) {
+        this.contextMenu.fire("BeforeOpen", evt);
+        if (evt.cancel == true) {
             return
         }
-        this.contextMenu.fire("opening", a);
-        if (a.cancel == true) {
+        this.contextMenu.fire("opening", evt);
+        if (evt.cancel == true) {
             return
         }
-        this.contextMenu.showAtPos(b.pageX, b.pageY);
-        this.contextMenu.fire("Open", a);
+        this.contextMenu.showAtPos(htmlEvt.pageX, htmlEvt.pageY);
+        this.contextMenu.fire("Open", evt);
         return false
     },
+    /**
+     * @cfg {String} contextMenu 上下文菜单的 id 或能被解析成 mini.Menu 对象的 HTML 代码
+     * @accessor
+     * @member mini.Control
+     */
     contextMenu : null,
     setContextMenu : function(b) {
         var a = this._getContextMenu(b);
@@ -1598,19 +1843,39 @@ mini.extend(mini.Control, mini.Component, {
     getContextMenu : function() {
         return this.contextMenu
     },
+    /**
+     * @cfg {Object} [defaultValue] 默认值
+     * @accessor
+     * @member mini.Control
+     */
     setDefaultValue : function(a) {
         this.defaultValue = a
     },
     getDefaultValue : function() {
         return this.defaultValue
     },
+    /**
+     * @cfg {Object} [value] 值
+     * @accessor
+     * @member mini.Control
+     */
     setValue : function(a) {
         this.value = a
     },
     getValue : function() {
         return this.value
     },
+    /**
+     * @cfg {Object} [ajaxData=null] 发起 ajax 请求时向后台提交的数据
+     * @accessor
+     * @member mini.Control
+     */
     ajaxData : null,
+    /**
+     * @cfg {String} [ajaxType=""] 发起 ajax 请求时的请求方式，一般为 "POST" 或 "GET"
+     * @accessor
+     * @member mini.Control
+     */
     ajaxType : "",
     setAjaxData : function(a) {
         this.ajaxData = a
@@ -1624,8 +1889,18 @@ mini.extend(mini.Control, mini.Component, {
     getAjaxType : function() {
         return this.ajaxType
     },
+    /**
+     * _afterApply
+     * @member mini.Control
+     * @private
+     */
     _afterApply : function(a) {
     },
+    /**
+     * @cfg {String} [dataField=""] 发起 ajax 请求时，当前控件在提交的数据对象中所对应的字段名称
+     * @accessor
+     * @member mini.Control
+     */
     dataField : "",
     setDataField : function(a) {
         this.dataField = a
@@ -1633,6 +1908,11 @@ mini.extend(mini.Control, mini.Component, {
     getDataField : function() {
         return this.dataField
     },
+    /**
+     * @cfg {Number} tabIndex 同 DOM 节点的 tabIndex 属性
+     * @accessor
+     * @member mini.Control
+     */
     tabIndex : 0,
     setTabIndex : function(b) {
         var a = this._textEl || this.el;
@@ -1643,10 +1923,7 @@ mini.extend(mini.Control, mini.Component, {
         return this.tabIndex
     },
     /**
-     * 获取 DOM 节点的属性列表
-     * @member mini.Control
-     * @param {HTMLElement} el 要进行解析的 DOM 节点
-     * @return {Object} 有效的属性列表。会进行解析的属性包括但不限于：
+     * 获取 DOM 节点的属性列表。会进行解析的属性包括但不限于：
      * <ul>
      * <li>
      *   <div>String：</div>
@@ -1681,7 +1958,7 @@ mini.extend(mini.Control, mini.Component, {
      *   <ul>
      *   <li>ajaxData</li>
      *   <li>ajaxOptions</li>
-     *   <li>data-options</li>
+     *   <li>data-options &#45; 如果 DOM 节点的 `data-options` 属性值为 `"{library:'miniUI'}"`，则在解析后，可以通过 `control.library` 的方式直接获取 library 字段的值</li>
      *   </ul>
      * </li>
      * <li>
@@ -1691,6 +1968,10 @@ mini.extend(mini.Control, mini.Component, {
      *   </ul>
      * </li>
      * </ul>
+     * @param {HTMLElement} el 要进行解析的 DOM 节点
+     * @return {Object} 有效的属性列表。
+     * @member mini.Control
+     * @protected
      */
     getAttrs : function(el) {
         var attrs = {};
@@ -1775,30 +2056,51 @@ mini.extend(mini.Control, mini.Component, {
         return attrs
     }
 });
+
+/**
+ * @property {Object} [_attrs=null] 
+ * @member mini
+ */
 mini._attrs = null;
-mini.regHtmlAttr = function(a, b) {
-    if (!a) {
+/**
+ * 注册 HTML 标签的属性
+ * @param {String} attrName 属性名
+ * @param {String} [valueType="string"] 属性值类型，如："string"、"number"、"boolean"、"object" 等
+ * @member mini
+ */
+mini.regHtmlAttr = function(attrName, valueType) {
+    if (!attrName) {
         return
     }
-    if (!b) {
-        b = "string"
+    if (!valueType) {
+        valueType = "string"
     }
     if (!mini._attrs) {
         mini._attrs = []
     }
-    mini._attrs.push([ a, b ])
+    mini._attrs.push([ attrName, valueType ])
 };
-__mini_setControls = function(b, f, e) {
-    f = f || this._contentEl;
-    e = e || this;
-    if (!b) {
-        b = []
+
+/**
+ * 设置容器的子控件
+ * @param {Array} children 子控件数组，数组中的元素类型可以是 `String`、`HTMLElement`、`mini.Control` 和 `Object` 类型，具体请参见 {@link mini#getAndCreate} 方法的参数描述
+ * @param {HTMLElement} [contentEl=this._contentEl] 容器控件的内容区域对应的 DOM 节点
+ * @param {mini.Container} [container=this] 容器对象
+ * @returns {mini.Container} 内容区域设置了子控件后的容器对象
+ * @member Window
+ * @private
+ */
+__mini_setControls = function(children, contentEl, container) {
+    contentEl = contentEl || this._contentEl;
+    container = container || this;
+    if (!children) {
+        children = []
     }
-    if (!mini.isArray(b)) {
-        b = [ b ]
+    if (!mini.isArray(children)) {
+        children = [ children ]
     }
-    for (var d = 0, a = b.length; d < a; d++) {
-        var g = b[d];
+    for (var d = 0, a = children.length; d < a; d++) {
+        var g = children[d];
         if (typeof g == "string") {
             if (g.indexOf("#") == 0) {
                 g = mini.byId(g)
@@ -1813,11 +2115,11 @@ __mini_setControls = function(b, f, e) {
         if (!g) {
             continue
         }
-        mini.append(f, g)
+        mini.append(contentEl, g)
     }
-    mini.parse(f);
-    e.doLayout();
-    return e
+    mini.parse(contentEl);
+    container.doLayout();
+    return container
 };
 /**
  * 容器控件的基类
@@ -1830,6 +2132,12 @@ mini.Container = function() {
     this._contentEl = this.el
 };
 mini.extend(mini.Container, mini.Control, {
+    /**
+     * @method setControls
+     * @member mini.Container
+     * @alias Window#__mini_setControls
+     * @chainable
+     */
     setControls : __mini_setControls,
     getContentEl : function() {
         return this._contentEl
@@ -2572,6 +2880,12 @@ mini.extend(mini.ListControl, mini.ValidatorBase, {
         return this.url
     },
     ajaxData : null,
+    /**
+     * 
+     * @fires render
+     * @fires render
+     * @fires render
+     */
     _doLoad : function(params) {
         try {
             var url = eval(this.url);
@@ -3052,6 +3366,10 @@ mini.extend(mini.ListControl, mini.ValidatorBase, {
             }
         }
     },
+    /**
+     * 
+     * @fires render
+     */
     _OnSelectionChanged : function(b, a) {
         var c = this.getValueAndText(this._selecteds);
         this.value = c[0];
@@ -3101,6 +3419,10 @@ mini.extend(mini.ListControl, mini.ValidatorBase, {
     __OnContextMenu : function(a) {
         this._fireEvent(a, "ContextMenu")
     },
+    /**
+     * 
+     * @fires render
+     */
     _fireEvent : function(f, a) {
         if (!this.enabled) {
             return
@@ -3120,6 +3442,10 @@ mini.extend(mini.ListControl, mini.ValidatorBase, {
             this.fire("item" + a, b)
         }
     },
+    /**
+     * 
+     * @fires render
+     */
     _OnItemClick : function(a, c) {
         if (this.isReadOnly() || this.enabled == false || a.enabled === false) {
             c.preventDefault();
@@ -3155,6 +3481,10 @@ mini.extend(mini.ListControl, mini.ValidatorBase, {
         this.fire("itemclick", c)
     },
     _blurOnOut : true,
+    /**
+     * 
+     * @fires render
+     */
     _OnItemMouseOut : function(a, b) {
         if (!this.enabled) {
             return
@@ -3168,6 +3498,10 @@ mini.extend(mini.ListControl, mini.ValidatorBase, {
         };
         this.fire("itemmouseout", b)
     },
+    /**
+     * 
+     * @fires render
+     */
     _OnItemMouseMove : function(a, b) {
         if (!this.enabled || a.enabled === false) {
             return
@@ -3646,6 +3980,10 @@ mini.CheckColumn = function(a) {
                             b += '<div class="mini-grid-radio-mask"></div>';
                             return b
                         },
+                        /**
+                         * 
+     * @fires render
+                         */
                         __OnHeaderCellClick : function(f) {
                             var c = f.sender;
                             if (f.column != this) {
@@ -3725,6 +4063,11 @@ mini.ExpandColumn = function(a) {
                         init : function(b) {
                             b.on("cellclick", this.__OnCellClick, this)
                         },
+                        /**
+                         * 
+     * @fires render
+     * @fires render
+                         */
                         __OnCellClick : function(d) {
                             var c = d.sender;
                             if (d.column == this && c.isShowRowDetail) {
@@ -3792,6 +4135,7 @@ mini.CheckBoxColumn = function(a) {
                         },
                         init : function(e) {
                             this.grid = e;
+                            //@fires render
                             function b(i) {
                                 if (e.isReadOnly() || this.readOnly) {
                                     return
@@ -3810,6 +4154,10 @@ mini.CheckBoxColumn = function(a) {
                                     }
                                 }
                             }
+                            /**
+                             * 
+     * @fires render
+                             */
                             function d(h) {
                                 if (h.column == this) {
                                     var i = this.getCheckId(h.record, h.column);
@@ -3915,6 +4263,7 @@ mini.RadioButtonColumn = function(a) {
                         },
                         init : function(e) {
                             this.grid = e;
+                            //@fires render
                             function b(n) {
                                 if (e.isReadOnly() || this.readOnly) {
                                     return
@@ -4138,6 +4487,12 @@ mini._Resizer.prototype = {
         }
         mini.setSize(this.proxy, a, c)
     },
+    /**
+     * 
+     * @fires render
+     * @param a
+     * @param c
+     */
     _OnDragStop : function(a, c) {
         if (!this.proxy) {
             return
