@@ -42,7 +42,7 @@ mini = {
      * 根据样式类获取对应的 DOM 节点
      * @param {String} className 样式类名称
      * @param {String/HTMLElement/jQuery} [parent] 父节点的 ID，值为 MiniUI 控件的 ID
-     * @return {HTMLElement} 符合条件的第一个 DOM 节点
+     * @returns {HTMLElement} 符合条件的第一个 DOM 节点
      */
     byClass : function(className, parent) {
         if (typeof parent == "string") {
@@ -52,7 +52,7 @@ mini = {
     },
     /**
      * 获取所有控件实例
-     * @return {mini.Control[]} 所有控件
+     * @returns {mini.Control[]} 所有控件
      */
     getComponents : function() {
         var a = [];
@@ -75,7 +75,7 @@ mini = {
      * <li>其他情况返回 null</li>
      * </ol>
      * @param {String/mini.Control/HTMLElement} sel 选择器
-     * @return {mini.Component} 对应的 MiniUI 组件实例，如果没有找到，则返回 null
+     * @returns {mini.Component} 对应的 MiniUI 组件实例，如果没有找到，则返回 null
      */
     get : function(id) {
         // 如果传入的参数为空，则返回 null
@@ -143,7 +143,7 @@ mini = {
     /**
      * 获取父控件下的所有子控件
      * @param {mini.Control/HTMLElement} parent 父控件
-     * @return {mini.Control[]} 所有子控件
+     * @returns {mini.Control[]} 所有子控件
      */
     getChildControls : function(parent) {
         var c = parent.el ? parent.el : parent;
@@ -203,7 +203,7 @@ mini = {
      * @param {String} name 控件名称
      * @param {String/mini.Control/HTMLElement} [parent=document.body] 父控件，用于限定获取控件的范围。<br>
      *      如果传入的值是一个字符串，则为父节点的 ID。
-     * @return {mini.Control[]} 对应的 MiniUI 控件数组，如果没有任何符合条件的控件，将返回一个长度为 0 的空数组
+     * @returns {mini.Control[]} 对应的 MiniUI 控件数组，如果没有任何符合条件的控件，将返回一个长度为 0 的空数组
      */
     getsbyName : function(name, parent) {
         var b = mini.isControl(parent);
@@ -243,7 +243,7 @@ mini = {
     /**
      * 获取 URL 中的所有参数
      * @param {String} [url=location.href] 要解析的 URL
-     * @return {Object} 包含所有参数名称和参数值的 Object
+     * @returns {Object} 包含所有参数名称和参数值的 Object
      */
     getParams : function(url) {
         if (!url) {
@@ -294,7 +294,7 @@ mini = {
     /**
      * 根据组件类名称获取对应的 MiniUI 组件定义
      * @param {String} className 组件类名称（全小写，不带前缀 mini-）
-     * @return {Function} 对应的 MiniUI 控件定义
+     * @returns {Function} 对应的 MiniUI 控件定义
      */
     getClass : function(className) {
         if (!className) {
@@ -305,7 +305,7 @@ mini = {
     /**
      * 根据 uiClass 获取对应的 MiniUI 组件定义
      * @param {String} uiCls uiClass，一般前缀（mini-）加上样式类名称，如： mini-button
-     * @return {Function} 对应的 MiniUI 组件定义
+     * @returns {Function} 对应的 MiniUI 组件定义
      */
     getClassByUICls : function(a) {
         return this.uiClasses[a.toLowerCase()]
@@ -324,7 +324,7 @@ mini = {
     /**
      * 生成一个新的控件 ID
      * @param {String} idPrefix ID 前缀
-     * @return {String} 新生成的控件 ID
+     * @returns {String} 新生成的控件 ID
      */
     newId : function(idPrefix) {
         return (idPrefix || this.idPre) + this.idIndex++
@@ -333,7 +333,7 @@ mini = {
      * 对象浅复制，将 `source` 中的所有属性都复制给 `dest`。
      * @param {Object} dest 目标对象
      * @param {Object} source 源对象
-     * @return {Object} `dest` 对象
+     * @returns {Object} `dest` 对象
      */
     copyTo : function(dest, source) {
         if (dest && source) {
@@ -347,7 +347,7 @@ mini = {
      * 对象浅复制，将 `source` 中所有在 `dest` 中为 `null` 或 `undefined` 的属性都复制给 `dest`。
      * @param {Object} dest 目标对象
      * @param {Object} source 源对象
-     * @return {Object} `dest` 对象
+     * @returns {Object} `dest` 对象
      */
     copyIf : function(c, b) {
         if (c && b) {
@@ -377,7 +377,7 @@ mini = {
     /**
      * 判断传入的对象是否为 MiniUI 的控件
      * @param {Object} obj 要进行检测的对象
-     * @return {Boolean} 如果传入的对象是 MiniUI 的控件，则返回 `true`， 否则返回 `false`
+     * @returns {Boolean} 如果传入的对象是 MiniUI 的控件，则返回 `true`， 否则返回 `false`
      */
     isControl : function(obj) {
         return !!(obj && obj.isControl)
@@ -385,7 +385,7 @@ mini = {
     /**
      * 判断传入的对象是否为 DOM 树的 Element 节点
      * @param {Object} obj 要进行检测的对象
-     * @return {Boolean} 如果传入的对象是 DOM 树的 HTMLElement 节点，则返回 `true`， 否则返回 `false`
+     * @returns {Boolean} 如果传入的对象是 DOM 树的 HTMLElement 节点，则返回 `true`， 否则返回 `false`
      */
     isElement : function(a) {
         return a && a.appendChild
@@ -393,7 +393,7 @@ mini = {
     /**
      * 判断传入的对象是否为日期
      * @param {Object} obj 要进行检测的对象
-     * @return {Boolean} 如果传入的对象是日期，则返回 `true`， 否则返回 `false`
+     * @returns {Boolean} 如果传入的对象是日期，则返回 `true`， 否则返回 `false`
      */
     isDate : function(obj) {
         return !!(obj && obj.getFullYear)
@@ -401,7 +401,7 @@ mini = {
     /**
      * 判断传入的对象是否为数组
      * @param {Object} obj 要进行检测的对象
-     * @return {Boolean} 如果传入的对象是数组，则返回 `true`， 否则返回 `false`
+     * @returns {Boolean} 如果传入的对象是数组，则返回 `true`， 否则返回 `false`
      */
     isArray : function(obj) {
         return !!(obj && !!obj.unshift)
@@ -409,7 +409,7 @@ mini = {
     /**
      * 判断传入的对象是否为空对象
      * @param {Object} obj 要进行检测的对象
-     * @return {Boolean} 如果传入的对象是空对象（`null` 或 `undefined`），则返回 `true`， 否则返回 `false`
+     * @returns {Boolean} 如果传入的对象是空对象（`null` 或 `undefined`），则返回 `true`， 否则返回 `false`
      */
     isNull : function(obj) {
         return obj === null || obj === undefined
@@ -417,7 +417,7 @@ mini = {
     /**
      * 判断传入的对象是否为数字
      * @param {Object} obj 要进行检测的对象
-     * @return {Boolean} 如果传入的对象是数字，则返回 `true`， 否则返回 `false`
+     * @returns {Boolean} 如果传入的对象是数字，则返回 `true`， 否则返回 `false`
      */
     isNumber : function(obj) {
         return !isNaN(obj) && typeof obj == "number"
@@ -432,7 +432,7 @@ mini = {
      * </ul>
      * @param {Object} obj1 要进行比较的第一个对象
      * @param {Object} obj2 要进行比较的第二个对象
-     * @return {Boolean} 如果传入的两个对象的值相等，，则返回 `true`， 否则返回 `false`
+     * @returns {Boolean} 如果传入的两个对象的值相等，，则返回 `true`， 否则返回 `false`
      */
     isEquals : function(obj1, obj2) {
         if (obj1 !== 0 && obj2 !== 0) {
@@ -487,7 +487,7 @@ mini = {
     /**
      * 从DOM中删除所有匹配的元素
      * @param {String/HTMLElement/jQuery} selector jQuery 选择器
-     * @return {jQuery} 匹配元素对应的 jQuery 实例
+     * @returns {jQuery} 匹配元素对应的 jQuery 实例
      */
     removeNode : function(selector) {
         jQuery(selector).remove()
@@ -927,18 +927,20 @@ mini.Component.prototype = {
     },
     /**
      * 监听事件。 例如：
+     * 
      *     @example
      *     control.on("click", function(e){
      *         //...
      *     });
+     *     
      * @param {String} type 事件类型，比如 ”click”
      * @param {Function} fn 事件处理函数
      * @param {Object} fn.event 事件对象
      * @param {String} fn.event.type 事件类型
      * @param {mini.Control} fn.event.source 事件源
      * @param {mini.Control} fn.event.sender 事件发送者
-     * @param {Object} [scope] 事件处理函数的作用域对象
-     * @return {mini.Component} this
+     * @param {Object} [scope=this] 事件处理函数的作用域对象
+     * @returns {mini.Component} this
      * @chainable
      * @member mini.Component
      */
@@ -974,7 +976,7 @@ mini.Component.prototype = {
      * @param {String} type 事件类型，比如 ”click”
      * @param {Function} fn 事件处理函数
      * @param {Object} [scope] 事件处理函数的作用域对象
-     * @return {mini.Component} this
+     * @returns {mini.Component} this
      * @chainable
      * @member mini.Component
      */
@@ -1971,7 +1973,7 @@ mini.extend(mini.Control, mini.Component, {
      * </li>
      * </ul>
      * @param {HTMLElement} el 要进行解析的 DOM 节点
-     * @return {Object} 有效的属性列表。
+     * @returns {Object} 有效的属性列表。
      * @member mini.Control
      * @protected
      */
@@ -2244,7 +2246,7 @@ mini.extend(mini.ValidatorBase, mini.Control, {
     /**
      * 是否可编辑
      * @method isEditable
-     * @return {Boolean} 可编辑时返回 true，反之返回 false
+     * @returns {Boolean} 可编辑时返回 true，反之返回 false
      * @member mini.ValidatorBase
      */
     isEditable : function() {
@@ -2264,7 +2266,7 @@ mini.extend(mini.ValidatorBase, mini.Control, {
     },
     /**
      * 进行校验
-     * @return {Boolean} 校验通过返回 true，否则则返回 false
+     * @returns {Boolean} 校验通过返回 true，否则则返回 false
      * @member mini.ValidatorBase
      * @fires validation
      */
@@ -2309,7 +2311,7 @@ mini.extend(mini.ValidatorBase, mini.Control, {
     /**
      * 获取校验结果
      * @method getIsValid
-     * @return {Boolean} 校验通过返回 true，反之则返回 false
+     * @returns {Boolean} 校验通过返回 true，反之则返回 false
      * @member mini.ValidatorBase
      */
     getIsValid : function() {
@@ -2507,21 +2509,21 @@ mini.extend(mini.ValidatorBase, mini.Control, {
      * </li>
      * </ul>
      * @param {HTMLElement} el 要进行解析的 DOM 节点
-     * @return {Object} 有效的属性列表。
+     * @returns {Object} 有效的属性列表。
      * @member mini.ValidatorBase
      * @protected
      */
-    getAttrs : function(b) {
-        var a = mini.ValidatorBase.superclass.getAttrs.call(this, b);
-        mini._ParseString(b, a, [ "onvaluechanged", "onvalidation", "label",
+    getAttrs : function(el) {
+        var a = mini.ValidatorBase.superclass.getAttrs.call(this, el);
+        mini._ParseString(el, a, [ "onvaluechanged", "onvalidation", "label",
                 "labelStyle", "requiredErrorText", "errorMode", "errorTooltipPlacement" ]);
-        mini._ParseBool(b, a, [ "validateOnChanged", "validateOnLeave", "labelField" ]);
-        var d = b.getAttribute("required");
+        mini._ParseBool(el, a, [ "validateOnChanged", "validateOnLeave", "labelField" ]);
+        var d = el.getAttribute("required");
         if (!d) {
-            d = b.required
+            d = el.required
         }
         if (!d) {
-            var c = b.attributes.required;
+            var c = el.attributes.required;
             if (c) {
                 d = c.value == "null" ? null : "true"
             }
@@ -2812,45 +2814,75 @@ mini.extend(mini.ListControl, mini.ValidatorBase, {
             return this.data[a]
         }
     },
-    addItemCls : function(c, a) {
-        var b = this.getItemEl(c);
-        if (b) {
-            mini.addClass(b, a)
+    /**
+     * 给下拉项添加样式类
+     * @param {Object/Number/String/Function} item 下拉项，具体信息请参见 {@link #getItemEl} 方法中的参数描述
+     * @param {String} cls 样式类名称
+     * @member mini.ListControl
+     */
+    addItemCls : function(item, cls) {
+        var el = this.getItemEl(item);
+        if (el) {
+            mini.addClass(el, cls)
         }
     },
-    removeItemCls : function(c, a) {
-        var b = this.getItemEl(c);
-        if (b) {
-            mini.removeClass(b, a)
+    /**
+     * 给下拉项移除样式类
+     * @param {Object/Number/String/Function} item 下拉项，具体信息请参见 {@link #getItemEl} 方法中的参数描述
+     * @param {String} cls 样式类名称
+     * @member mini.ListControl
+     */
+    removeItemCls : function(item, cls) {
+        var el = this.getItemEl(item);
+        if (el) {
+            mini.removeClass(el, cls)
         }
     },
-    getItemEl : function(b) {
-        b = this.getItem(b);
-        var a = this.data.indexOf(b);
-        var c = this._createItemId(a);
-        return document.getElementById(c)
+    /**
+     * 获取下拉项对应的 DOM 节点
+     * @param {Object/Number/String/Function} item 下拉项，具体信息请参见 {@link #getItem} 方法中的参数描述
+     * @returns {HTMLElement} 下拉项对应的 DOM 节点
+     * @member mini.ListControl
+     */
+    getItemEl : function(item) {
+        item = this.getItem(item);
+        var index = this.data.indexOf(item);
+        var id = this._createItemId(index);
+        return document.getElementById(id)
     },
-    _focusItem : function(b, a) {
-        b = this.getItem(b);
-        if (!b) {
+    /**
+     * 下拉项获取焦点
+     * @param {Object/Number/String/Function} item 下拉项，具体信息请参见 {@link #getItem} 方法中的参数描述
+     * @param {Boolean} scrollToView 是否滚动到当前获取焦点的下拉项
+     * @member mini.ListControl
+     * @private
+     */
+    _focusItem : function(item, scrollToView) {
+        item = this.getItem(item);
+        if (!item) {
             return
         }
-        var c = this.getItemEl(b);
-        if (a && c) {
-            this.scrollIntoView(b)
+        var el = this.getItemEl(item);
+        if (scrollToView && el) {
+            this.scrollIntoView(item)
         }
-        if (this._focusedItem == b) {
-            if (c) {
-                mini.addClass(c, this._itemHoverCls)
+        if (this._focusedItem == item) {
+            if (el) {
+                mini.addClass(el, this._itemHoverCls)
             }
             return
         }
         this._blurItem();
-        this._focusedItem = b;
-        if (c) {
-            mini.addClass(c, this._itemHoverCls)
+        this._focusedItem = item;
+        if (el) {
+            mini.addClass(el, this._itemHoverCls)
         }
     },
+    /**
+     * 将当前取得焦点的下拉项改为失去焦点
+     * @member mini.ListControl
+     * @private
+     */
     _blurItem : function() {
         if (!this._focusedItem) {
             return
@@ -2861,26 +2893,56 @@ mini.extend(mini.ListControl, mini.ValidatorBase, {
         }
         this._focusedItem = null
     },
+    /**
+     * 获取当前取得焦点的下拉项
+     * @member mini.ListControl
+     * @returns {Object} 当前取得焦点的下拉项，如果所有下拉项都没有取得焦点，则返回 `null`
+     */
     getFocusedItem : function() {
         var a = this._focusedItem;
         return this.indexOf(a) == -1 ? null : a
     },
+    /**
+     * 获取当前取得焦点的下拉项的索引值
+     * @member mini.ListControl
+     * @returns {Number} 当前取得焦点的下拉项的索引值，如果所有下拉项都没有取得焦点，则返回 `-1`
+     */
     getFocusedIndex : function() {
         return this.data.indexOf(this._focusedItem)
     },
+    /**
+     * @property {Object} [_scrollViewEl=null] 
+     * @member mini.ListControl
+     * @private
+     */
     _scrollViewEl : null,
-    scrollIntoView : function(c) {
+    /**
+     * 滚动到指定下拉项
+     * @param {Object/Number/String/Function} item 下拉项，具体信息请参见 {@link #getItemEl} 方法中的参数描述
+     * @member mini.ListControl
+     */
+    scrollIntoView : function(item) {
         try {
-            var b = this.getItemEl(c);
+            var itemEl = this.getItemEl(item);
             var a = this._scrollViewEl || this.el;
-            mini.scrollIntoView(b, a, false)
+            mini.scrollIntoView(itemEl, a, false)
         } catch (d) {
         }
     },
     /**
-     * 获取项
-     * @param {Number/String/Function/Object} value 类型为 Number 时表示下拉项索引；类型为 String 时为下拉项的值
-     * @return {Object} 下拉项对象
+     * 获取下拉项。如果需要同时获取多个下拉项，请使用 {@link #findItems} 方法。
+     * @param {Object/Number/String/Function} value 下拉项的值或索引位置，具体描述如下
+     * <ul>
+     * <li>Object &#45; 将直接返回该参数</li>
+     * <li>Number &#45; 表示下拉项索引</li>
+     * <li>String &#45; 表示下拉项的值</li>
+     * <li>Function &#45; 过滤下拉项的方法，包含两个参数：<br>
+     * item String 下拉项<br>
+     * index Number 下拉项的索引，从 0 开始<br>
+     * 返回值类型为 Boolean 类型，返回 `true` 时，会将当前被迭代的下拉项返回</li>
+     * </ul>
+     *  类型为  时表示；类型为 String 时为
+     * @returns {Object} 下拉项对象
      * @member mini.ListControl
      */
     getItem : function(value) {
@@ -2894,7 +2956,7 @@ mini.extend(mini.ListControl, mini.ValidatorBase, {
     },
     /**
      * 获取总项数
-     * @return {Number} 总项数
+     * @returns {Number} 总项数
      * @member mini.ListControl
      */
     getCount : function() {
@@ -2903,7 +2965,7 @@ mini.extend(mini.ListControl, mini.ValidatorBase, {
     /**
      * 获取对象索引号
      * @param {Object} obj 数据对象
-     * @return {Number} 对应的索引
+     * @returns {Number} 对应的索引，如果不存在，则返回 -1
      * @member mini.ListControl
      */
     indexOf : function(obj) {
@@ -2911,8 +2973,8 @@ mini.extend(mini.ListControl, mini.ValidatorBase, {
     },
     /**
      * 获取索引处对象
-     * @param {Number} index 索引
-     * @return {Object} 对应索引处的对象
+     * @param {Number} index 索引，从 0 开始
+     * @returns {Object} 对应索引处的对象
      * @member mini.ListControl
      */
     getAt : function(index) {
@@ -2934,14 +2996,14 @@ mini.extend(mini.ListControl, mini.ValidatorBase, {
     },
     /**
      * 加载数据
-     * @param {String} url URL
+     * @param {String/Array} data 数据对象或请求数据的 URL
      * @member mini.ListControl
      */
-    load : function(url) {
-        if (typeof url == "string") {
-            this.setUrl(url)
+    load : function(data) {
+        if (typeof data == "string") {
+            this.setUrl(data)
         } else {
-            this.setData(url)
+            this.setData(data)
         }
     },
     /**
@@ -2977,12 +3039,20 @@ mini.extend(mini.ListControl, mini.ValidatorBase, {
     getUrl : function() {
         return this.url
     },
+    /**
+     * @cfg {Object} [ajaxData=null] 发起 ajax 请求时向后台提交的数据
+     * @accessor
+     * @member mini.ListControl
+     */
     ajaxData : null,
     /**
-     * 
-     * @fires render
-     * @fires render
-     * @fires render
+     * 从后台服务器加载下拉项的数据
+     * @param {Object} params 请求参数
+     * @member mini.ListControl
+     * @private
+     * @fires beforeload
+     * @fires preload
+     * @fires loaderror
      */
     _doLoad : function(params) {
         try {
@@ -3100,6 +3170,11 @@ mini.extend(mini.ListControl, mini.ValidatorBase, {
     getValue : function() {
         return this.value
     },
+    /**
+     * 获取在表单中提交的值
+     * @returns {String} 在表单中提交的值
+     * @member mini.ListControl
+     */
     getFormValue : function() {
         return this.value
     },
@@ -3115,24 +3190,42 @@ mini.extend(mini.ListControl, mini.ValidatorBase, {
     getTextField : function() {
         return this.textField
     },
-    getItemValue : function(a) {
-        return String(mini._getMap(this.valueField, a))
+    /**
+     * 获取下拉项的值
+     * @param {Object} item 下拉项
+     * @returns {String} 下拉项的值
+     * @member mini.ListControl
+     */
+    getItemValue : function(item) {
+        return String(mini._getMap(this.valueField, item))
     },
-    getItemText : function(b) {
-        var a = mini._getMap(this.textField, b);
+    /**
+     * 获取下拉项的显示文本
+     * @param {Object} item 下拉项
+     * @returns {String} 下拉项的显示文本
+     * @member mini.ListControl
+     */
+    getItemText : function(item) {
+        var a = mini._getMap(this.textField, item);
         return mini.isNull(a) ? "" : String(a)
     },
-    getValueAndText : function(d) {
-        if (mini.isNull(d)) {
-            d = []
+    /**
+     * 获取下拉项的值和显示文本
+     * @param {Array/String/Function} items 下拉项数组或以逗号（{@link #delimiter}）分隔的多个下拉项值
+     * @returns {String[]} 一个长度为 2 的字符串数组，数组中第 1 个元素是下拉项的值，第 2 个元素是下拉项的显示文本
+     * @member mini.ListControl
+     */
+    getValueAndText : function(items) {
+        if (mini.isNull(items)) {
+            items = []
         }
-        if (!mini.isArray(d)) {
-            d = this.findItems(d)
+        if (!mini.isArray(items)) {
+            items = this.findItems(items)
         }
         var c = [];
         var f = [];
-        for (var e = 0, b = d.length; e < b; e++) {
-            var a = d[e];
+        for (var e = 0, b = items.length; e < b; e++) {
+            var a = items[e];
             if (a) {
                 c.push(this.getItemValue(a));
                 f.push(this.getItemText(a))
@@ -3142,10 +3235,11 @@ mini.extend(mini.ListControl, mini.ValidatorBase, {
     },
     /**
      * 根据值获取项数组
-     * @param {Function/String} values 值，多值之间使用 `,` 分隔，如果传入值为 Function，则包含两个参数：
-     * @param {values.item} 下拉项
-     * @param {values.index} 下拉项的索引，从 0 开始
-     * @return {Array} 对应的项数组
+     * @param {Function/String} values 值，多值之间使用 `,` 分隔，如果传入值为 Function，则包含两个参数，返回值类型为 Boolean：
+     * @param {String} values.item 下拉项
+     * @param {Number} values.index 下拉项的索引，从 0 开始
+     * @param {Boolean} values.return 如果包含当前迭代的下拉项，则返回 `true`，否则返回 `false`
+     * @returns {Array} 对应的项数组
      * @member mini.ListControl
      */
     findItems : function(values) {
@@ -3240,7 +3334,7 @@ mini.extend(mini.ListControl, mini.ValidatorBase, {
     },
     /**
      * 删除项
-     * @param {Array} item 要删除的项
+     * @param {Object} item 要删除的项
      * @member mini.ListControl
      */
     removeItem : function(item) {
@@ -3271,14 +3365,29 @@ mini.extend(mini.ListControl, mini.ValidatorBase, {
         this.data.insert(index, item);
         this.doUpdate()
     },
+    /**
+     * @property {Object} [_selected=nul] 被选中的项
+     * @member mini.ListControl
+     * @private
+     */
     _selected : null,
+    /**
+     * @property {Array} [_selecteds=[]] 被选中的多个项
+     * @member mini.ListControl
+     * @private
+     */
     _selecteds : [],
     /**
      * @cfg {Boolean} [multiSelect=false] 多选
-     * @accessor
      * @member mini.ListControl
+     * @private
      */
     multiSelect : false,
+    /**
+     * 检查选择的项
+     * @member mini.ListControl
+     * @private
+     */
     _checkSelecteds : function() {
         for (var b = this._selecteds.length - 1; b >= 0; b--) {
             var a = this._selecteds[b];
@@ -3301,7 +3410,7 @@ mini.extend(mini.ListControl, mini.ValidatorBase, {
     /**
      * 是否选中项
      * @param {Object} item
-     * @return {Boolean} 选中时返回 true， 否则返回 false
+     * @returns {Boolean} 选中时返回 true， 否则返回 false
      * @member mini.ListControl
      */
     isSelected : function(item) {
@@ -3312,7 +3421,7 @@ mini.extend(mini.ListControl, mini.ValidatorBase, {
     },
     /**
      * 获取选中项集合
-     * @return {Array} 所有选中项
+     * @returns {Array} 所有选中项
      * @member mini.ListControl
      */
     getSelecteds : function() {
@@ -3332,7 +3441,7 @@ mini.extend(mini.ListControl, mini.ValidatorBase, {
         return a
     },
     /**
-     * 设置选中项
+     * 设置选中的下拉项
      * @param {Number/String/Function/Object} value 类型为 Number 时表示下拉项索引；类型为 String 时为下拉项的值
      * @member mini.ListControl
      */
@@ -3343,16 +3452,16 @@ mini.extend(mini.ListControl, mini.ValidatorBase, {
         }
     },
     /**
-     * 获取当前选中项
-     * @return {Object} 当前选中项
+     * 获取当前选中的下拉项
+     * @returns {Object} 当前选中项
      * @member mini.ListControl
      */
     getSelected : function() {
         return this._selected
     },
     /**
-     * 选中项
-     * @param {Number/String/Function/Object} value 类型为 Number 时表示下拉项索引；类型为 String 时为下拉项的值
+     * 选中下拉项
+     * @param {Number/String/Function/Object} value 要选中的下拉项的值或索引，更详细的参数信息请参见 {@link #getItem} 方法中的参数描述
      * @member mini.ListControl
      */
     select : function(value) {
@@ -3366,8 +3475,8 @@ mini.extend(mini.ListControl, mini.ValidatorBase, {
         this.selects([ value ])
     },
     /**
-     * deselect
-     * @param {Number/String/Function/Object} value 类型为 Number 时表示下拉项索引；类型为 String 时为下拉项的值
+     * 取消选中下拉项
+     * @param {Number/String/Function/Object} value 要取消选中的下拉项的值或索引，更详细的参数信息请参见 {@link #getItem} 方法中的参数描述
      * @member mini.ListControl
      */
     deselect : function(a) {
@@ -3444,6 +3553,11 @@ mini.extend(mini.ListControl, mini.ValidatorBase, {
         var d = this;
         d._doSelects()
     },
+    /**
+     * 进行选中操作
+     * @member mini.ListControl
+     * @private
+     */
     _doSelects : function() {
         var g = this.getValueAndText(this._selecteds);
         this.value = g[0];
@@ -3466,9 +3580,24 @@ mini.extend(mini.ListControl, mini.ValidatorBase, {
             }
         }
     },
+    
     /**
-     * 
-     * @fires render
+     * @event SelectionChanged 在时触发
+     * @param {Object} event 当前事件对象
+     * @param {String} event.type 事件类型
+     * @param {mini.Control} event.source 事件源
+     * @param {mini.Control} event.sender 事件发送者
+     * @param {Array} event.selecteds 所有选中项
+     * @param {Object} event.selected 当前选中项
+     * @param {String} event.value 当前选中项的值
+     * @member mini.ListControl
+     */
+    
+    /**
+     * 改变选中项
+     * @member mini.ListControl
+     * @private
+     * @fires SelectionChanged
      */
     _OnSelectionChanged : function(b, a) {
         var c = this.getValueAndText(this._selecteds);
@@ -3483,167 +3612,577 @@ mini.extend(mini.ListControl, mini.ValidatorBase, {
         };
         this.fire("SelectionChanged", d)
     },
-    _createCheckId : function(a) {
-        return this.uid + "$ck$" + a
+    /**
+     * 创建下拉项对应的多选框的 id
+     * @param {Object} item 下拉项
+     * @member mini.ListControl
+     * @private
+     */
+    _createCheckId : function(item) {
+        return this.uid + "$ck$" + item
     },
-    _createItemId : function(a) {
-        return this.uid + "$" + a
+
+    /**
+     * 创建下拉项的 DOM 节点 id
+     * @param {Object} item 下拉项
+     * @member mini.ListControl
+     * @private
+     */
+    _createItemId : function(item) {
+        return this.uid + "$" + item
     },
+
+    /**
+     * @event Click 鼠标点击时触发
+     * @param {Object} event 当前事件对象
+     * @param {String} event.type 事件类型
+     * @param {mini.Control} event.source 事件源
+     * @param {mini.Control} event.sender 事件发送者
+     * @param {Object} event.item 下拉项
+     * @param {Event} event.htmlEvent 原生的 HTML 事件
+     * @member mini.ListControl
+     */
+    
+    /**
+     * 触发 Click 事件
+     * @param {Event} htmlEvt 原生的 HTML 事件
+     * @member mini.ListControl
+     * @private
+     * @fires Click
+     */
     __OnClick : function(a) {
         this._fireEvent(a, "Click")
     },
+
+    /**
+     * @event Dblclick 双击时触发
+     * @param {Object} event 当前事件对象
+     * @param {String} event.type 事件类型
+     * @param {mini.Control} event.source 事件源
+     * @param {mini.Control} event.sender 事件发送者
+     * @param {Object} event.item 下拉项
+     * @param {Event} event.htmlEvent 原生的 HTML 事件
+     * @member mini.ListControl
+     */
+    
+    /**
+     * 触发 Dblclick 事件
+     * @param {Event} htmlEvt 原生的 HTML 事件
+     * @member mini.ListControl
+     * @private
+     * @fires Dblclick
+     */
     __OnDblClick : function(a) {
         this._fireEvent(a, "Dblclick")
     },
+
+    /**
+     * @event MouseDown 鼠标按下时触发
+     * @param {Object} event 当前事件对象
+     * @param {String} event.type 事件类型
+     * @param {mini.Control} event.source 事件源
+     * @param {mini.Control} event.sender 事件发送者
+     * @param {Object} event.item 下拉项
+     * @param {Event} event.htmlEvent 原生的 HTML 事件
+     * @member mini.ListControl
+     */
+    
+    /**
+     * 触发 MouseDown 事件
+     * @param {Event} htmlEvt 原生的 HTML 事件
+     * @member mini.ListControl
+     * @private
+     * @fires MouseDown
+     */
     __OnMouseDown : function(a) {
         this._fireEvent(a, "MouseDown")
     },
+
+    /**
+     * @event MouseUp 鼠标弹起时触发
+     * @param {Object} event 当前事件对象
+     * @param {String} event.type 事件类型
+     * @param {mini.Control} event.source 事件源
+     * @param {mini.Control} event.sender 事件发送者
+     * @param {Object} event.item 下拉项
+     * @param {Event} event.htmlEvent 原生的 HTML 事件
+     * @member mini.ListControl
+     */
+    
+    /**
+     * 触发 MouseUp 事件
+     * @param {Event} htmlEvt 原生的 HTML 事件
+     * @member mini.ListControl
+     * @private
+     * @fires MouseUp
+     */
     __OnMouseUp : function(a) {
         this._fireEvent(a, "MouseUp")
     },
+
+    /**
+     * @event MouseMove 鼠标移动时触发
+     * @param {Object} event 当前事件对象
+     * @param {String} event.type 事件类型
+     * @param {mini.Control} event.source 事件源
+     * @param {mini.Control} event.sender 事件发送者
+     * @param {Object} event.item 下拉项
+     * @param {Event} event.htmlEvent 原生的 HTML 事件
+     * @member mini.ListControl
+     */
+    
+    /**
+     * 触发 MouseMove 事件
+     * @param {Event} htmlEvt 原生的 HTML 事件
+     * @member mini.ListControl
+     * @private
+     * @fires MouseMove
+     */
     __OnMouseMove : function(a) {
         this._fireEvent(a, "MouseMove")
     },
+
+    /**
+     * @event MouseOver 鼠标滑过时触发
+     * @param {Object} event 当前事件对象
+     * @param {String} event.type 事件类型
+     * @param {mini.Control} event.source 事件源
+     * @param {mini.Control} event.sender 事件发送者
+     * @param {Object} event.item 下拉项
+     * @param {Event} event.htmlEvent 原生的 HTML 事件
+     * @member mini.ListControl
+     */
+    
+    /**
+     * 触发 MouseOver 事件
+     * @param {Event} htmlEvt 原生的 HTML 事件
+     * @member mini.ListControl
+     * @private
+     * @fires MouseOver
+     */
     __OnMouseOver : function(a) {
         this._fireEvent(a, "MouseOver")
     },
+
+    /**
+     * @event MouseOut 鼠标移出时触发
+     * @param {Object} event 当前事件对象
+     * @param {String} event.type 事件类型
+     * @param {mini.Control} event.source 事件源
+     * @param {mini.Control} event.sender 事件发送者
+     * @param {Object} event.item 下拉项
+     * @param {Event} event.htmlEvent 原生的 HTML 事件
+     * @member mini.ListControl
+     */
+    
+    /**
+     * 触发 MouseOut 事件
+     * @param {Event} htmlEvt 原生的 HTML 事件
+     * @member mini.ListControl
+     * @private
+     * @fires MouseOut
+     */
     __OnMouseOut : function(a) {
         this._fireEvent(a, "MouseOut")
     },
+
+    /**
+     * @event KeyDown 键盘按下时触发
+     * @param {Object} event 当前事件对象
+     * @param {String} event.type 事件类型
+     * @param {mini.Control} event.source 事件源
+     * @param {mini.Control} event.sender 事件发送者
+     * @param {Object} event.item 下拉项
+     * @param {Event} event.htmlEvent 原生的 HTML 事件
+     * @member mini.ListControl
+     */
+    
+    /**
+     * 触发 KeyDown 事件
+     * @param {Event} htmlEvt 原生的 HTML 事件
+     * @member mini.ListControl
+     * @private
+     * @fires KeyDown
+     */
     __OnKeyDown : function(a) {
         this._fireEvent(a, "KeyDown")
     },
+
+    /**
+     * @event KeyUp 键盘弹起时触发
+     * @param {Object} event 当前事件对象
+     * @param {String} event.type 事件类型
+     * @param {mini.Control} event.source 事件源
+     * @param {mini.Control} event.sender 事件发送者
+     * @param {Object} event.item 下拉项
+     * @param {Event} event.htmlEvent 原生的 HTML 事件
+     * @member mini.ListControl
+     */
+    
+    /**
+     * 触发 KeyUp 事件
+     * @param {Event} htmlEvt 原生的 HTML 事件
+     * @member mini.ListControl
+     * @private
+     * @fires KeyUp
+     */
     __OnKeyUp : function(a) {
         this._fireEvent(a, "KeyUp")
     },
-    __OnContextMenu : function(a) {
-        this._fireEvent(a, "ContextMenu")
+
+    /**
+     * @event ContextMenu 弹出上下文菜单时触发
+     * @param {Object} event 当前事件对象
+     * @param {String} event.type 事件类型
+     * @param {mini.Control} event.source 事件源
+     * @param {mini.Control} event.sender 事件发送者
+     * @param {Object} event.item 下拉项
+     * @param {Event} event.htmlEvent 原生的 HTML 事件
+     * @member mini.ListControl
+     */
+    
+    /**
+     * 触发 ContextMenu 事件
+     * @param {Event} htmlEvt 原生的 HTML 事件
+     * @member mini.ListControl
+     * @private
+     * @fires ContextMenu
+     */
+    __OnContextMenu : function(htmlEvt) {
+        this._fireEvent(htmlEvt, "ContextMenu")
     },
     /**
-     * 
-     * @fires render
+     * 触发事件
+     * @member mini.ListControl
+     * @private
      */
-    _fireEvent : function(f, a) {
+    _fireEvent : function(event, type) {
         if (!this.enabled) {
             return
         }
-        var d = this.getItemByEvent(f);
+        var d = this.getItemByEvent(event);
         if (!d) {
             return
         }
-        var c = this["_OnItem" + a];
+        var c = this["_OnItem" + type];
         if (c) {
-            c.call(this, d, f)
+            c.call(this, d, event)
         } else {
             var b = {
                 item : d,
-                htmlEvent : f
+                htmlEvent : event
             };
-            this.fire("item" + a, b)
+            this.fire("item" + type, b)
         }
     },
+
     /**
-     * 
-     * @fires render
+     * 触发 itemclick 事件
+     * @param {Object} item 鼠标点击的下拉项
+     * @param {Event} htmlEvt 原生的 HTML 鼠标点击事件
+     * @member mini.ListControl
+     * @private
+     * @fires itemclick
      */
-    _OnItemClick : function(a, c) {
-        if (this.isReadOnly() || this.enabled == false || a.enabled === false) {
-            c.preventDefault();
+    _OnItemClick : function(item, htmlEvt) {
+        if (this.isReadOnly() || this.enabled == false || item.enabled === false) {
+            htmlEvt.preventDefault();
             return
         }
         var b = this.getValue();
         if (this.multiSelect) {
-            if (this.isSelected(a)) {
-                this.deselect(a);
-                if (this._selected == a) {
+            if (this.isSelected(item)) {
+                this.deselect(item);
+                if (this._selected == item) {
                     this._selected = null
                 }
             } else {
-                this.select(a);
-                this._selected = a
+                this.select(item);
+                this._selected = item
             }
             this._OnSelectionChanged()
         } else {
-            if (!this.isSelected(a)) {
+            if (!this.isSelected(item)) {
                 this.deselectAll();
-                this.select(a);
-                this._selected = a;
+                this.select(item);
+                this._selected = item;
                 this._OnSelectionChanged()
             }
         }
         if (b != this.getValue()) {
             this._OnValueChanged()
         }
-        var c = {
-            item : a,
-            htmlEvent : c
+        var htmlEvt = {
+            item : item,
+            htmlEvent : htmlEvt
         };
-        this.fire("itemclick", c)
+        this.fire("itemclick", htmlEvt)
     },
-    _blurOnOut : true,
+    
     /**
-     * 
-     * @fires render
+     * @param {Boolean} [_blurOnOut=true] 鼠标移出时是否触发推动焦点的事件
+     * @member mini.ListControl
+     * @private
      */
-    _OnItemMouseOut : function(a, b) {
+    _blurOnOut : true,
+    
+    /**
+     * @event itemmouseout 鼠标从下拉项上移出时触发
+     * @param {Object} event 当前事件对象
+     * @param {String} event.type 事件类型
+     * @param {mini.Control} event.source 事件源
+     * @param {mini.Control} event.sender 事件发送者
+     * @param {Object} event.item 鼠标移出时指向的下拉项
+     * @param {Event} event.htmlEvent 原生的 HTML 鼠标移出事件
+     * @member mini.ListControl
+     */
+    
+    /**
+     * 触发 itemmouseout 事件
+     * @param {Object} item 鼠标移出时指向的下拉项
+     * @param {Event} htmlEvt 原生的 HTML 鼠标移动事件
+     * @member mini.ListControl
+     * @private
+     * @fires itemmouseout
+     */
+    _OnItemMouseOut : function(item, htmlEvt) {
         if (!this.enabled) {
             return
         }
         if (this._blurOnOut) {
             this._blurItem()
         }
-        var b = {
-            item : a,
-            htmlEvent : b
+        var event = {
+            item : item,
+            htmlEvent : htmlEvt
         };
-        this.fire("itemmouseout", b)
+        this.fire("itemmouseout", event)
     },
+    
     /**
-     * 
-     * @fires render
+     * @event itemmousemove 鼠标在下拉项上移动时触发
+     * @param {Object} event 当前事件对象
+     * @param {String} event.type 事件类型
+     * @param {mini.Control} event.source 事件源
+     * @param {mini.Control} event.sender 事件发送者
+     * @param {Object} event.item 鼠标移动时指向的下拉项
+     * @param {Event} event.htmlEvent 原生的 HTML 鼠标移动事件
+     * @member mini.ListControl
      */
-    _OnItemMouseMove : function(a, b) {
-        if (!this.enabled || a.enabled === false) {
+    
+    /**
+     * 触发 itemmousemove 事件
+     * @param {Object} item 鼠标移动时指向的下拉项
+     * @param {Event} htmlEvt 原生的 HTML 鼠标移动事件
+     * @member mini.ListControl
+     * @private
+     * @fires itemmousemove
+     */
+    _OnItemMouseMove : function(item, htmlEvt) {
+        if (!this.enabled || item.enabled === false) {
             return
         }
-        this._focusItem(a);
-        var b = {
-            item : a,
-            htmlEvent : b
+        this._focusItem(item);
+        var event = {
+            item : item,
+            htmlEvent : htmlEvt
         };
-        this.fire("itemmousemove", b)
+        this.fire("itemmousemove", event)
     },
-    onItemClick : function(b, a) {
-        this.on("itemclick", b, a)
+    
+    /**
+     * @event itemclick 单击下拉项时触发
+     * @param {Object} event 当前事件对象
+     * @param {String} event.type 事件类型
+     * @param {mini.Control} event.source 事件源
+     * @param {mini.Control} event.sender 事件发送者
+     * @param {Object} event.item 当前点击的下拉项
+     * @param {Event} event.htmlEvent 原生的 HTML 单击事件
+     * @member mini.ListControl
+     */
+
+    /**
+     * 绑定 itemclick 事件
+     * @param {Function} fn 事件处理函数
+     * @param {Object} fn.event {@link #itemclick} 事件对象
+     * @param {Object} [scope=this] 事件处理函数的作用域对象
+     * @member mini.ListControl
+     */
+    onItemClick : function(fn, scope) {
+        this.on("itemclick", fn, scope)
     },
-    onItemMouseDown : function(b, a) {
-        this.on("itemmousedown", b, a)
+    
+    /**
+     * @event itemmousedown 在下拉项上按下鼠标时触发
+     * @param {Object} event 当前事件对象
+     * @param {String} event.type 事件类型
+     * @param {mini.Control} event.source 事件源
+     * @param {mini.Control} event.sender 事件发送者
+     * @member mini.ListControl
+     */
+    
+    /**
+     * 绑定 itemmousedown 事件
+     * @param {Function} fn 事件处理函数
+     * @param {Object} fn.event {@link #itemmousedown} 事件对象
+     * @param {Object} [scope=this] 事件处理函数的作用域对象
+     * @member mini.ListControl
+     */
+    onItemMouseDown : function(fn, scope) {
+        this.on("itemmousedown", fn, scope)
     },
-    onBeforeLoad : function(b, a) {
-        this.on("beforeload", b, a)
+    
+    /**
+     * @event beforeload 在加载数据（发起 Ajax 请求）之前触发
+     * @param {Object} event 当前事件对象
+     * @param {String} event.type 事件类型
+     * @param {mini.Control} event.source 事件源
+     * @param {mini.Control} event.sender 事件发送者
+     * @param {String} event.url 请求的 URL
+     * @param {Boolean} [event.async=false] 是否为异步请求
+     * @param {String} event.type 请求方式，默认为 {@link #ajaxType} 的值
+     * @param {Object} event.data 请求参数
+     * @param {Object} event.params 请求参数，与 `data` 相同
+     * @param {Boolean} [event.cache=false] 是否允许缓存
+     * @param {Boolean} [event.cancel=false] 是否取消请求
+     * @member mini.ListControl
+     */
+    
+    /**
+     * 绑定 beforeload 事件
+     * @param {Function} fn 事件处理函数
+     * @param {Object} fn.event {@link #beforeload} 事件对象
+     * @param {Object} [scope=this] 事件处理函数的作用域对象
+     * @member mini.ListControl
+     */
+    onBeforeLoad : function(fn, scope) {
+        this.on("beforeload", fn, scope)
     },
-    onLoad : function(b, a) {
-        this.on("load", b, a)
+    
+    /**
+     * @event load 将数据加载到控件后触发
+     * @param {Object} event 当前事件对象
+     * @param {String} event.type 事件类型
+     * @param {mini.Control} event.source 事件源
+     * @param {mini.Control} event.sender 事件发送者
+     * @member mini.ListControl
+     */
+    
+    /**
+     * 绑定 load 事件
+     * @param {Function} fn 事件处理函数
+     * @param {Object} fn.event {@link #load} 事件对象
+     * @param {Object} [scope=this] 事件处理函数的作用域对象
+     * @member mini.ListControl
+     */
+    onLoad : function(fn, scope) {
+        this.on("load", fn, scope)
     },
-    onLoadError : function(b, a) {
-        this.on("loaderror", b, a)
+    
+    /**
+     * @event loaderror 在加载数据发生错误时触发
+     * @param {Object} event 当前事件对象
+     * @param {String} event.type 事件类型
+     * @param {mini.Control} event.source 事件源
+     * @param {mini.Control} event.sender 事件发送者
+     * @param {Object} event.xhr ajax 请求的 XMLHttpRequest 对象
+     * @param {String} event.text xhr 的 responseText
+     * @param {String} event.textStatus xhr 的 textStatus
+     * @param {String} event.errorMsg xhr 的 responseText
+     * @param {Number} event.errorCode xhr 的 status
+     * @member mini.ListControl
+     */
+    
+    /**
+     * 绑定 loaderror 事件
+     * @param {Function} fn 事件处理函数
+     * @param {Object} fn.event {@link #loaderror} 事件对象
+     * @param {Object} [scope=this] 事件处理函数的作用域对象
+     * @member mini.ListControl
+     */
+    onLoadError : function(fn, scope) {
+        this.on("loaderror", fn, scope)
     },
-    onPreLoad : function(b, a) {
-        this.on("preload", b, a)
+    
+    /**
+     * @event preload 从后台请求到数据后，准备将数据装载到控件时触发
+     * @param {Object} event 当前事件对象
+     * @param {String} event.type 事件类型
+     * @param {mini.Control} event.source 事件源
+     * @param {mini.Control} event.sender 事件发送者
+     * @param {Object} event.data 从后台请求到的数据对象
+     * @param {Boolean} [event.cancel=false] 是否取消
+     * @member mini.ListControl
+     */
+    
+    /**
+     * 绑定 preload 事件
+     * @param {Function} fn 事件处理函数
+     * @param {Object} fn.event {@link #preload} 事件对象
+     * @param {Object} [scope=this] 事件处理函数的作用域对象
+     * @member mini.ListControl
+     */
+    onPreLoad : function(fn, scope) {
+        this.on("preload", fn, scope)
     },
-    getAttrs : function(b) {
-        var h = mini.ListControl.superclass.getAttrs.call(this, b);
-        mini._ParseString(b, h, [ "url", "data", "value", "textField",
+    
+    /**
+     * 获取 DOM 节点的属性列表。除了父类解析的属性外，还会解析以下属性：
+     * <ul>
+     * <li>
+     *   <div>String：</div>
+     *   <ul>
+     *   <li>url</li>
+     *   <li>value</li>
+     *   <li>textField</li>
+     *   <li>valueField</li>
+     *   <li></li>
+     *   </ul>
+     * </li>
+     * <li>
+     *   <div>Boolean：</div>
+     *   <ul>
+     *   <li>multiSelect</li>
+     *   </ul>
+     * </li>
+     * <li>
+     *   <div>Object：</div>
+     *   <ul>
+     *   <li>data</li>
+     *   </ul>
+     * </li>
+     * <li>
+     *   <div>Function（Event）：</div>
+     *   <ul>
+     *   <li>onitemclick</li>
+     *   <li>onitemmousemove</li>
+     *   <li>onselectionchanged</li>
+     *   <li>onitemdblclick</li>
+     *   <li>onbeforeload</li>
+     *   <li>onload</li>
+     *   <li>onloaderror</li>
+     *   <li>ondataload</li>
+     *   </ul>
+     * </li>
+     * </ul>
+     * @param {HTMLElement} el 要进行解析的 DOM 节点
+     * @returns {Object} 有效的属性列表。
+     * @member mini.ListControl
+     * @protected
+     */
+    getAttrs : function(el) {
+        var h = mini.ListControl.superclass.getAttrs.call(this, el);
+        mini._ParseString(el, h, [ "url", "data", "value", "textField",
                 "valueField", "onitemclick", "onitemmousemove",
                 "onselectionchanged", "onitemdblclick", "onbeforeload",
                 "onload", "onloaderror", "ondataload" ]);
-        mini._ParseBool(b, h, [ "multiSelect" ]);
+        mini._ParseBool(el, h, [ "multiSelect" ]);
         var j = h.valueField || this.valueField;
         var c = h.textField || this.textField;
-        if (b.nodeName.toLowerCase() == "select") {
+        if (el.nodeName.toLowerCase() == "select") {
             var e = [];
-            for (var f = 0, d = b.length; f < d; f++) {
-                var g = b.options[f];
+            for (var f = 0, d = el.length; f < d; f++) {
+                var g = el.options[f];
                 var a = {};
                 a[c] = g.text;
                 a[j] = g.value;
@@ -4794,7 +5333,7 @@ mini._doOpen = function(c) {
  * @param {String} [options.url = ""] 子页面的 URL
  * @param {Boolean} [options.showCloseButton = true] 是否显示关闭按钮
  * @param {Boolean} [options.showFooter = false] 是否显示底部栏
- * @return {String} 弹出窗口的唯一标识符
+ * @returns {String} 弹出窗口的唯一标识符
  * @member mini
  */
 mini.open = function(b) {
