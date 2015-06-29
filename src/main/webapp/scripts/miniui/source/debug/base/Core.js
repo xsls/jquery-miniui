@@ -4069,9 +4069,9 @@ mini.extend(mini.ListControl, mini.ValidatorBase, {
      */
     
     /**
-     * 绑定 load 事件
+     * 绑定 `load` 事件
      * @param {Function} fn 事件处理函数
-     * @param {Object} fn.event {@link #load} 事件对象
+     * @param {Object} fn.event `load` 事件对象
      * @param {Object} [scope=this] 事件处理函数的作用域对象
      * @member mini.ListControl
      */
@@ -4205,9 +4205,11 @@ mini._Layouts = {};
 
 /**
  * 布局，调整控件达到合适尺寸
+ * @param {String/mini.Container/HTMLElement} [container=document.body] 要进行布局调整的容器对象，或容器对象的 id
+ * @param {Boolean} [recursive=true] 是否递归调整子容器的布局
  * @member mini
  */
-mini.layout = function(b, a) {
+mini.layout = function(container, recursive) {
     if (!document.body) {
         return
     }
@@ -4220,7 +4222,7 @@ mini.layout = function(b, a) {
             if (j.doLayout) {
                 if (!mini._Layouts[j.uid]) {
                     mini._Layouts[j.uid] = j;
-                    if (a !== false || j.isFixedSize() == false) {
+                    if (recursive !== false || j.isFixedSize() == false) {
                         j.doLayout(false)
                     }
                     delete mini._Layouts[j.uid]
@@ -4236,23 +4238,29 @@ mini.layout = function(b, a) {
             }
         }
     }
-    if (!b) {
-        b = document.body
+    if (!container) {
+        container = document.body
     }
-    c(b);
-    if (b == document.body) {
+    c(container);
+    if (container == document.body) {
         mini.layoutIFrames()
     }
 };
-mini.applyTo = function(b) {
-    b = mini.byId(b);
-    if (!b) {
+/**
+ * 将 miniUI 控件替换到指定 DOM 节点，并将指定 DOM 节点的属性应用到该 miniUI 控件上
+ * @param {String/HTMLElement} id DOM 节点的 id 或 dom 节点实例
+ * @return {mini.Control} this
+ * @member mini
+ */
+mini.applyTo = function(id) {
+    id = mini.byId(id);
+    if (!id) {
         return this
     }
-    if (mini.get(b)) {
+    if (mini.get(id)) {
         throw new Error("not applyTo a mini control")
     }
-    var a = this.getAttrs(b);
+    var a = this.getAttrs(id);
     delete a._applyTo;
     if (mini.isNull(a.defaultValue) && !mini.isNull(a.value)) {
         a.defaultValue = a.value
@@ -4260,53 +4268,59 @@ mini.applyTo = function(b) {
     if (mini.isNull(a.defaultText) && !mini.isNull(a.text)) {
         a.defaultText = a.text
     }
-    var c = b.parentNode;
-    if (c && this.el != b) {
-        c.replaceChild(this.el, b)
+    var c = id.parentNode;
+    if (c && this.el != id) {
+        c.replaceChild(this.el, id)
     }
     this.set(a);
-    this._afterApply(b);
+    this._afterApply(id);
     return this
 };
-mini._doParse = function(b) {
-    if (!b) {
+/**
+ * 将 DOM 节点解析为 miniUI 控件
+ * @param {HTMLElement} element DOM 节点
+ * @member mini
+ * @private
+ */
+mini._doParse = function(element) {
+    if (!element) {
         return
     }
-    var m = b.nodeName.toLowerCase();
+    var m = element.nodeName.toLowerCase();
     if (!m) {
         return
     }
-    var j = String(b.className);
+    var j = String(element.className);
     if (j) {
-        var f = mini.get(b);
+        var f = mini.get(element);
         if (!f) {
             var d = j.split(" ");
             for (var g = 0, e = d.length; g < e; g++) {
                 var n = d[g];
                 var h = mini.getClassByUICls(n);
                 if (h) {
-                    mini.removeClass(b, n);
+                    mini.removeClass(element, n);
                     var k = new h();
-                    mini.applyTo.call(k, b);
-                    b = k.el;
+                    mini.applyTo.call(k, element);
+                    element = k.el;
                     break
                 }
             }
         }
     }
-    if (m == "select" || mini.hasClass(b, "mini-menu")
-            || mini.hasClass(b, "mini-datagrid")
-            || mini.hasClass(b, "mini-treegrid")
-            || mini.hasClass(b, "mini-tree") || mini.hasClass(b, "mini-button")
-            || mini.hasClass(b, "mini-textbox")
-            || mini.hasClass(b, "mini-buttonedit")) {
+    if (m == "select" || mini.hasClass(element, "mini-menu")
+            || mini.hasClass(element, "mini-datagrid")
+            || mini.hasClass(element, "mini-treegrid")
+            || mini.hasClass(element, "mini-tree") || mini.hasClass(element, "mini-button")
+            || mini.hasClass(element, "mini-textbox")
+            || mini.hasClass(element, "mini-buttonedit")) {
         return
     }
-    var a = mini.getChildNodes(b, true);
+    var a = mini.getChildNodes(element, true);
     for (var g = 0, e = a.length; g < e; g++) {
         var c = a[g];
         if (c.nodeType == 1) {
-            if (c.parentNode == b) {
+            if (c.parentNode == element) {
                 mini._doParse(c)
             }
         }
@@ -4316,7 +4330,6 @@ mini._doParse = function(b) {
 /**
  * 被移除的 MiniUI 控件数组
  * @property {mini.Component[]} [_Removes=[]] 
- * @static
  * @private
  * @readonly
  */
@@ -4324,7 +4337,6 @@ mini._Removes = [];
 /**
  * 是否为第一次将页面中的 DOM 节点解析为 MiniUI 控件
  * @property {Boolean} [_firstParse=true] 
- * @static
  * @private
  * @readonly
  */
@@ -4394,33 +4406,117 @@ mini.parse = function(element, relayout) {
         mini.layout(element)
     }
 };
-mini._ParseString = function(e, c, b) {
-    for (var d = 0, a = b.length; d < a; d++) {
-        var g = b[d];
-        var f = mini.getAttr(e, g);
+/**
+ * 将 DOM 节点的指定属性值解析为 String 类型后，将其设为 miniUI 控件的属性
+ * @param {HTMLElement} element DOM 节点
+ * @param {mini.Control} control miniUI 控件
+ * @param {String[]} attrNames 要解析的属性名称
+ * @member mini
+ * @private
+ */
+mini._ParseString = function(element, control, attrNames) {
+    for (var d = 0, a = attrNames.length; d < a; d++) {
+        var g = attrNames[d];
+        var f = mini.getAttr(element, g);
         if (f) {
-            c[g] = f
+            control[g] = f
         }
     }
 };
-mini._ParseBool = function(e, c, b) {
-    for (var d = 0, a = b.length; d < a; d++) {
-        var g = b[d];
-        var f = mini.getAttr(e, g);
+/**
+ * 将 DOM 节点的指定属性值解析为 Boolean 类型后，将其设为 miniUI 控件的属性
+ * @param {HTMLElement} element DOM 节点
+ * @param {mini.Control} control miniUI 控件
+ * @param {String[]} attrNames 要解析的属性名称
+ * @member mini
+ * @private
+ */
+mini._ParseBool = function(element, control, attrNames) {
+    for (var d = 0, a = attrNames.length; d < a; d++) {
+        var g = attrNames[d];
+        var f = mini.getAttr(element, g);
         if (f) {
-            c[g] = f == "true" ? true : false
+            control[g] = f == "true" ? true : false
         }
     }
 };
-mini._ParseInt = function(e, c, b) {
-    for (var d = 0, a = b.length; d < a; d++) {
-        var g = b[d];
-        var f = parseInt(mini.getAttr(e, g));
+/**
+ * 将 DOM 节点的指定属性值解析为 Integer 类型后，将其设为 miniUI 控件的属性
+ * @param {HTMLElement} element DOM 节点
+ * @param {mini.Control} control miniUI 控件
+ * @param {String[]} attrNames 要解析的属性名称
+ * @member mini
+ * @private
+ */
+mini._ParseInt = function(element, control, attrNames) {
+    for (var d = 0, a = attrNames.length; d < a; d++) {
+        var g = attrNames[d];
+        var f = parseInt(mini.getAttr(element, g));
         if (!isNaN(f)) {
-            c[g] = f
+            control[g] = f
         }
     }
 };
+/**
+ * 将 DOM 节点解析为表格的列，会解析的属性包括但不限于：
+ * <ul>
+ * <li>
+ *   <div>String：</div>
+ *   <ul>
+ *   <li>name</li>
+ *   <li>header</li>
+ *   <li>field</li>
+ *   <li>editor</li>
+ *   <li>filter</li>
+ *   <li>renderer</li>
+ *   <li>width</li>
+ *   <li>type</li>
+ *   <li>headerAlign</li>
+ *   <li>align</li>
+ *   <li>headerCls</li>
+ *   <li>cellCls</li>
+ *   <li>headerStyle</li>
+ *   <li>cellStyle</li>
+ *   <li>displayField</li>
+ *   <li>dateFormat</li>
+ *   <li>listFormat</li>
+ *   <li>mapFormat</li>
+ *   <li>trueValue</li>
+ *   <li>falseValue</li>
+ *   <li>dataType</li>
+ *   <li>vtype</li>
+ *   <li>currencyUnit</li>
+ *   <li>summaryType</li>
+ *   <li>summaryRenderer</li>
+ *   <li>groupSummaryType</li>
+ *   <li>groupSummaryRenderer</li>
+ *   <li>defaultValue</li>
+ *   <li>defaultText</li>
+ *   <li>decimalPlaces</li>
+ *   <li>data-options</li>
+ *   </ul>
+ * </li>
+ * <li>
+ *   <div>Boolean：</div>
+ *   <ul>
+ *   <li>visible</li>
+ *   <li>readOnly</li>
+ *   <li>allowSort</li>
+ *   <li>allowResize</li>
+ *   <li>allowMove</li>
+ *   <li>allowDrag</li>
+ *   <li>autoShowPopup</li>
+ *   <li>unique</li>
+ *   <li>autoEscape</li>
+ *   <li>enabled</li>
+ *   <li>hideable</li>
+ *   </ul>
+ * </li>
+ * </ul>
+ * @param {HTMLElement} el DOM 节点
+ * @member mini
+ * @private
+ */
 mini._ParseColumns = function(el) {
     var columns = [];
     var cs = mini.getChildNodes(el);
@@ -4502,7 +4598,18 @@ mini._ParseColumns = function(el) {
     }
     return columns
 };
+/**
+ * @property {Object} _Columns
+ * @member mini
+ * @private
+ */
 mini._Columns = {};
+/**
+ * _getColumn
+ * @param {String} b
+ * @member mini
+ * @private
+ */
 mini._getColumn = function(b) {
     var a = mini._Columns[b.toLowerCase()];
     if (!a) {
@@ -4510,56 +4617,120 @@ mini._getColumn = function(b) {
     }
     return a()
 };
-mini.IndexColumn = function(a) {
+
+/**
+ * 索引列
+ * @class mini.IndexColumn
+ * @constructor
+ * @param column 普通列
+ */
+mini.IndexColumn = function(column) {
     return mini.copyTo({
+        /**
+         * @cfg {Number} [width=30] 宽度 
+         * @accessor
+         * @member mini.IndexColumn
+         */
         width : 30,
+        /**
+         * @cfg {String} [cellCls=""] 单元格样式类 
+         * @accessor
+         * @member mini.IndexColumn
+         */
         cellCls : "",
+        /**
+         * @cfg {String} [align="center"] 对齐方式
+         * @accessor
+         * @member mini.IndexColumn
+         */
         align : "center",
+        /**
+         * @cfg {Boolean} [draggable=false] 是否可以拖拽
+         * @accessor
+         * @member mini.IndexColumn
+         */
         draggable : false,
+        /**
+         * @cfg {Boolean} [allowDrag=true] 是否允许拖拽
+         * @accessor
+         * @member mini.IndexColumn
+         */
         allowDrag : true,
+        /**
+         * @cfg {Boolean} [hideable=true] 是否可隐藏
+         * @accessor
+         * @member mini.IndexColumn
+         */
         hideable : true,
-        init : function(b) {
-            b.on("addrow", this.__OnIndexChanged, this);
-            b.on("removerow", this.__OnIndexChanged, this);
-            b.on("moverow", this.__OnIndexChanged, this);
-            if (b.isTree) {
-                b.on("addnode", this.__OnIndexChanged, this);
-                b.on("removenode", this.__OnIndexChanged, this);
-                b.on("movenode", this.__OnIndexChanged, this);
-                b.on("loadnode", this.__OnIndexChanged, this);
-                this._gridUID = b.uid;
+        /**
+         * 初始化
+         * @param  {mini.DataGrid} grid 数据表格
+         * @member mini.IndexColumn
+         */
+        init : function(grid) {
+            grid.on("addrow", this.__OnIndexChanged, this);
+            grid.on("removerow", this.__OnIndexChanged, this);
+            grid.on("moverow", this.__OnIndexChanged, this);
+            if (grid.isTree) {
+                grid.on("addnode", this.__OnIndexChanged, this);
+                grid.on("removenode", this.__OnIndexChanged, this);
+                grid.on("movenode", this.__OnIndexChanged, this);
+                grid.on("loadnode", this.__OnIndexChanged, this);
+                this._gridUID = grid.uid;
                 this._rowIdField = "_id"
             }
         },
-        getNumberId : function(b) {
-            return this._gridUID + "$number$" + b[this._rowIdField]
+        /**
+         * 获取索引单元格的 id
+         * @param  {mini.DataGrid} grid 数据表格
+         * @member mini.IndexColumn
+         */
+        getNumberId : function(grid) {
+            return this._gridUID + "$number$" + grid[this._rowIdField]
         },
-        createNumber : function(b, c) {
-            if (mini.isNull(b.pageIndex)) {
-                return c + 1
+        /**
+         * 创建索引单元格的数值
+         * @param  {mini.DataGrid} grid 数据表格
+         * @param  {Number} current 当前索引值
+         * @member mini.IndexColumn
+         */
+        createNumber : function(grid, current) {
+            if (mini.isNull(grid.pageIndex)) {
+                return current + 1
             } else {
-                return (b.pageIndex * b.pageSize) + c + 1
+                return (grid.pageIndex * grid.pageSize) + current + 1
             }
         },
-        renderer : function(d) {
-            var b = d.sender;
+        /**
+         * 渲染单元格的显示内容
+         * @param {Object} evt 事件对象
+         * @member mini.IndexColumn
+         */
+        renderer : function(evt) {
+            var b = evt.sender;
             if (this.draggable) {
-                if (!d.cellStyle) {
-                    d.cellStyle = ""
+                if (!evt.cellStyle) {
+                    evt.cellStyle = ""
                 }
-                d.cellStyle += ";cursor:move;"
+                evt.cellStyle += ";cursor:move;"
             }
-            var c = '<div id="' + this.getNumberId(d.record) + '">';
+            var c = '<div id="' + this.getNumberId(evt.record) + '">';
             if (mini.isNull(b.getPageIndex)) {
-                c += d.rowIndex + 1
+                c += evt.rowIndex + 1
             } else {
-                c += (b.getPageIndex() * b.getPageSize()) + d.rowIndex + 1
+                c += (b.getPageIndex() * b.getPageSize()) + evt.rowIndex + 1
             }
             c += "</div>";
             return c
         },
-        __OnIndexChanged : function(j) {
-            var h = j.sender;
+        /**
+         * 索引改变事件的处理方法
+         * @param {Object} evt 事件对象
+         * @member mini.IndexColumn
+         * @private
+         */
+        __OnIndexChanged : function(evt) {
+            var h = evt.sender;
             var f = h.getDataView();
             for (var g = 0, c = f.length; g < c; g++) {
                 var b = f[g];
@@ -4570,459 +4741,498 @@ mini.IndexColumn = function(a) {
                 }
             }
         }
-    }, a)
+    }, column)
 };
 mini._Columns.indexcolumn = mini.IndexColumn;
-mini.CheckColumn = function(a) {
-    return mini
-            .copyTo(
-                    {
-                        width : 30,
-                        cellCls : "mini-checkcolumn",
-                        headerCls : "mini-checkcolumn",
-                        hideable : true,
-                        _multiRowSelect : true,
-                        header : function(c) {
-                            var d = this.uid + "checkall";
-                            var b = '<input type="checkbox" id="' + d + '" />';
-                            if (this.multiSelect == false) {
-                                b = ""
-                            }
-                            return b
-                        },
-                        getCheckId : function(b, c) {
-                            return this._gridUID + "$checkcolumn$"
-                                    + b[this._rowIdField] + "$" + c._id
-                        },
-                        init : function(b) {
-                            b.on("selectionchanged", this.__OnSelectionChanged,
-                                    this);
-                            b.on("HeaderCellClick", this.__OnHeaderCellClick,
-                                    this)
-                        },
-                        renderer : function(g) {
-                            var h = this.getCheckId(g.record, g.column);
-                            var f = g.sender.isSelected ? g.sender
-                                    .isSelected(g.record) : false;
-                            var d = "checkbox";
-                            var c = g.sender;
-                            if (c.getMultiSelect() == false) {
-                                d = "radio"
-                            }
-                            var b = '<input type="'
-                                    + d
-                                    + '" id="'
-                                    + h
-                                    + '" '
-                                    + (f ? "checked" : "")
-                                    + ' hidefocus style="outline:none;" onclick="return false"/>';
-                            b += '<div class="mini-grid-radio-mask"></div>';
-                            return b
-                        },
-                        /**
-                         * 
-     * @fires render
-                         */
-                        __OnHeaderCellClick : function(f) {
-                            var c = f.sender;
-                            if (f.column != this) {
-                                return
-                            }
-                            var g = c.uid + "checkall";
-                            var b = document.getElementById(g);
-                            if (b) {
-                                if (c.getMultiSelect()) {
-                                    if (b.checked) {
-                                        c.deselectAll();
-                                        var d = c.getDataView();
-                                        c.selects(d)
-                                    } else {
-                                        c.deselectAll()
-                                    }
-                                } else {
-                                    c.deselectAll();
-                                    if (b.checked) {
-                                        c.select(0)
-                                    }
-                                }
-                                c.fire("checkall")
-                            }
-                        },
-                        __OnSelectionChanged : function(j) {
-                            var b = j.sender;
-                            var d = b.toArray();
-                            var k = this;
-                            for (var g = 0, f = d.length; g < f; g++) {
-                                var h = d[g];
-                                var m = b.isSelected(h);
-                                var c = k.getCheckId(h, k);
-                                var n = document.getElementById(c);
-                                if (n) {
-                                    n.checked = m
-                                }
-                            }
-                            if (!this._timer) {
-                                this._timer = setTimeout(function() {
-                                    k._doCheckState(b);
-                                    k._timer = null
-                                }, 10)
-                            }
-                        },
-                        _doCheckState : function(c) {
-                            var e = c.uid + "checkall";
-                            var b = document.getElementById(e);
-                            if (b && c._getSelectAllCheckState) {
-                                var d = c._getSelectAllCheckState();
-                                if (d == "has") {
-                                    b.indeterminate = true;
-                                    b.checked = true
-                                } else {
-                                    b.indeterminate = false;
-                                    b.checked = d
-                                }
-                            }
-                        }
-                    }, a)
+
+/**
+ * 选择列
+ * @class mini.CheckColumn
+ * @constructor
+ * @param column 普通列
+ */
+mini.CheckColumn = function(column) {
+    return mini.copyTo({
+        /**
+         * @cfg {Number} [width=30] 宽度 
+         * @accessor
+         * @member mini.CheckColumn
+         */
+        width : 30,
+        /**
+         * @cfg {String} [cellCls="mini-checkcolumn"] 单元格样式类 
+         * @accessor
+         * @member mini.CheckColumn
+         */
+        cellCls : "mini-checkcolumn",
+        /**
+         * @cfg {String} [headerCls="mini-checkcolumn"] 对齐方式
+         * @accessor
+         * @member mini.CheckColumn
+         */
+        headerCls : "mini-checkcolumn",
+        /**
+         * @cfg {Boolean} [hideable=true] 是否可隐藏
+         * @accessor
+         * @member mini.CheckColumn
+         */
+        hideable : true,
+        /**
+         * @property {Boolean} [_multiRowSelect=true] 是否允许多选
+         * @member mini.CheckColumn
+         * @private
+         */
+        _multiRowSelect : true,
+        /**
+         * 表头渲染器
+         * @param  {mini.DataGrid} grid 数据表格
+         * @member mini.CheckColumn
+         */
+        header : function(grid) {
+            var d = this.uid + "checkall";
+            var b = '<input type="checkbox" id="' + d + '" />';
+            if (this.multiSelect == false) {
+                b = ""
+            }
+            return b
+        },
+        /**
+         * 获取选择列单元格的 id
+         * @param  {mini.DataGrid} grid 数据表格
+         * @member mini.CheckColumn
+         */
+        getCheckId : function(b, grid) {
+            return this._gridUID + "$checkcolumn$" + b[this._rowIdField] + "$" + grid._id
+        },
+        /**
+         * 初始化
+         * @param  {mini.DataGrid} grid 数据表格
+         * @member mini.CheckColumn
+         */
+        init : function(grid) {
+            grid.on("selectionchanged", this.__OnSelectionChanged, this);
+            grid.on("HeaderCellClick", this.__OnHeaderCellClick, this)
+        },
+        /**
+         * 渲染单元格的显示内容
+         * @param {Object} evt 事件对象
+         * @member mini.CheckColumn
+         */
+        renderer : function(evt) {
+            var h = this.getCheckId(evt.record, evt.column);
+            var f = evt.sender.isSelected ? evt.sender.isSelected(evt.record) : false;
+            var d = "checkbox";
+            var c = evt.sender;
+            if (c.getMultiSelect() == false) {
+                d = "radio"
+            }
+            var b = '<input type="' + d + '" id="' + h + '" '
+                    + (f ? "checked" : "") + ' hidefocus style="outline:none;" onclick="return false"/>';
+            b += '<div class="mini-evt-radio-mask"></div>';
+            return b
+        },
+        
+        /**
+         * 表头单元格单击事件的处理方法
+         * @param {Object} evt 事件对象
+         * @member mini.CheckColumn
+         * @private
+         * @fires checkall
+         */
+        __OnHeaderCellClick : function(evt) {
+            var c = evt.sender;
+            if (evt.column != this) {
+                return
+            }
+            var g = c.uid + "checkall";
+            var b = document.getElementById(g);
+            if (b) {
+                if (c.getMultiSelect()) {
+                    if (b.checked) {
+                        c.deselectAll();
+                        var d = c.getDataView();
+                        c.selects(d)
+                    } else {
+                        c.deselectAll()
+                    }
+                } else {
+                    c.deselectAll();
+                    if (b.checked) {
+                        c.select(0)
+                    }
+                }
+                c.fire("checkall")
+            }
+        },
+        __OnSelectionChanged : function(j) {
+            var b = j.sender;
+            var d = b.toArray();
+            var k = this;
+            for (var g = 0, f = d.length; g < f; g++) {
+                var h = d[g];
+                var m = b.isSelected(h);
+                var c = k.getCheckId(h, k);
+                var n = document.getElementById(c);
+                if (n) {
+                    n.checked = m
+                }
+            }
+            if (!this._timer) {
+                this._timer = setTimeout(function() {
+                    k._doCheckState(b);
+                    k._timer = null
+                }, 10)
+            }
+        },
+        _doCheckState : function(c) {
+            var e = c.uid + "checkall";
+            var b = document.getElementById(e);
+            if (b && c._getSelectAllCheckState) {
+                var d = c._getSelectAllCheckState();
+                if (d == "has") {
+                    b.indeterminate = true;
+                    b.checked = true
+                } else {
+                    b.indeterminate = false;
+                    b.checked = d
+                }
+            }
+        }
+    }, column)
 };
 mini._Columns.checkcolumn = mini.CheckColumn;
 mini.ExpandColumn = function(a) {
-    return mini
-            .copyTo(
-                    {
-                        width : 30,
-                        headerAlign : "center",
-                        align : "center",
-                        draggable : false,
-                        cellStyle : "padding:0",
-                        cellCls : "mini-grid-expandCell",
-                        hideable : true,
-                        renderer : function(b) {
-                            return '<a class="mini-grid-ecIcon" href="javascript:#" onclick="return false"></a>'
-                        },
-                        init : function(b) {
-                            b.on("cellclick", this.__OnCellClick, this)
-                        },
-                        /**
-                         * 
-     * @fires render
-     * @fires render
-                         */
-                        __OnCellClick : function(d) {
-                            var c = d.sender;
-                            if (d.column == this && c.isShowRowDetail) {
-                                if (mini.findParent(d.htmlEvent.target,
-                                        "mini-grid-ecIcon")) {
-                                    var b = c.isShowRowDetail(d.record);
-                                    if (!b) {
-                                        d.cancel = false;
-                                        c.fire("beforeshowrowdetail", d);
-                                        if (d.cancel === true) {
-                                            return
-                                        }
-                                    } else {
-                                        d.cancel = false;
-                                        c.fire("beforehiderowdetail", d);
-                                        if (d.cancel === true) {
-                                            return
-                                        }
-                                    }
-                                    if (c.autoHideRowDetail) {
-                                        c.hideAllRowDetail()
-                                    }
-                                    if (b) {
-                                        c.hideRowDetail(d.record)
-                                    } else {
-                                        c.showRowDetail(d.record)
-                                    }
-                                }
-                            }
+    return mini.copyTo({
+        width : 30,
+        headerAlign : "center",
+        align : "center",
+        draggable : false,
+        cellStyle : "padding:0",
+        cellCls : "mini-grid-expandCell",
+        hideable : true,
+        renderer : function(b) {
+            return '<a class="mini-grid-ecIcon" href="javascript:#" onclick="return false"></a>'
+        },
+        init : function(b) {
+            b.on("cellclick", this.__OnCellClick, this)
+        },
+        /**
+                     * 
+ * @fires render
+ * @fires render
+                     */
+        __OnCellClick : function(d) {
+            var c = d.sender;
+            if (d.column == this && c.isShowRowDetail) {
+                if (mini.findParent(d.htmlEvent.target,
+                        "mini-grid-ecIcon")) {
+                    var b = c.isShowRowDetail(d.record);
+                    if (!b) {
+                        d.cancel = false;
+                        c.fire("beforeshowrowdetail", d);
+                        if (d.cancel === true) {
+                            return
                         }
-                    }, a)
+                    } else {
+                        d.cancel = false;
+                        c.fire("beforehiderowdetail", d);
+                        if (d.cancel === true) {
+                            return
+                        }
+                    }
+                    if (c.autoHideRowDetail) {
+                        c.hideAllRowDetail()
+                    }
+                    if (b) {
+                        c.hideRowDetail(d.record)
+                    } else {
+                        c.showRowDetail(d.record)
+                    }
+                }
+            }
+        }
+    }, a)
 };
 mini._Columns.expandcolumn = mini.ExpandColumn;
 mini.CheckBoxColumn = function(a) {
-    return mini
-            .copyTo(
-                    {
-                        _type : "checkboxcolumn",
-                        header : "",
-                        headerAlign : "center",
-                        cellCls : "mini-checkcolumn",
-                        trueValue : true,
-                        falseValue : false,
-                        readOnly : false,
-                        getCheckId : function(b, c) {
-                            return this._gridUID + "$checkbox$"
-                                    + b[this._rowIdField] + "$" + c._id
-                        },
-                        getCheckBoxEl : function(b, c) {
-                            return document.getElementById(this
-                                    .getCheckId(b, c))
-                        },
-                        renderer : function(f) {
-                            var g = this.getCheckId(f.record, f.column);
-                            var b = mini._getMap(f.field, f.record);
-                            var d = b == this.trueValue ? true : false;
-                            var c = "checkbox";
-                            return '<input type="'
-                                    + c
-                                    + '" id="'
-                                    + g
-                                    + '" '
-                                    + (d ? "checked" : "")
-                                    + ' hidefocus style="outline:none;" onclick="return false;"/>'
-                        },
-                        init : function(e) {
-                            this.grid = e;
-                            //@fires render
-                            function b(i) {
-                                if (e.isReadOnly() || this.readOnly) {
-                                    return
-                                }
-                                i.value = mini._getMap(i.field, i.record);
-                                e.fire("cellbeginedit", i);
-                                if (i.cancel !== true) {
-                                    var g = mini._getMap(i.column.field,
-                                            i.record);
-                                    var h = g == this.trueValue ? this.falseValue
-                                            : this.trueValue;
-                                    if (e._OnCellCommitEdit) {
-                                        e._OnCellCommitEdit(i.record, i.column,
-                                                h);
-                                        e._OnCellEndEdit(i.record, i.column)
-                                    }
-                                }
+    return mini.copyTo({
+        _type : "checkboxcolumn",
+        header : "",
+        headerAlign : "center",
+        cellCls : "mini-checkcolumn",
+        trueValue : true,
+        falseValue : false,
+        readOnly : false,
+        getCheckId : function(b, c) {
+            return this._gridUID + "$checkbox$"
+                    + b[this._rowIdField] + "$" + c._id
+        },
+        getCheckBoxEl : function(b, c) {
+            return document.getElementById(this
+                    .getCheckId(b, c))
+        },
+        renderer : function(f) {
+            var g = this.getCheckId(f.record, f.column);
+            var b = mini._getMap(f.field, f.record);
+            var d = b == this.trueValue ? true : false;
+            var c = "checkbox";
+            return '<input type="'
+                    + c
+                    + '" id="'
+                    + g
+                    + '" '
+                    + (d ? "checked" : "")
+                    + ' hidefocus style="outline:none;" onclick="return false;"/>'
+        },
+        init : function(e) {
+            this.grid = e;
+            //@fires render
+            function b(i) {
+                if (e.isReadOnly() || this.readOnly) {
+                    return
+                }
+                i.value = mini._getMap(i.field, i.record);
+                e.fire("cellbeginedit", i);
+                if (i.cancel !== true) {
+                    var g = mini._getMap(i.column.field,
+                            i.record);
+                    var h = g == this.trueValue ? this.falseValue
+                            : this.trueValue;
+                    if (e._OnCellCommitEdit) {
+                        e._OnCellCommitEdit(i.record, i.column,
+                                h);
+                        e._OnCellEndEdit(i.record, i.column)
+                    }
+                }
+            }
+            /**
+                         * 
+ * @fires render
+                         */
+            function d(h) {
+                if (h.column == this) {
+                    var i = this.getCheckId(h.record, h.column);
+                    var g = h.htmlEvent.target;
+                    if (g.id == i) {
+                        if (e.allowCellEdit) {
+                            h.cancel = false;
+                            b.call(this, h)
+                        } else {
+                            if (this.readOnly) {
+                                return
                             }
-                            /**
-                             * 
-     * @fires render
-                             */
-                            function d(h) {
-                                if (h.column == this) {
-                                    var i = this.getCheckId(h.record, h.column);
-                                    var g = h.htmlEvent.target;
-                                    if (g.id == i) {
-                                        if (e.allowCellEdit) {
-                                            h.cancel = false;
-                                            b.call(this, h)
-                                        } else {
-                                            if (this.readOnly) {
-                                                return
-                                            }
-                                            h.value = mini._getMap(
-                                                    h.column.field, h.record);
-                                            e.fire("cellbeginedit", h);
-                                            if (h.cancel == true) {
-                                                return
-                                            }
-                                            if (e.isEditingRow
-                                                    && e.isEditingRow(h.record)) {
-                                                setTimeout(function() {
-                                                    g.checked = !g.checked
-                                                }, 1)
-                                            }
-                                        }
-                                    }
-                                }
+                            h.value = mini._getMap(
+                                    h.column.field, h.record);
+                            e.fire("cellbeginedit", h);
+                            if (h.cancel == true) {
+                                return
                             }
-                            e.on("cellclick", d, this);
-                            mini.on(this.grid.el, "keydown", function(h) {
-                                if (h.keyCode == 32 && e.allowCellEdit) {
-                                    var i = e.getCurrentCell();
-                                    if (!i) {
-                                        return
-                                    }
-                                    if (i[1] != this) {
-                                        return
-                                    }
-                                    var g = {
-                                        record : i[0],
-                                        column : i[1]
-                                    };
-                                    g.field = g.column.field;
-                                    b.call(this, g);
-                                    h.preventDefault()
-                                }
-                            }, this);
-                            var c = parseInt(this.trueValue), f = parseInt(this.falseValue);
-                            if (!isNaN(c)) {
-                                this.trueValue = c
-                            }
-                            if (!isNaN(f)) {
-                                this.falseValue = f
+                            if (e.isEditingRow
+                                    && e.isEditingRow(h.record)) {
+                                setTimeout(function() {
+                                    g.checked = !g.checked
+                                }, 1)
                             }
                         }
-                    }, a)
+                    }
+                }
+            }
+            e.on("cellclick", d, this);
+            mini.on(this.grid.el, "keydown", function(h) {
+                if (h.keyCode == 32 && e.allowCellEdit) {
+                    var i = e.getCurrentCell();
+                    if (!i) {
+                        return
+                    }
+                    if (i[1] != this) {
+                        return
+                    }
+                    var g = {
+                        record : i[0],
+                        column : i[1]
+                    };
+                    g.field = g.column.field;
+                    b.call(this, g);
+                    h.preventDefault()
+                }
+            }, this);
+            var c = parseInt(this.trueValue), f = parseInt(this.falseValue);
+            if (!isNaN(c)) {
+                this.trueValue = c
+            }
+            if (!isNaN(f)) {
+                this.falseValue = f
+            }
+        }
+    }, a)
 };
 mini._Columns.checkboxcolumn = mini.CheckBoxColumn;
 mini.RadioButtonColumn = function(a) {
-    return mini
-            .copyTo(
-                    {
-                        _type : "radiobuttoncolumn",
-                        header : "",
-                        headerAlign : "center",
-                        cellCls : "mini-checkcolumn",
-                        trueValue : true,
-                        falseValue : false,
-                        readOnly : false,
-                        getCheckId : function(b, c) {
-                            return this._gridUID + "$radio$"
-                                    + b[this._rowIdField] + "$" + c._id
-                        },
-                        getCheckBoxEl : function(b, c) {
-                            return document.getElementById(this
-                                    .getCheckId(b, c))
-                        },
-                        renderer : function(g) {
-                            var b = g.sender;
-                            var d = this.getCheckId(g.record, g.column);
-                            var j = mini._getMap(g.field, g.record);
-                            var i = j == this.trueValue ? true : false;
-                            var h = "radio";
-                            var c = b._id + g.column.field;
-                            var f = "";
-                            var k = '<div style="position:relative;">';
-                            k += '<input name="'
-                                    + c
-                                    + '" type="'
-                                    + h
-                                    + '" id="'
-                                    + d
-                                    + '" '
-                                    + (i ? "checked" : "")
-                                    + ' hidefocus style="outline:none;" onclick="return false;" style="position:relative;z-index:1;"/>';
-                            if (!b.allowCellEdit) {
-                                if (!b.isEditingRow(g.record)) {
-                                    k += '<div class="mini-grid-radio-mask"></div>'
-                                }
-                            }
-                            k += "</div>";
-                            return k
-                        },
-                        init : function(e) {
-                            this.grid = e;
-                            //@fires render
-                            function b(n) {
-                                if (e.isReadOnly() || this.readOnly) {
-                                    return
-                                }
-                                n.value = mini._getMap(n.field, n.record);
-                                e.fire("cellbeginedit", n);
-                                if (n.cancel !== true) {
-                                    var h = mini._getMap(n.column.field,
-                                            n.record);
-                                    if (h == this.trueValue) {
-                                        return
-                                    }
-                                    var m = h == this.trueValue ? this.falseValue
-                                            : this.trueValue;
-                                    var k = e.getData();
-                                    for (var j = 0, g = k.length; j < g; j++) {
-                                        var o = k[j];
-                                        if (o == n.record) {
-                                            continue
-                                        }
-                                        var h = mini._getMap(n.column.field, o);
-                                        if (h != this.falseValue) {
-                                            e.updateRow(o, n.column.field,
-                                                    this.falseValue)
-                                        }
-                                    }
-                                    if (e._OnCellCommitEdit) {
-                                        e._OnCellCommitEdit(n.record, n.column,
-                                                m)
-                                    }
-                                }
-                            }
-                            function d(i) {
-                                if (i.column == this) {
-                                    var j = this.getCheckId(i.record, i.column);
-                                    var g = i.htmlEvent.target;
-                                    if (g.id == j) {
-                                        if (e.allowCellEdit) {
-                                            i.cancel = false;
-                                            b.call(this, i)
-                                        } else {
-                                            if (e.isEditingRow
-                                                    && e.isEditingRow(i.record)) {
-                                                var h = this;
-                                                setTimeout(
-                                                        function() {
-                                                            g.checked = true;
-                                                            var p = e.getData();
-                                                            for (var n = 0, k = p.length; n < k; n++) {
-                                                                var s = p[n];
-                                                                if (s == i.record) {
-                                                                    continue
-                                                                }
-                                                                var q = i.column.field;
-                                                                var m = mini
-                                                                        ._getMap(
-                                                                                q,
-                                                                                s);
-                                                                if (m != h.falseValue) {
-                                                                    if (s != i.record) {
-                                                                        if (e._dataSource) {
-                                                                            mini
-                                                                                    ._setMap(
-                                                                                            i.column.field,
-                                                                                            h.falseValue,
-                                                                                            s);
-                                                                            e._dataSource
-                                                                                    ._setModified(
-                                                                                            s,
-                                                                                            q,
-                                                                                            m)
-                                                                        } else {
-                                                                            var r = {};
-                                                                            mini
-                                                                                    ._setMap(
-                                                                                            q,
-                                                                                            h.falseValue,
-                                                                                            r);
-                                                                            e
-                                                                                    ._doUpdateRow(
-                                                                                            s,
-                                                                                            r)
-                                                                        }
-                                                                    }
-                                                                }
-                                                            }
-                                                        }, 1)
+    return mini.copyTo({
+        _type : "radiobuttoncolumn",
+        header : "",
+        headerAlign : "center",
+        cellCls : "mini-checkcolumn",
+        trueValue : true,
+        falseValue : false,
+        readOnly : false,
+        getCheckId : function(b, c) {
+            return this._gridUID + "$radio$"
+                    + b[this._rowIdField] + "$" + c._id
+        },
+        getCheckBoxEl : function(b, c) {
+            return document.getElementById(this
+                    .getCheckId(b, c))
+        },
+        renderer : function(g) {
+            var b = g.sender;
+            var d = this.getCheckId(g.record, g.column);
+            var j = mini._getMap(g.field, g.record);
+            var i = j == this.trueValue ? true : false;
+            var h = "radio";
+            var c = b._id + g.column.field;
+            var f = "";
+            var k = '<div style="position:relative;">';
+            k += '<input name="'
+                    + c
+                    + '" type="'
+                    + h
+                    + '" id="'
+                    + d
+                    + '" '
+                    + (i ? "checked" : "")
+                    + ' hidefocus style="outline:none;" onclick="return false;" style="position:relative;z-index:1;"/>';
+            if (!b.allowCellEdit) {
+                if (!b.isEditingRow(g.record)) {
+                    k += '<div class="mini-grid-radio-mask"></div>'
+                }
+            }
+            k += "</div>";
+            return k
+        },
+        init : function(e) {
+            this.grid = e;
+            //@fires render
+            function b(n) {
+                if (e.isReadOnly() || this.readOnly) {
+                    return
+                }
+                n.value = mini._getMap(n.field, n.record);
+                e.fire("cellbeginedit", n);
+                if (n.cancel !== true) {
+                    var h = mini._getMap(n.column.field,
+                            n.record);
+                    if (h == this.trueValue) {
+                        return
+                    }
+                    var m = h == this.trueValue ? this.falseValue
+                            : this.trueValue;
+                    var k = e.getData();
+                    for (var j = 0, g = k.length; j < g; j++) {
+                        var o = k[j];
+                        if (o == n.record) {
+                            continue
+                        }
+                        var h = mini._getMap(n.column.field, o);
+                        if (h != this.falseValue) {
+                            e.updateRow(o, n.column.field,
+                                    this.falseValue)
+                        }
+                    }
+                    if (e._OnCellCommitEdit) {
+                        e._OnCellCommitEdit(n.record, n.column,
+                                m)
+                    }
+                }
+            }
+            function d(i) {
+                if (i.column == this) {
+                    var j = this.getCheckId(i.record, i.column);
+                    var g = i.htmlEvent.target;
+                    if (g.id == j) {
+                        if (e.allowCellEdit) {
+                            i.cancel = false;
+                            b.call(this, i)
+                        } else {
+                            if (e.isEditingRow
+                                    && e.isEditingRow(i.record)) {
+                                var h = this;
+                                setTimeout(
+                                        function() {
+                                            g.checked = true;
+                                            var p = e.getData();
+                                            for (var n = 0, k = p.length; n < k; n++) {
+                                                var s = p[n];
+                                                if (s == i.record) {
+                                                    continue
+                                                }
+                                                var q = i.column.field;
+                                                var m = mini
+                                                        ._getMap(
+                                                                q,
+                                                                s);
+                                                if (m != h.falseValue) {
+                                                    if (s != i.record) {
+                                                        if (e._dataSource) {
+                                                            mini
+                                                                    ._setMap(
+                                                                            i.column.field,
+                                                                            h.falseValue,
+                                                                            s);
+                                                            e._dataSource
+                                                                    ._setModified(
+                                                                            s,
+                                                                            q,
+                                                                            m)
+                                                        } else {
+                                                            var r = {};
+                                                            mini
+                                                                    ._setMap(
+                                                                            q,
+                                                                            h.falseValue,
+                                                                            r);
+                                                            e
+                                                                    ._doUpdateRow(
+                                                                            s,
+                                                                            r)
+                                                        }
+                                                    }
+                                                }
                                             }
-                                        }
-                                    }
-                                }
-                            }
-                            e.on("cellclick", d, this);
-                            mini.on(this.grid.el, "keydown", function(h) {
-                                if (h.keyCode == 32 && e.allowCellEdit) {
-                                    var i = e.getCurrentCell();
-                                    if (!i) {
-                                        return
-                                    }
-                                    if (i[1] != this) {
-                                        return
-                                    }
-                                    var g = {
-                                        record : i[0],
-                                        column : i[1]
-                                    };
-                                    g.field = g.column.field;
-                                    b.call(this, g);
-                                    h.preventDefault()
-                                }
-                            }, this);
-                            var c = parseInt(this.trueValue), f = parseInt(this.falseValue);
-                            if (!isNaN(c)) {
-                                this.trueValue = c
-                            }
-                            if (!isNaN(f)) {
-                                this.falseValue = f
+                                        }, 1)
                             }
                         }
-                    }, a)
+                    }
+                }
+            }
+            e.on("cellclick", d, this);
+            mini.on(this.grid.el, "keydown", function(h) {
+                if (h.keyCode == 32 && e.allowCellEdit) {
+                    var i = e.getCurrentCell();
+                    if (!i) {
+                        return
+                    }
+                    if (i[1] != this) {
+                        return
+                    }
+                    var g = {
+                        record : i[0],
+                        column : i[1]
+                    };
+                    g.field = g.column.field;
+                    b.call(this, g);
+                    h.preventDefault()
+                }
+            }, this);
+            var c = parseInt(this.trueValue), f = parseInt(this.falseValue);
+            if (!isNaN(c)) {
+                this.trueValue = c
+            }
+            if (!isNaN(f)) {
+                this.falseValue = f
+            }
+        }
+    }, a)
 };
 mini._Columns.radiobuttoncolumn = mini.RadioButtonColumn;
 mini.ComboBoxColumn = function(a) {
@@ -5336,11 +5546,11 @@ mini._doOpen = function(c) {
  * @returns {String} 弹出窗口的唯一标识符
  * @member mini
  */
-mini.open = function(b) {
-    if (!b) {
+mini.open = function(options) {
+    if (!options) {
         return
     }
-    var a = b.url;
+    var a = options.url;
     if (!a) {
         a = ""
     }
@@ -5357,8 +5567,8 @@ mini.open = function(b) {
             a = a + "#" + f[1]
         }
     }
-    b.url = a;
-    b.Owner = window;
+    options.url = a;
+    options.Owner = window;
     var g = [];
     function d(i) {
         try {
@@ -5373,7 +5583,7 @@ mini.open = function(b) {
     }
     d(window);
     var e = g[g.length - 1];
-    return e.mini._doOpen(b)
+    return e.mini._doOpen(options)
 };
 /**
  * @member mini
@@ -5916,5 +6126,6 @@ mini.formatCurrency = function(a, c) {
     c = c || "";
     return c + (((sign) ? "" : "-") + a + "." + cents)
 };
+
 mini.emptyFn = function() {
 };
